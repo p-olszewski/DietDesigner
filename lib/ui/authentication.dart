@@ -27,6 +27,14 @@ class _AuthenticationState extends State<Authentication> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              "Welcome to Diet Designer!",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: screenHeight / 10),
             SizedBox(
               width: widgetWidth,
               child: TextFormField(
