@@ -77,7 +77,32 @@ class _AuthenticationState extends State<Authentication> {
                 },
                 child: const Text("Register"),
               ),
-            )
+            ),
+            SizedBox(height: screenHeight / 100),
+            Container(
+              width: screenWidth / 1.3,
+              height: 45,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.white,
+              ),
+              child: MaterialButton(
+                onPressed: () async {
+                  bool shouldNavigate =
+                      await signIn(_emailField.text, _passwordField.text);
+                  if (shouldNavigate) {
+                    if (!mounted) return;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeView(),
+                      ),
+                    );
+                  }
+                },
+                child: const Text("Login"),
+              ),
+            ),
           ],
         ),
       ),
