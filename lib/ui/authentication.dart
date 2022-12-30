@@ -36,7 +36,21 @@ class _AuthenticationState extends State<Authentication> {
                   hintText: "youremail@email.com",
                 ),
               ),
-            )
+            ),
+            SizedBox(height: screenHeight / 100),
+            SizedBox(
+              width: screenWidth / 1.3,
+              child: TextFormField(
+                style: const TextStyle(color: Colors.white),
+                controller: _passwordField,
+                decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.white),
+                  labelText: "Password",
+                  hintStyle: TextStyle(color: Colors.white),
+                  hintText: "Enter your password",
+                ),
+              ),
+            ),
           ],
         ),
       ),
