@@ -1,5 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 
 class Authentication extends StatefulWidget {
   const Authentication({super.key});
@@ -9,8 +8,19 @@ class Authentication extends StatefulWidget {
 }
 
 class _AuthenticationState extends State<Authentication> {
+  final TextEditingController _emailField = TextEditingController();
+  final TextEditingController _passwordField = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: Container(
+        width: screenWidth,
+        height: screenHeight,
+      ),
+    );
   }
 }
