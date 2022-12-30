@@ -52,6 +52,7 @@ class _AuthenticationState extends State<Authentication> {
             SizedBox(
               width: widgetWidth,
               child: TextFormField(
+                obscureText: true,
                 style: const TextStyle(color: Colors.white),
                 controller: _passwordField,
                 decoration: const InputDecoration(
