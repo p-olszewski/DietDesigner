@@ -20,6 +20,25 @@ class _AuthenticationState extends State<Authentication> {
       body: Container(
         width: screenWidth,
         height: screenHeight,
+        decoration: const BoxDecoration(color: Colors.blue),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: screenWidth / 1.3,
+              child: TextFormField(
+                style: const TextStyle(color: Colors.white),
+                controller: _emailField,
+                decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.white),
+                  labelText: "Email",
+                  hintStyle: TextStyle(color: Colors.white),
+                  hintText: "youremail@email.com",
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
