@@ -1,5 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -11,6 +10,20 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("DietDesigner"),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      body: const Center(
+        child: Text("Home page"),
+      ),
+    );
   }
 }
