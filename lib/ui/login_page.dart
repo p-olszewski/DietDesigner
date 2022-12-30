@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:diet_designer/net/flutterfire.dart';
 import 'package:diet_designer/ui/home_view.dart';
 import 'package:diet_designer/ui/registration_page.dart';
