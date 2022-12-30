@@ -1,3 +1,5 @@
+import 'package:diet_designer/net/flutterfire.dart';
+import 'package:diet_designer/ui/login_page.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,7 +18,18 @@ class _HomeViewState extends State<HomeView> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              bool shouldNavigate = await signOut();
+              if (shouldNavigate) {
+                if (!mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              }
+            },
             icon: const Icon(Icons.logout),
           )
         ],

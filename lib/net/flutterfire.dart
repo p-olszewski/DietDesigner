@@ -29,3 +29,13 @@ Future<bool> signUp(String email, String password) async {
     return false;
   }
 }
+
+Future<bool> signOut() async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    return true;
+  } catch (e) {
+    debugPrint(e.toString());
+    return false;
+  }
+}
