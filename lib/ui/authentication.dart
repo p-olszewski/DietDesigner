@@ -1,3 +1,5 @@
+import 'package:diet_designer/net/flutterfire.dart';
+import 'package:diet_designer/ui/home_view.dart';
 import 'package:flutter/material.dart';
 
 class Authentication extends StatefulWidget {
@@ -51,6 +53,31 @@ class _AuthenticationState extends State<Authentication> {
                 ),
               ),
             ),
+            SizedBox(height: screenHeight / 20),
+            Container(
+              width: screenWidth / 1.3,
+              height: 45,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.white,
+              ),
+              child: MaterialButton(
+                onPressed: () async {
+                  bool shouldNavigate =
+                      await signUp(_emailField.text, _passwordField.text);
+                  if (shouldNavigate) {
+                    if (!mounted) return;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeView(),
+                      ),
+                    );
+                  }
+                },
+                child: const Text("Register"),
+              ),
+            )
           ],
         ),
       ),
