@@ -100,9 +100,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               child: MaterialButton(
                 onPressed: () async {
-                  bool shouldNavigate =
+                  bool shouldRedirect =
                       await signUp(_emailField.text, _passwordField.text);
-                  if (shouldNavigate) {
+                  if (shouldRedirect) {
                     if (!mounted) return;
                     Navigator.push(
                       context,

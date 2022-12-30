@@ -88,9 +88,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: MaterialButton(
                 onPressed: () async {
-                  bool shouldNavigate =
+                  bool shouldRedirect =
                       await signIn(_emailField.text, _passwordField.text);
-                  if (shouldNavigate) {
+                  if (shouldRedirect) {
                     if (!mounted) return;
                     Navigator.push(
                       context,

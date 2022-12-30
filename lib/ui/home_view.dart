@@ -19,8 +19,8 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () async {
-              bool shouldNavigate = await signOut();
-              if (shouldNavigate) {
+              bool shouldRedirect = await signOut();
+              if (shouldRedirect) {
                 if (!mounted) return;
                 Navigator.push(
                   context,
