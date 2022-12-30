@@ -17,6 +17,7 @@ class _AuthenticationState extends State<Authentication> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+    var widgetWidth = screenWidth / 1.3;
 
     return Scaffold(
       body: Container(
@@ -27,7 +28,7 @@ class _AuthenticationState extends State<Authentication> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: screenWidth / 1.3,
+              width: widgetWidth,
               child: TextFormField(
                 style: const TextStyle(color: Colors.white),
                 controller: _emailField,
@@ -41,7 +42,7 @@ class _AuthenticationState extends State<Authentication> {
             ),
             SizedBox(height: screenHeight / 100),
             SizedBox(
-              width: screenWidth / 1.3,
+              width: widgetWidth,
               child: TextFormField(
                 style: const TextStyle(color: Colors.white),
                 controller: _passwordField,
@@ -55,7 +56,7 @@ class _AuthenticationState extends State<Authentication> {
             ),
             SizedBox(height: screenHeight / 20),
             Container(
-              width: screenWidth / 1.3,
+              width: widgetWidth,
               height: 45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
@@ -80,7 +81,7 @@ class _AuthenticationState extends State<Authentication> {
             ),
             SizedBox(height: screenHeight / 100),
             Container(
-              width: screenWidth / 1.3,
+              width: widgetWidth,
               height: 45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
