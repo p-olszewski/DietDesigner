@@ -2,6 +2,7 @@ import 'package:diet_designer/net/flutterfire.dart';
 import 'package:diet_designer/ui/home_view.dart';
 import 'package:diet_designer/ui/registration_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -90,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                       await signIn(_emailField.text, _passwordField.text);
                   if (shouldRedirect) {
                     if (!mounted) return;
+                    Fluttertoast.showToast(msg: "Logged in");
                     Navigator.push(
                       context,
                       MaterialPageRoute(
