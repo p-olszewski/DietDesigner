@@ -24,12 +24,12 @@ class _HomeViewState extends State<HomeView> {
               if (shouldRedirect) {
                 if (!mounted) return;
                 Fluttertoast.showToast(msg: "Logged out");
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const LoginPage(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
               }
             },
             icon: const Icon(Icons.logout),
