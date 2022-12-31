@@ -2,6 +2,7 @@ import 'package:diet_designer/net/flutterfire.dart';
 import 'package:diet_designer/ui/home_view.dart';
 import 'package:diet_designer/ui/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -115,6 +116,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             MaterialButton(
               onPressed: () async {
                 if (!mounted) return;
+                Fluttertoast.showToast(msg: "Account created");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
