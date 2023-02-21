@@ -102,6 +102,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       await signUp(_emailField.text, _passwordField.text);
                   if (shouldRedirect) {
                     if (!mounted) return;
+                    Fluttertoast.showToast(msg: "Account created");
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -116,7 +117,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
             MaterialButton(
               onPressed: () async {
                 if (!mounted) return;
-                Fluttertoast.showToast(msg: "Account created");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
