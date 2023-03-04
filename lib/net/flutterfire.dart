@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 Future<bool> signIn(String email, String password) async {
   try {
@@ -7,7 +7,7 @@ Future<bool> signIn(String email, String password) async {
         .signInWithEmailAndPassword(email: email, password: password);
     return true;
   } catch (e) {
-    debugPrint(e.toString());
+    Fluttertoast.showToast(msg: e.toString());
     return false;
   }
 }
@@ -19,13 +19,13 @@ Future<bool> signUp(String email, String password) async {
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      debugPrint('The password provided is too weak.');
+      Fluttertoast.showToast(msg: 'The password provided is too weak.');
     } else if (e.code == 'email-already-in-use') {
-      debugPrint('The account already exists for that email.');
+      Fluttertoast.showToast(msg: 'The account already exists for that email.');
     }
     return false;
   } catch (e) {
-    debugPrint(e.toString());
+    Fluttertoast.showToast(msg: e.toString());
     return false;
   }
 }
@@ -35,7 +35,7 @@ Future<bool> signOut() async {
     await FirebaseAuth.instance.signOut();
     return true;
   } catch (e) {
-    debugPrint(e.toString());
+    Fluttertoast.showToast(msg: e.toString());
     return false;
   }
 }
