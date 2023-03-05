@@ -1,4 +1,5 @@
 import 'package:diet_designer/net/flutterfire.dart';
+import 'package:diet_designer/ui/calculator.dart';
 import 'package:diet_designer/ui/home_view.dart';
 import 'package:diet_designer/ui/registration_page.dart';
 import 'package:flutter/material.dart';
@@ -31,17 +32,11 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const Text(
               "Sign in to",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w600),
             ),
             const Text(
               "DietDesigner",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w100),
+              style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w100),
             ),
             SizedBox(height: screenHeight / 15),
             SizedBox(
@@ -87,17 +82,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: MaterialButton(
                 onPressed: () async {
-                  bool shouldRedirect =
-                      await signIn(_emailField.text, _passwordField.text);
+                  bool shouldRedirect = await signIn(_emailField.text, _passwordField.text);
                   if (shouldRedirect) {
-                    if (!mounted) return;
                     Fluttertoast.showToast(msg: "Logged in");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeView(),
-                      ),
-                    );
+                    bool calculatedCalories = await checkUserCalculatedCalories();
+                    if (!mounted) return;
+                    if (calculatedCalories) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeView(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Calculator(),
+                        ),
+                      );
+                    }
                   }
                 },
                 child: const Text("Login"),
