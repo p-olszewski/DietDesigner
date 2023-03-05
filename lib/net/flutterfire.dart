@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -44,5 +45,26 @@ Future<bool> signOut() async {
   } catch (e) {
     Fluttertoast.showToast(msg: e.toString());
     return false;
+  }
+}
+
+Future<bool> checkUserCalculatedCalories() async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+
+  final userSnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser!.uid)
+      .get();
+
+  if (userSnapshot.data() == null ||
+      userSnapshot.data()!['calories'] == null ||
+      userSnapshot.data()!['protein'] == null ||
+      userSnapshot.data()!['carbs'] == null ||
+      userSnapshot.data()!['fat'] == null ||
+      userSnapshot.data()!['goal'] == null) {
+    Fluttertoast.showToast(msg: "No data, go to calculator");
+    return false;
+  } else {
+    return true;
   }
 }
