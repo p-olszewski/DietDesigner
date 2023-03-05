@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         width: screenWidth,
         height: screenHeight,
-        decoration: const BoxDecoration(color: Colors.blueAccent),
+        decoration: BoxDecoration(color: Colors.green.shade500),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelStyle: TextStyle(color: Colors.white),
                   labelText: "Email",
                   hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 164, 200, 255),
+                    color: Color.fromARGB(255, 213, 253, 179),
                   ),
                   hintText: "youremail@email.com",
                 ),
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelStyle: TextStyle(color: Colors.white),
                   labelText: "Password",
                   hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 164, 200, 255),
+                    color: Color.fromARGB(255, 213, 253, 179),
                   ),
                   hintText: "password",
                 ),
@@ -74,10 +74,10 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: screenHeight / 20),
             SizedBox(height: screenHeight / 100),
             Container(
-              width: widgetWidth,
+              width: widgetWidth / 1.3,
               height: 45,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
+                borderRadius: BorderRadius.circular(50.0),
                 color: Colors.white,
               ),
               child: MaterialButton(

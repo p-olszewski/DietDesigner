@@ -26,16 +26,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
       body: Container(
         width: screenWidth,
         height: screenHeight,
-        decoration: const BoxDecoration(color: Colors.blueAccent),
+        decoration: BoxDecoration(color: Colors.green.shade500),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               "Create Account",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: screenHeight / 30),
             SizedBox(
@@ -47,7 +44,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   labelStyle: TextStyle(color: Colors.white),
                   labelText: "Email",
                   hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 164, 200, 255),
+                    color: Color.fromARGB(255, 213, 253, 179),
                   ),
                   hintText: "youremail@email.com",
                 ),
@@ -64,7 +61,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   labelStyle: TextStyle(color: Colors.white),
                   labelText: "Password",
                   hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 164, 200, 255),
+                    color: Color.fromARGB(255, 213, 253, 179),
                   ),
                   hintText: "password",
                 ),
@@ -81,7 +78,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   labelStyle: TextStyle(color: Colors.white),
                   labelText: "Repeat Password",
                   hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 164, 200, 255),
+                    color: Color.fromARGB(255, 213, 253, 179),
                   ),
                   hintText: "password",
                 ),
@@ -90,16 +87,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
             SizedBox(height: screenHeight / 20),
             SizedBox(height: screenHeight / 100),
             Container(
-              width: widgetWidth,
+              width: widgetWidth / 1.3,
               height: 45,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
+                borderRadius: BorderRadius.circular(50.0),
                 color: Colors.white,
               ),
               child: MaterialButton(
                 onPressed: () async {
-                  bool shouldRedirect =
-                      await signUp(_emailField.text, _passwordField.text);
+                  bool shouldRedirect = await signUp(_emailField.text, _passwordField.text);
                   if (shouldRedirect) {
                     if (!mounted) return;
                     Fluttertoast.showToast(msg: "Account created");
@@ -111,7 +107,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     );
                   }
                 },
-                child: const Text("Register account"),
+                child: const Text("Register and login"),
               ),
             ),
             MaterialButton(
