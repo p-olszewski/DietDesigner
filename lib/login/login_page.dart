@@ -2,6 +2,7 @@ import 'package:diet_designer/services/flutterfire.dart';
 import 'package:diet_designer/calculator/calculator.dart';
 import 'package:diet_designer/home/home_view.dart';
 import 'package:diet_designer/registration/registration_page.dart';
+import 'package:diet_designer/shared/custom_textformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailField = TextEditingController();
   final TextEditingController _passwordField = TextEditingController();
+  final TextEditingController _repeatedPasswordField = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +41,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w100),
             ),
             SizedBox(height: screenHeight / 15),
-            SizedBox(
-              width: widgetWidth,
-              child: TextFormField(
-                style: const TextStyle(color: Colors.white),
-                controller: _emailField,
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(color: Colors.white),
-                  labelText: "Email",
-                  hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 213, 253, 179),
-                  ),
-                  hintText: "youremail@email.com",
-                ),
-              ),
-            ),
+            CustomTextFormField(controller: _emailField, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
             SizedBox(height: screenHeight / 100),
             SizedBox(
               width: widgetWidth,
@@ -71,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            CustomTextFormField(controller: _passwordField, labelText: "Password", hintText: "password", obscureText: true),
             SizedBox(height: screenHeight / 20),
             SizedBox(height: screenHeight / 100),
             Container(
