@@ -1,18 +1,18 @@
 import 'package:diet_designer/services/flutterfire.dart';
 import 'package:diet_designer/calculator/calculator.dart';
-import 'package:diet_designer/home/home_view.dart';
+import 'package:diet_designer/home/home.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginState extends State<Login> {
   final TextEditingController _emailFieldController = TextEditingController();
   final TextEditingController _passwordFieldController = TextEditingController();
   final TextEditingController _repeatedPasswordFieldController = TextEditingController();
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomeView(),
+                          builder: (context) => const Home(),
                         ),
                       );
                     } else {

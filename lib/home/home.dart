@@ -1,16 +1,16 @@
 import 'package:diet_designer/services/flutterfire.dart';
-import 'package:diet_designer/login/login_page.dart';
+import 'package:diet_designer/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,7 @@ class _HomeViewState extends State<HomeView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
+                    builder: (context) => const Login(),
                   ),
                 );
               }

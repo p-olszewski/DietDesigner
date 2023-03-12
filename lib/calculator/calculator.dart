@@ -1,5 +1,5 @@
 import 'package:diet_designer/services/flutterfire.dart';
-import 'package:diet_designer/login/login_page.dart';
+import 'package:diet_designer/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -27,7 +27,7 @@ class _CalculatorState extends State<Calculator> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
+                    builder: (context) => const Login(),
                   ),
                 );
               }
