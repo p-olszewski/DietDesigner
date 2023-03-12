@@ -1,6 +1,6 @@
-import 'package:diet_designer/net/flutterfire.dart';
-import 'package:diet_designer/ui/home_view.dart';
-import 'package:diet_designer/ui/login_page.dart';
+import 'package:diet_designer/services/flutterfire.dart';
+import 'package:diet_designer/home/home_view.dart';
+import 'package:diet_designer/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
