@@ -43,22 +43,6 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: screenHeight / 15),
             CustomTextFormField(controller: _emailField, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
             SizedBox(height: screenHeight / 100),
-            SizedBox(
-              width: widgetWidth,
-              child: TextFormField(
-                obscureText: true,
-                style: const TextStyle(color: Colors.white),
-                controller: _passwordField,
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(color: Colors.white),
-                  labelText: "Password",
-                  hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 213, 253, 179),
-                  ),
-                  hintText: "password",
-                ),
-              ),
-            ),
             CustomTextFormField(controller: _passwordField, labelText: "Password", hintText: "password", obscureText: true),
             SizedBox(height: screenHeight / 20),
             SizedBox(height: screenHeight / 100),
