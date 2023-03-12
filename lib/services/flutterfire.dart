@@ -4,8 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 Future<bool> signIn(String email, String password) async {
   try {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+    await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
@@ -20,10 +19,13 @@ Future<bool> signIn(String email, String password) async {
   }
 }
 
-Future<bool> signUp(String email, String password) async {
+Future<bool> signUp(String email, String password, String repeatedPassword) async {
+  if (password != repeatedPassword) {
+    Fluttertoast.showToast(msg: 'The passwords do not match.');
+    return false;
+  }
   try {
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
@@ -51,10 +53,7 @@ Future<bool> signOut() async {
 Future<bool> checkUserCalculatedCalories() async {
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  final userSnapshot = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(currentUser!.uid)
-      .get();
+  final userSnapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
 
   if (userSnapshot.data() == null ||
       userSnapshot.data()!['calories'] == null ||

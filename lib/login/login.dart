@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
                 onPressed: () async {
                   bool shouldRedirect = _isLoginPage
                       ? await signIn(_emailFieldController.text, _passwordFieldController.text)
-                      : await signUp(_emailFieldController.text, _passwordFieldController.text);
+                      : await signUp(_emailFieldController.text, _passwordFieldController.text, _repeatedPasswordFieldController.text);
                   if (shouldRedirect) {
                     Fluttertoast.showToast(msg: _isLoginPage ? "Logged in" : "Account created");
                     bool calculatedCalories = await checkUserCalculatedCalories();
