@@ -87,9 +87,9 @@ class _LoginState extends State<Login> {
                           : await signUp(_emailFieldController.text, _passwordFieldController.text, _repeatedPasswordFieldController.text);
                       if (shouldRedirect) {
                         Fluttertoast.showToast(msg: _isLoginPage ? "Logged in" : "Account created");
-                        bool calculatedCalories = await checkUserCalculatedCalories();
+                        bool hasCalculatedCalories = await checkUserCalculatedCalories();
                         if (!mounted) return;
-                        Navigator.pushNamed(context, calculatedCalories ? '/home' : '/calculator');
+                        Navigator.pushNamed(context, hasCalculatedCalories ? '/home' : '/calculator');
                       }
                     },
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
