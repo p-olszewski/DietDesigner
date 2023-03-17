@@ -43,6 +43,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   cloud_firestore: ^4.4.3
   google_fonts: ^4.0.3
+  animations: ^2.0.7
 
 dev_dependencies:
   flutter_test:
