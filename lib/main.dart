@@ -1,4 +1,5 @@
 import 'package:diet_designer/login/login.dart';
+import 'package:diet_designer/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Diet Designer',
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: appTheme,
       home: const Login(),
     );
   }
