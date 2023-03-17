@@ -89,21 +89,7 @@ class _LoginState extends State<Login> {
                         Fluttertoast.showToast(msg: _isLoginPage ? "Logged in" : "Account created");
                         bool calculatedCalories = await checkUserCalculatedCalories();
                         if (!mounted) return;
-                        if (calculatedCalories) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Home(),
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Calculator(),
-                            ),
-                          );
-                        }
+                        Navigator.pushNamed(context, calculatedCalories ? '/home' : '/calculator');
                       }
                     },
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
