@@ -25,12 +25,15 @@ class CustomTextFormField extends StatelessWidget {
         style: const TextStyle(color: Colors.white),
         controller: controller,
         obscureText: obscureText,
-        cursorColor: Colors.yellowAccent,
+        cursorColor: Theme.of(context).colorScheme.secondary,
         decoration: InputDecoration(
           labelStyle: const TextStyle(color: Colors.white),
           labelText: labelText,
           hintStyle: const TextStyle(color: Color.fromARGB(255, 213, 253, 179)),
           hintText: hintText,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+          ),
         ),
       ),
     );
