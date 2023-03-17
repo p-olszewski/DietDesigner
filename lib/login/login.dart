@@ -5,6 +5,7 @@ import 'package:diet_designer/home/home.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -48,14 +49,14 @@ class _LoginState extends State<Login> {
               children: [
                 _isLoginPage
                     ? Column(
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Sign in to",
-                            style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.white, fontSize: 24),
                           ),
                           Text(
                             "DietDesigner",
-                            style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w100),
+                            style: TextStyle(color: Colors.white, fontSize: 54, fontFamily: GoogleFonts.indieFlower().fontFamily),
                           ),
                         ],
                       )
