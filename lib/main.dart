@@ -1,4 +1,5 @@
 import 'package:diet_designer/login/login.dart';
+import 'package:diet_designer/routes.dart';
 import 'package:diet_designer/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Diet Designer',
       theme: appTheme,
-      home: const Login(),
+      initialRoute: '/login', // temporary
+      routes: appRoutes,
     );
   }
 }
