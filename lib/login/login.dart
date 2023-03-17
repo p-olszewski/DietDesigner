@@ -49,15 +49,12 @@ class _LoginState extends State<Login> {
               children: [
                 _isLoginPage
                     ? Column(
-                        children: [
-                          const Text(
+                        children: const [
+                          Text(
                             "Sign in to",
                             style: TextStyle(color: Colors.white, fontSize: 24),
                           ),
-                          Text(
-                            "DietDesigner",
-                            style: TextStyle(color: Colors.white, fontSize: 54, fontFamily: GoogleFonts.indieFlower().fontFamily),
-                          ),
+                          Logo(),
                         ],
                       )
                     : const Text(
