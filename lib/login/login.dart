@@ -1,11 +1,8 @@
 import 'package:animations/animations.dart';
 import 'package:diet_designer/services/flutterfire.dart';
-import 'package:diet_designer/calculator/calculator.dart';
-import 'package:diet_designer/home/home.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

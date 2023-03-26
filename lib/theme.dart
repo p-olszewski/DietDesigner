@@ -5,8 +5,4 @@ var appTheme = ThemeData(
   useMaterial3: true,
   colorSchemeSeed: Colors.green,
   fontFamily: GoogleFonts.poppins().fontFamily,
-  // colorScheme: ColorScheme.fromSwatch(
-  //   primarySwatch: Colors.green,
-  //   accentColor: Colors.yellow,
-  // ),
 );
