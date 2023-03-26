@@ -50,7 +50,7 @@ class _CalculatorState extends State<Calculator> {
           children: [
             const SizedBox(height: 40),
             const Text("Enter your data:"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -69,6 +69,7 @@ class _CalculatorState extends State<Calculator> {
                 const Text("man"),
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -83,6 +84,7 @@ class _CalculatorState extends State<Calculator> {
                 )
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -97,6 +99,7 @@ class _CalculatorState extends State<Calculator> {
                 )
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -111,6 +114,7 @@ class _CalculatorState extends State<Calculator> {
                 )
               ],
             ),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -128,6 +132,7 @@ class _CalculatorState extends State<Calculator> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -151,6 +156,11 @@ class _CalculatorState extends State<Calculator> {
                 ),
                 const Text("gain"),
               ],
+            ),
+            const SizedBox(height: 40),
+            FilledButton(
+              onPressed: () {},
+              child: const Text("Save"),
             ),
           ],
         ),
