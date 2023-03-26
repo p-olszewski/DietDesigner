@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Diet Designer',
       theme: appTheme,
-      initialRoute: '/login', // temporary
+      initialRoute: '/calculator', // temporary
       routes: appRoutes,
     );
   }
