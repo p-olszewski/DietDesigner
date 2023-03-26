@@ -17,6 +17,9 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text("DietDesigner"),
         centerTitle: true,
+        elevation: 4,
+        shadowColor: Theme.of(context).shadowColor,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         leading: IconButton(
           onPressed: () {},
           icon: const Icon(Icons.menu),
