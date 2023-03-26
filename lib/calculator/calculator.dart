@@ -21,28 +21,31 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   Widget build(BuildContext context) {
-    Row activitySlider = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Activity:"),
-        SizedBox(
-          width: 250,
-          child: Slider(
-            value: _activity,
-            onChanged: (value) => setState(() => _activity = value),
-            divisions: 4,
-            min: 1,
-            max: 5,
-            label: _activity.round().toString(),
+    Padding activitySlider = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Activity:", style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(
+            width: 250,
+            child: Slider(
+              value: _activity,
+              onChanged: (value) => setState(() => _activity = value),
+              divisions: 4,
+              min: 1,
+              max: 5,
+              label: _activity.round().toString(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
 
     Row genderRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Gender:"),
+        const Text("Gender:", style: TextStyle(fontWeight: FontWeight.bold)),
         Radio(
           value: 'woman',
           groupValue: _gender,
@@ -58,29 +61,37 @@ class _CalculatorState extends State<Calculator> {
       ],
     );
 
-    Row targetRow = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Target:"),
-        Radio(
-          value: 'cut',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("cut"),
-        Radio(
-          value: 'stay',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("stay"),
-        Radio(
-          value: 'gain',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("gain"),
-      ],
+    Padding targetRow = Padding(
+      padding: const EdgeInsets.only(bottom: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
+          Radio(
+            value: 'cut',
+            groupValue: _target,
+            onChanged: (value) => setState(() => _target = value!),
+          ),
+          const Text("cut"),
+          Radio(
+            value: 'stay',
+            groupValue: _target,
+            onChanged: (value) => setState(() => _target = value!),
+          ),
+          const Text("stay"),
+          Radio(
+            value: 'gain',
+            groupValue: _target,
+            onChanged: (value) => setState(() => _target = value!),
+          ),
+          const Text("gain"),
+        ],
+      ),
+    );
+
+    const headerText = Padding(
+      padding: EdgeInsets.symmetric(vertical: 40),
+      child: Text("Enter your data:", style: TextStyle(fontSize: 18)),
     );
 
     return Scaffold(
@@ -88,30 +99,21 @@ class _CalculatorState extends State<Calculator> {
         title: const Text("Calculator"),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text("Enter your data:"),
-              const SizedBox(height: 40),
-              genderRow,
-              const SizedBox(height: 20),
-              TextInput(controller: _ageFieldController, labelText: "Age:"),
-              const SizedBox(height: 20),
-              TextInput(controller: _heightFieldController, labelText: "Height:"),
-              const SizedBox(height: 20),
-              TextInput(controller: _weightFieldController, labelText: "Weight:"),
-              const SizedBox(height: 30),
-              activitySlider,
-              const SizedBox(height: 20),
-              targetRow,
-              const SizedBox(height: 40),
-              FilledButton(
-                onPressed: () {},
-                child: const Text("Save"),
-              ),
-            ],
-          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            headerText,
+            genderRow,
+            TextInput(controller: _ageFieldController, labelText: "Age:"),
+            TextInput(controller: _heightFieldController, labelText: "Height:"),
+            TextInput(controller: _weightFieldController, labelText: "Weight:"),
+            activitySlider,
+            targetRow,
+            FilledButton(
+              onPressed: () {},
+              child: const Text("Save"),
+            ),
+          ],
         ),
       ),
     );
@@ -130,19 +132,25 @@ class TextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(labelText),
-        const SizedBox(width: 15),
-        SizedBox(
-          width: 200,
-          child: TextField(
-            controller: controller,
-            decoration: const InputDecoration(border: UnderlineInputBorder()),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            labelText,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-        )
-      ],
+          const SizedBox(width: 15),
+          SizedBox(
+            width: 200,
+            child: TextField(
+              controller: controller,
+              decoration: const InputDecoration(border: UnderlineInputBorder()),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
