@@ -16,7 +16,11 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("DietDesigner"),
-        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.menu),
+        ),
         actions: [
           IconButton(
             onPressed: () async {
