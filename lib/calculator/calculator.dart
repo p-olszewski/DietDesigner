@@ -23,27 +23,8 @@ class _CalculatorState extends State<Calculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("DietDesigner"),
+        title: const Text("Calculator"),
         centerTitle: true,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              bool shouldRedirect = await signOut();
-              if (shouldRedirect) {
-                if (!mounted) return;
-                Fluttertoast.showToast(msg: "Logged out");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Login(),
-                  ),
-                );
-              }
-            },
-            icon: const Icon(Icons.logout),
-          )
-        ],
       ),
       body: Center(
         child: Column(
