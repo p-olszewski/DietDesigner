@@ -18,24 +18,26 @@ class LoginTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var widgetWidth = screenWidth / 1.3;
+    Color mainColor = Theme.of(context).colorScheme.onPrimary;
+    Color accentColor = Color.fromARGB(255, 155, 207, 110);
 
     return SizedBox(
       width: widgetWidth,
       child: TextFormField(
-        style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+        style: TextStyle(color: mainColor),
         controller: controller,
         obscureText: obscureText,
-        cursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        cursorColor: mainColor,
         decoration: InputDecoration(
-          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
+          labelStyle: TextStyle(color: mainColor),
           labelText: labelText,
-          hintStyle: const TextStyle(color: Color.fromARGB(255, 155, 207, 110)),
+          hintStyle: TextStyle(color: accentColor),
           hintText: hintText,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer),
+            borderSide: BorderSide(color: mainColor),
           ),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer),
+            borderSide: BorderSide(color: accentColor),
           ),
         ),
       ),

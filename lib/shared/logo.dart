@@ -8,7 +8,7 @@ class Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       "DietDesigner",
-      style: TextStyle(color: Colors.white, fontSize: 64, fontFamily: GoogleFonts.indieFlower().fontFamily),
+      style: TextStyle(color: Colors.white, fontSize: 50, fontFamily: GoogleFonts.indieFlower().fontFamily),
     );
   }
 }

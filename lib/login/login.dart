@@ -20,15 +20,17 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    var screenHeight = MediaQuery.of(context).size.height;
-    var widgetWidth = screenWidth / 1.3;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final widgetWidth = screenWidth / 1.3;
+    const backgroundColor = Colors.green;
+    const fontColor = Colors.white;
 
     return Scaffold(
       body: Container(
         width: screenWidth,
         height: screenHeight,
-        color: Theme.of(context).colorScheme.primary,
+        color: backgroundColor,
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) => FadeThroughTransition(
@@ -40,7 +42,7 @@ class _LoginState extends State<Login> {
             key: ValueKey<int>(_key),
             width: screenWidth,
             height: screenHeight,
-            color: Theme.of(context).colorScheme.primary,
+            color: backgroundColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -49,35 +51,30 @@ class _LoginState extends State<Login> {
                         children: const [
                           Text(
                             "Sign in to",
-                            style: TextStyle(color: Colors.white, fontSize: 24),
+                            style: TextStyle(fontSize: 24, color: fontColor),
                           ),
                           Logo(),
                         ],
                       )
                     : const Text(
                         "Create Account",
-                        style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: fontColor),
                       ),
-                SizedBox(height: screenHeight / 15),
-                CustomTextFormField(
+                SizedBox(height: screenHeight / 25),
+                LoginTextFormField(
                     controller: _emailFieldController, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
                 SizedBox(height: screenHeight / 100),
-                CustomTextFormField(controller: _passwordFieldController, labelText: "Password", hintText: "password", obscureText: true),
+                LoginTextFormField(controller: _passwordFieldController, labelText: "Password", hintText: "password", obscureText: true),
                 SizedBox(height: screenHeight / 100),
                 Visibility(
                   visible: !_isLoginPage,
-                  child: CustomTextFormField(
+                  child: LoginTextFormField(
                       controller: _repeatedPasswordFieldController, labelText: "Repeat password", hintText: "password", obscureText: true),
                 ),
                 SizedBox(height: screenHeight / 15),
-                Container(
+                SizedBox(
                   width: widgetWidth / 1.3,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50.0),
-                    color: Colors.white,
-                  ),
-                  child: MaterialButton(
+                  child: ElevatedButton(
                     onPressed: () async {
                       bool shouldRedirect = _isLoginPage
                           ? await signIn(_emailFieldController.text, _passwordFieldController.text)
@@ -92,7 +89,7 @@ class _LoginState extends State<Login> {
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
                   ),
                 ),
-                MaterialButton(
+                TextButton(
                   onPressed: () => setState(() {
                     _isLoginPage = !_isLoginPage;
                     _emailFieldController.clear();
@@ -103,7 +100,7 @@ class _LoginState extends State<Login> {
                   }),
                   child: Text(
                     _isLoginPage ? "or go to registration page" : "or go back to the login page",
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                    style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],
