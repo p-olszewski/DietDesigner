@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
+class LoginTextFormField extends StatelessWidget {
+  const LoginTextFormField({
     Key? key,
     required this.controller,
     required this.labelText,
@@ -22,17 +22,20 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: widgetWidth,
       child: TextFormField(
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
         controller: controller,
         obscureText: obscureText,
-        cursorColor: Theme.of(context).colorScheme.secondary,
+        cursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
         decoration: InputDecoration(
-          labelStyle: const TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
           labelText: labelText,
-          hintStyle: const TextStyle(color: Color.fromARGB(255, 213, 253, 179)),
+          hintStyle: const TextStyle(color: Color.fromARGB(255, 155, 207, 110)),
           hintText: hintText,
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer),
           ),
         ),
       ),
