@@ -91,10 +91,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Calculator"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Calculator")),
       body: SingleChildScrollView(
         child: Column(
           children: [
