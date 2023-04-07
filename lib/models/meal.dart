@@ -4,12 +4,13 @@ class Meal {
   final double fats;
   final double proteins;
   final int id;
-  final double pricePerServing;
-  final int readyInMinutes;
-  final int servings;
-  final String title;
-  final List<String> ingredients;
-  final List<String> steps;
+  final double? pricePerServing;
+  final int? readyInMinutes;
+  final int? servings;
+  final String? title;
+  final List<String>? ingredients;
+  final List<String>? steps;
+  final List<String>? dishTypes;
 
   Meal(
     this.calories,
@@ -23,20 +24,24 @@ class Meal {
     this.title,
     this.ingredients,
     this.steps,
+    this.dishTypes,
   );
 
   Meal.fromJson(Map<String, dynamic> json)
-      : calories = json['Calories'],
-        carbs = json['Carbohydrates'],
-        fats = json['Fats'],
-        proteins = json['Proteins'],
+      : calories = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Calories')['amount'],
+        carbs = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
+        fats = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
+        proteins = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
         id = json['id'],
         pricePerServing = json['pricePerServing'],
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
         title = json['title'],
-        ingredients = json['ingredients'].cast<String>(),
-        steps = json['steps'].cast<String>();
+        ingredients = (json['extendedIngredients'] as List<dynamic>)
+            .map((ingredient) => "${ingredient['name']} (${ingredient['amount']} ${ingredient['unit']})")
+            .toList(),
+        steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step'].toString()).toList(),
+        dishTypes = (json['dishTypes'] as List<dynamic>).cast<String>();
 
   Map<String, dynamic> toJson() => {
         'Calories': calories,
@@ -50,5 +55,6 @@ class Meal {
         'title': title,
         'ingredients': ingredients,
         'steps': steps,
+        'dishTypes': dishTypes,
       };
 }
