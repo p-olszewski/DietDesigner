@@ -1,4 +1,3 @@
-import 'package:diet_designer/login/login.dart';
 import 'package:diet_designer/routes.dart';
 import 'package:diet_designer/theme.dart';
 import 'package:flutter/material.dart';
