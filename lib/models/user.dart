@@ -2,16 +2,16 @@ class User {
   final int activity;
   final int age;
   final bool calculatedData;
-  final int calories;
-  final int carbs;
+  final double calories;
+  final double carbs;
   final String email;
-  final int fats;
+  final double fats;
   final String gender;
   final int height;
   final int mealsNumber;
-  final int proteins;
+  final double proteins;
   final String target;
-  final int weight;
+  final double weight;
 
   User(
     this.activity,
