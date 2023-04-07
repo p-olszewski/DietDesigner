@@ -1,9 +1,9 @@
-import 'package:diet_designer/calculator/calculator.dart';
-import 'package:diet_designer/home/home.dart';
-import 'package:diet_designer/login/login.dart';
+import 'package:diet_designer/screens/calculator_screen.dart';
+import 'package:diet_designer/screens/home_screen.dart';
+import 'package:diet_designer/screens/login_screen.dart';
 
 var appRoutes = {
-  '/': (context) => const Home(),
-  '/login': (context) => const Login(),
-  '/calculator': (context) => const Calculator(),
+  '/': (context) => const HomeScreen(),
+  '/login': (context) => const LoginScreen(),
+  '/calculator': (context) => const CalculatorScreen(),
 };

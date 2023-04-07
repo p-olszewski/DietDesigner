@@ -1,17 +1,13 @@
-import 'package:diet_designer/services/flutterfire.dart';
-import 'package:diet_designer/login/login.dart';
-import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-class Calculator extends StatefulWidget {
-  const Calculator({super.key});
+class CalculatorScreen extends StatefulWidget {
+  const CalculatorScreen({super.key});
 
   @override
-  State<Calculator> createState() => _CalculatorState();
+  State<CalculatorScreen> createState() => _CalculatorScreenState();
 }
 
-class _CalculatorState extends State<Calculator> {
+class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController _ageFieldController = TextEditingController();
   final TextEditingController _heightFieldController = TextEditingController();
   final TextEditingController _weightFieldController = TextEditingController();

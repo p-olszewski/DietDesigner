@@ -4,14 +4,14 @@ import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailFieldController = TextEditingController();
   final TextEditingController _passwordFieldController = TextEditingController();
   final TextEditingController _repeatedPasswordFieldController = TextEditingController();
@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
                   }),
                   child: Text(
                     _isLoginPage ? "or go to registration page" : "or go back to the login page",
-                    style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
+                    style: const TextStyle(color: fontColor, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],
