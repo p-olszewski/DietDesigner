@@ -75,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: screenHeight / 15),
                 SizedBox(
                   width: widgetWidth / 1.3,
+                  height: 40,
                   child: ElevatedButton(
                     onPressed: () async {
                       bool shouldRedirect = _isLoginPage
@@ -90,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
                   ),
                 ),
+                SizedBox(height: screenHeight / 100),
                 TextButton(
                   onPressed: () => setState(() {
                     _isLoginPage = !_isLoginPage;
