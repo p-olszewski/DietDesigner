@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
 Future<bool> signIn(String email, String password) async {
   try {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
@@ -25,7 +26,7 @@ Future<bool> signUp(String email, String password, String repeatedPassword) asyn
     return false;
   }
   try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+    await _auth.createUserWithEmailAndPassword(email: email, password: password);
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
@@ -42,7 +43,7 @@ Future<bool> signUp(String email, String password, String repeatedPassword) asyn
 
 Future<bool> signOut() async {
   try {
-    await FirebaseAuth.instance.signOut();
+    await _auth.signOut();
     return true;
   } catch (e) {
     Fluttertoast.showToast(msg: e.toString());
@@ -50,20 +51,6 @@ Future<bool> signOut() async {
   }
 }
 
-Future<bool> checkUserCalculatedCalories() async {
-  final currentUser = FirebaseAuth.instance.currentUser;
-
-  final userSnapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
-
-  if (userSnapshot.data() == null ||
-      userSnapshot.data()!['calories'] == null ||
-      userSnapshot.data()!['protein'] == null ||
-      userSnapshot.data()!['carbs'] == null ||
-      userSnapshot.data()!['fat'] == null ||
-      userSnapshot.data()!['goal'] == null) {
-    Fluttertoast.showToast(msg: "No data, go to calculator");
-    return false;
-  } else {
-    return true;
-  }
+String? getUserId() {
+  return _auth.currentUser?.uid;
 }

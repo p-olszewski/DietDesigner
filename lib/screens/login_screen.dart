@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
-import 'package:diet_designer/services/flutterfire.dart';
+import 'package:diet_designer/services/auth.dart';
+import 'package:diet_designer/services/firestore.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/login_textformfield.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : await signUp(_emailFieldController.text, _passwordFieldController.text, _repeatedPasswordFieldController.text);
                       if (shouldRedirect) {
                         Fluttertoast.showToast(msg: _isLoginPage ? "Logged in" : "Account created");
-                        bool hasCalculatedCalories = await checkUserCalculatedCalories();
+                        bool hasCalculatedCalories = await checkUserHasCalculatedData();
                         if (!mounted) return;
                         Navigator.pushNamed(context, hasCalculatedCalories ? '/' : '/calculator');
                       }
