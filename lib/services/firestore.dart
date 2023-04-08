@@ -16,9 +16,13 @@ Future<bool> checkUserHasCalculatedData() async {
   }
 }
 
+// TODO: add bmr calculation
 bool updateUserData(user_model.User user) {
   try {
-    _database.doc('users/$_uid').update(user.toJson());
+    // update only non-null fields and set hasCalculatedData flag to true
+    final Map<String, dynamic> data = user.toJson()..removeWhere((key, value) => value == null);
+    data['hasCalculatedData'] = true;
+    _database.doc('users/$_uid').update(data);
     return true;
   } catch (e) {
     Fluttertoast.showToast(msg: e.toString());
