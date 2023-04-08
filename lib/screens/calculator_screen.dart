@@ -12,8 +12,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController _heightFieldController = TextEditingController();
   final TextEditingController _weightFieldController = TextEditingController();
   String _gender = "woman";
-  double _activity = 1;
+  double _activity = 3;
   String _target = "reduce";
+  double _mealsNumber = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -57,37 +58,55 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       ],
     );
 
-    Padding targetRow = Padding(
-      padding: const EdgeInsets.only(bottom: 40),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
-          Radio(
-            value: 'cut',
-            groupValue: _target,
-            onChanged: (value) => setState(() => _target = value!),
-          ),
-          const Text("cut"),
-          Radio(
-            value: 'stay',
-            groupValue: _target,
-            onChanged: (value) => setState(() => _target = value!),
-          ),
-          const Text("stay"),
-          Radio(
-            value: 'gain',
-            groupValue: _target,
-            onChanged: (value) => setState(() => _target = value!),
-          ),
-          const Text("gain"),
-        ],
-      ),
+    Row targetRow = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
+        Radio(
+          value: 'cut',
+          groupValue: _target,
+          onChanged: (value) => setState(() => _target = value!),
+        ),
+        const Text("cut"),
+        Radio(
+          value: 'stay',
+          groupValue: _target,
+          onChanged: (value) => setState(() => _target = value!),
+        ),
+        const Text("stay"),
+        Radio(
+          value: 'gain',
+          groupValue: _target,
+          onChanged: (value) => setState(() => _target = value!),
+        ),
+        const Text("gain"),
+      ],
     );
 
     const headerText = Padding(
       padding: EdgeInsets.symmetric(vertical: 40),
       child: Text("Enter your data:", style: TextStyle(fontSize: 18)),
+    );
+
+    Padding mealsNumberSlider = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Meals number:", style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(
+            width: 250,
+            child: Slider(
+              value: _mealsNumber,
+              onChanged: (value) => setState(() => _mealsNumber = value),
+              divisions: 4,
+              min: 2,
+              max: 6,
+              label: _mealsNumber.round().toString(),
+            ),
+          ),
+        ],
+      ),
     );
 
     return Scaffold(
@@ -102,6 +121,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             TextInput(controller: _weightFieldController, labelText: "Weight:"),
             activitySlider,
             targetRow,
+            mealsNumberSlider,
+            const SizedBox(height: 20),
             FilledButton(
               onPressed: () {},
               child: const Text("Save"),
