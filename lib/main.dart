@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Diet Designer',
       theme: appTheme,
-      initialRoute: '/calculator', // temporary
+      initialRoute: '/login', // temporary
       routes: appRoutes,
     );
   }

@@ -1,3 +1,5 @@
+import 'package:diet_designer/models/user.dart';
+import 'package:diet_designer/services/firestore.dart';
 import 'package:flutter/material.dart';
 
 class CalculatorScreen extends StatefulWidget {
@@ -8,6 +10,7 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _ageFieldController = TextEditingController();
   final TextEditingController _heightFieldController = TextEditingController();
   final TextEditingController _weightFieldController = TextEditingController();
@@ -15,6 +18,45 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   double _activity = 3;
   String _target = "reduce";
   double _mealsNumber = 5;
+
+  @override
+  void dispose() {
+    _ageFieldController.dispose();
+    _heightFieldController.dispose();
+    _weightFieldController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      final age = int.tryParse(_ageFieldController.text);
+      final height = int.tryParse(_heightFieldController.text);
+      final weight = double.tryParse(_weightFieldController.text);
+
+      final user = User(
+        gender: _gender,
+        age: age,
+        height: height,
+        weight: weight,
+        activity: _activity.round(),
+        target: _target,
+        mealsNumber: _mealsNumber.round(),
+      );
+
+      try {
+        updateUserData(user);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form submitted successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+
+      // TODO: add fields validation
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,34 +154,37 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Calculator")),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            headerText,
-            genderRow,
-            TextInput(
-              controller: _ageFieldController,
-              labelText: "Age:",
-              hintText: "years",
-            ),
-            TextInput(
-              controller: _heightFieldController,
-              labelText: "Height:",
-              hintText: "cm",
-            ),
-            TextInput(
-              controller: _weightFieldController,
-              labelText: "Weight:",
-              hintText: "kg",
-            ),
-            activitySlider,
-            targetRow,
-            mealsNumberSlider,
-            const SizedBox(height: 20),
-            FilledButton(
-              onPressed: () {},
-              child: const Text("Save"),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              headerText,
+              genderRow,
+              TextInput(
+                controller: _ageFieldController,
+                labelText: "Age:",
+                hintText: "years",
+              ),
+              TextInput(
+                controller: _heightFieldController,
+                labelText: "Height:",
+                hintText: "cm",
+              ),
+              TextInput(
+                controller: _weightFieldController,
+                labelText: "Weight:",
+                hintText: "kg",
+              ),
+              activitySlider,
+              targetRow,
+              mealsNumberSlider,
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: () => _submitForm(),
+                child: const Text("Save"),
+              ),
+            ],
+          ),
         ),
       ),
     );

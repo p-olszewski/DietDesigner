@@ -1,19 +1,19 @@
 class User {
-  final int activity;
-  final int age;
-  final bool hasCalculatedData;
-  final double calories;
-  final double carbs;
-  final String email;
-  final double fats;
-  final String gender;
-  final int height;
-  final int mealsNumber;
-  final double proteins;
-  final String target;
-  final double weight;
+  final int? activity;
+  final int? age;
+  final bool? hasCalculatedData;
+  final double? calories;
+  final double? carbs;
+  final String? email;
+  final double? fats;
+  final String? gender;
+  final int? height;
+  final int? mealsNumber;
+  final double? proteins;
+  final String? target;
+  final double? weight;
 
-  User(
+  User({
     this.activity,
     this.age,
     this.hasCalculatedData,
@@ -27,7 +27,7 @@ class User {
     this.proteins,
     this.target,
     this.weight,
-  );
+  });
 
   User.fromJson(Map<String, dynamic> json)
       : activity = json['activity'],
