@@ -8,7 +8,7 @@ class Meal {
   final int? readyInMinutes;
   final int? servings;
   final String? title;
-  final List<String>? ingredients;
+  final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
 
@@ -37,11 +37,15 @@ class Meal {
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
         title = json['title'],
-        ingredients = (json['extendedIngredients'] as List<dynamic>)
-            .map((ingredient) => "${ingredient['name']} (${ingredient['amount']} ${ingredient['unit']})")
+        ingredients = json['ingredients']
+            .map((ingredient) => {
+                  'name': ingredient['name'],
+                  'amount': ingredient['amount'],
+                  'unit': ingredient['unit'],
+                })
             .toList(),
-        steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step'].toString()).toList(),
-        dishTypes = (json['dishTypes'] as List<dynamic>).cast<String>();
+        steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList(),
+        dishTypes = List<String>.from(json['dishTypes']);
 
   Map<String, dynamic> toJson() => {
         'Calories': calories,
