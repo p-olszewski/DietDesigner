@@ -50,8 +50,8 @@ class Meal {
   Map<String, dynamic> toJson() => {
         'Calories': calories,
         'Carbohydrates': carbs,
-        'Fats': fats,
-        'Proteins': proteins,
+        'Fat': fats,
+        'Protein': proteins,
         'id': id,
         'pricePerServing': pricePerServing,
         'readyInMinutes': readyInMinutes,

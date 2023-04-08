@@ -14,7 +14,7 @@ class NutritionPlan {
         proteins = meals.fold(0, (sum, meal) => sum + meal.proteins);
 
   Map<String, dynamic> toJson() => {
-        'meals': meals.map((meal) => meal.toJson()).toList(),
+        // 'meals': meals.map((meal) => meal.toJson()).toList(),
         'calories': calories,
         'carbs': carbs,
         'fats': fats,
