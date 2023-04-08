@@ -1,7 +1,7 @@
 class User {
   final int activity;
   final int age;
-  final bool calculatedData;
+  final bool hasCalculatedData;
   final double calories;
   final double carbs;
   final String email;
@@ -16,7 +16,7 @@ class User {
   User(
     this.activity,
     this.age,
-    this.calculatedData,
+    this.hasCalculatedData,
     this.calories,
     this.carbs,
     this.email,
@@ -32,14 +32,14 @@ class User {
   User.fromJson(Map<String, dynamic> json)
       : activity = json['activity'],
         age = json['age'],
-        calculatedData = json['calculated_data'],
+        hasCalculatedData = json['hasCalculatedData'],
         calories = json['calories'],
         carbs = json['carbs'],
         email = json['email'],
         fats = json['fats'],
         gender = json['gender'],
         height = json['height'],
-        mealsNumber = json['meals_number'],
+        mealsNumber = json['mealsNumber'],
         proteins = json['proteins'],
         target = json['target'],
         weight = json['weight'];
@@ -47,14 +47,14 @@ class User {
   Map<String, dynamic> toJson() => {
         'activity': activity,
         'age': age,
-        'calculated_data': calculatedData,
+        'hasCalculatedData': hasCalculatedData,
         'calories': calories,
         'carbs': carbs,
         'email': email,
         'fats': fats,
         'gender': gender,
         'height': height,
-        'meals_number': mealsNumber,
+        'mealsNumber': mealsNumber,
         'proteins': proteins,
         'target': target,
         'weight': weight,
