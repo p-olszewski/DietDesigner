@@ -116,9 +116,21 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           children: [
             headerText,
             genderRow,
-            TextInput(controller: _ageFieldController, labelText: "Age:"),
-            TextInput(controller: _heightFieldController, labelText: "Height:"),
-            TextInput(controller: _weightFieldController, labelText: "Weight:"),
+            TextInput(
+              controller: _ageFieldController,
+              labelText: "Age:",
+              hintText: "years",
+            ),
+            TextInput(
+              controller: _heightFieldController,
+              labelText: "Height:",
+              hintText: "cm",
+            ),
+            TextInput(
+              controller: _weightFieldController,
+              labelText: "Weight:",
+              hintText: "kg",
+            ),
             activitySlider,
             targetRow,
             mealsNumberSlider,
@@ -139,10 +151,12 @@ class TextInput extends StatelessWidget {
     super.key,
     required this.controller,
     required this.labelText,
+    this.hintText,
   });
 
   final TextEditingController controller;
   final String labelText;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -155,14 +169,18 @@ class TextInput extends StatelessWidget {
             labelText,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(width: 15),
+          const SizedBox(width: 20),
           SizedBox(
             width: 200,
             child: TextField(
               controller: controller,
-              decoration: const InputDecoration(border: UnderlineInputBorder()),
+              decoration: InputDecoration(
+                border: const UnderlineInputBorder(),
+                hintText: hintText,
+                hintStyle: TextStyle(fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
