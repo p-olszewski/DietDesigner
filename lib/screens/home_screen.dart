@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      drawer: const MenuDrawer(),
+      drawer: const DrawerMenu(),
       body: const Center(
         child: Text("Home page"),
       ),
