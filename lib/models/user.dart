@@ -9,9 +9,9 @@ class User {
   final String? target;
   final double? weight;
   int? calories;
-  double? carbs;
-  double? proteins;
-  double? fats;
+  int? carbs;
+  int? proteins;
+  int? fats;
 
   User({
     this.activity,
@@ -102,7 +102,24 @@ class User {
       default:
         break;
     }
-
     calories = bmr.round();
+
+    switch (target) {
+      case 'cut':
+        proteins = (2.2 * weight!).round();
+        fats = (gender == 'man' ? 0.7 * weight! : weight!).round();
+        break;
+      case 'stay':
+        proteins = (1.2 * weight!).round();
+        fats = weight!.round();
+        break;
+      case 'gain':
+        proteins = (1.8 * weight!).round();
+        fats = (gender == 'man' ? 0.9 * weight! : 1.1 * weight!).round();
+        break;
+      default:
+        break;
+    }
+    carbs = ((calories! - (4 * proteins!) - (9 * fats!)) / 4).round();
   }
 }
