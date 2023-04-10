@@ -1,4 +1,6 @@
+import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavbarMenu extends StatelessWidget {
   const BottomNavbarMenu({super.key});
@@ -6,7 +8,8 @@ class BottomNavbarMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      selectedIndex: 0,
+      selectedIndex: context.watch<NavBarProvider>().currentIndex,
+      onDestinationSelected: (int newIndex) => context.read<NavBarProvider>().setCurrentIndex(newIndex),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: const [
         NavigationDestination(
