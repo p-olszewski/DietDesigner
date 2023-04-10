@@ -1,5 +1,6 @@
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,13 +49,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
       try {
         updateUserData(user);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Form submitted successfully')),
-        );
+        PopupMessenger.info("Data saved successfully");
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        PopupMessenger.error(e.toString());
       }
     }
   }

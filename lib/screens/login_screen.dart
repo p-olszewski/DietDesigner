@@ -4,7 +4,6 @@ import 'package:diet_designer/services/firestore.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/login_textformfield.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -83,7 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? await signIn(_emailFieldController.text, _passwordFieldController.text)
                           : await signUp(_emailFieldController.text, _passwordFieldController.text, _repeatedPasswordFieldController.text);
                       if (shouldRedirect) {
-                        Fluttertoast.showToast(msg: _isLoginPage ? "Logged in" : "Account created");
                         bool hasCalculatedCalories = await checkUserHasCalculatedData();
                         if (!mounted) return;
                         Navigator.pushNamed(context, hasCalculatedCalories ? '/' : '/calculator');

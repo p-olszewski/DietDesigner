@@ -1,5 +1,5 @@
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -9,20 +9,20 @@ Future<bool> signIn(String email, String password) async {
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
-      Fluttertoast.showToast(msg: 'This email address is not registered.');
+      PopupMessenger.error('This email address is not registered.');
     } else if (e.code == 'wrong-password') {
-      Fluttertoast.showToast(msg: 'Wrong password.');
+      PopupMessenger.error('Wrong password.');
     }
     return false;
   } catch (e) {
-    Fluttertoast.showToast(msg: e.toString());
+    PopupMessenger.error(e.toString());
     return false;
   }
 }
 
 Future<bool> signUp(String email, String password, String repeatedPassword) async {
   if (password != repeatedPassword) {
-    Fluttertoast.showToast(msg: 'The passwords do not match.');
+    PopupMessenger.error('The passwords do not match.');
     return false;
   }
   try {
@@ -30,13 +30,13 @@ Future<bool> signUp(String email, String password, String repeatedPassword) asyn
     return true;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      Fluttertoast.showToast(msg: 'The password provided is too weak.');
+      PopupMessenger.error('The password provided is too weak.');
     } else if (e.code == 'email-already-in-use') {
-      Fluttertoast.showToast(msg: 'The account already exists for that email.');
+      PopupMessenger.error('The account already exists for that email.');
     }
     return false;
   } catch (e) {
-    Fluttertoast.showToast(msg: e.toString());
+    PopupMessenger.error(e.toString());
     return false;
   }
 }
@@ -46,7 +46,7 @@ Future<bool> signOut() async {
     await _auth.signOut();
     return true;
   } catch (e) {
-    Fluttertoast.showToast(msg: e.toString());
+    PopupMessenger.error(e.toString());
     return false;
   }
 }

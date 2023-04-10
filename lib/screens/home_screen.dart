@@ -1,7 +1,7 @@
 import 'package:diet_designer/services/auth.dart';
 import 'package:diet_designer/screens/login_screen.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
               bool shouldRedirect = await signOut();
               if (shouldRedirect) {
                 if (!mounted) return;
-                Fluttertoast.showToast(msg: "Logged out");
+                PopupMessenger.info("Logged out");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
