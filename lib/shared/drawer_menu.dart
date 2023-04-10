@@ -1,11 +1,17 @@
-
+import 'package:diet_designer/services/auth.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 
-class DrawerMenu extends StatelessWidget {
+class DrawerMenu extends StatefulWidget {
   const DrawerMenu({
     super.key,
   });
 
+  @override
+  State<DrawerMenu> createState() => _DrawerMenuState();
+}
+
+class _DrawerMenuState extends State<DrawerMenu> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -26,7 +32,14 @@ class DrawerMenu extends StatelessWidget {
             child: const Text("Ustawienia"),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              bool shouldRedirect = await signOut();
+              if (shouldRedirect) {
+                PopupMessenger.info('You have been logged out!');
+                if (!mounted) return;
+                Navigator.pushNamed(context, "/login");
+              }
+            },
             child: const Text("Wyloguj"),
           ),
         ],

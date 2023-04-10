@@ -1,5 +1,3 @@
-import 'package:diet_designer/services/auth.dart';
-import 'package:diet_designer/screens/login_screen.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
@@ -21,24 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 4,
         shadowColor: Theme.of(context).shadowColor,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              bool shouldRedirect = await signOut();
-              if (shouldRedirect) {
-                if (!mounted) return;
-                PopupMessenger.info("Logged out");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              }
-            },
-            icon: const Icon(Icons.logout),
-          )
-        ],
       ),
       drawer: const DrawerMenu(),
       body: Padding(
