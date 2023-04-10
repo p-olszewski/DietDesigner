@@ -1,13 +1,8 @@
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-enum NumberInputFieldType {
-  age,
-  height,
-  weight,
-}
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -21,9 +16,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController _ageFieldController = TextEditingController();
   final TextEditingController _heightFieldController = TextEditingController();
   final TextEditingController _weightFieldController = TextEditingController();
-  String _gender = "woman";
+  String _gender = Gender.male.name;
   double _activity = 3;
-  String _target = "stay";
+  String _target = Target.stay.name;
   double _mealsNumber = 5;
 
   @override
@@ -60,8 +55,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           SnackBar(content: Text(e.toString())),
         );
       }
-
-      // TODO: add bmr calculation
     }
   }
 
@@ -83,17 +76,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 children: [
                   const Text("Gender:", style: TextStyle(fontWeight: FontWeight.bold)),
                   Radio(
-                    value: 'woman',
+                    value: Gender.female.name,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
                   ),
-                  const Text("woman"),
+                  Text(Gender.female.name),
                   Radio(
-                    value: 'man',
+                    value: Gender.male.name,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
                   ),
-                  const Text("man"),
+                  Text(Gender.male.name),
                 ],
               ),
               _NumberInputField(
@@ -134,19 +127,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 children: [
                   const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
                   Radio(
-                    value: 'cut',
+                    value: Target.cut.name,
                     groupValue: _target,
                     onChanged: (value) => setState(() => _target = value!),
                   ),
-                  const Text("cut"),
+                  Text(Target.cut.toString().split('.').last),
                   Radio(
-                    value: 'stay',
+                    value: Target.stay.name,
                     groupValue: _target,
                     onChanged: (value) => setState(() => _target = value!),
                   ),
-                  const Text("stay"),
+                  Text(Target.stay.name),
                   Radio(
-                    value: 'gain',
+                    value: Target.gain.name,
                     groupValue: _target,
                     onChanged: (value) => setState(() => _target = value!),
                   ),

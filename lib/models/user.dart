@@ -1,3 +1,5 @@
+import 'package:diet_designer/utils/enums.dart';
+
 class User {
   final int? activity;
   final int? age;
@@ -63,7 +65,7 @@ class User {
   // Harris-Benedict equation
   void calculateCaloriesAndMacronutrients() {
     double bmr;
-    if (gender == 'man') {
+    if (gender == Gender.male.toString()) {
       bmr = 66.5 + (13.75 * weight!) + (5.003 * height!) - (6.75 * age!);
     } else {
       bmr = 655.1 + (9.563 * weight!) + (1.850 * height!) - (4.676 * age!);
@@ -92,30 +94,19 @@ class User {
 
     switch (target) {
       case 'cut':
-        bmr = 0.85 * bmr;
-        break;
-      case 'stay':
-        break;
-      case 'gain':
-        bmr = 1.1 * bmr;
-        break;
-      default:
-        break;
-    }
-    calories = bmr.round();
-
-    switch (target) {
-      case 'cut':
+        calories = (0.85 * bmr).round();
         proteins = (2.2 * weight!).round();
-        fats = (gender == 'man' ? 0.7 * weight! : weight!).round();
+        fats = (gender == Gender.male.toString() ? 0.7 * weight! : weight!).round();
         break;
       case 'stay':
+        calories = bmr.round();
         proteins = (1.2 * weight!).round();
         fats = weight!.round();
         break;
       case 'gain':
+        calories = (1.1 * bmr).round();
         proteins = (1.8 * weight!).round();
-        fats = (gender == 'man' ? 0.9 * weight! : 1.1 * weight!).round();
+        fats = (gender == Gender.male.toString() ? 0.9 * weight! : 1.1 * weight!).round();
         break;
       default:
         break;
