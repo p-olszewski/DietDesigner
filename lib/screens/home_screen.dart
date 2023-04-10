@@ -20,10 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 4,
         shadowColor: Theme.of(context).shadowColor,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu),
-        ),
         actions: [
           IconButton(
             onPressed: () async {
@@ -43,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
+      drawer: const MenuDrawer(),
       body: const Center(
         child: Text("Home page"),
       ),
