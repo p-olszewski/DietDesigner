@@ -18,7 +18,6 @@ Future<bool> checkUserHasCalculatedData() async {
 
 bool updateUserData(user_model.User user) {
   try {
-    user.calculateCaloriesAndMacronutrients();
     // update only non-null fields
     final Map<String, dynamic> data = user.toJson()..removeWhere((key, value) => value == null);
     data['hasCalculatedData'] = true;

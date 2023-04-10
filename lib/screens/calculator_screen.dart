@@ -44,7 +44,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         target: _target,
         mealsNumber: _mealsNumber.round(),
       );
-
+      user.calculateCaloriesAndMacronutrients();
       try {
         updateUserData(user);
         ScaffoldMessenger.of(context).showSnackBar(
