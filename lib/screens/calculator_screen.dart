@@ -45,6 +45,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         mealsNumber: _mealsNumber.round(),
       );
       user.calculateCaloriesAndMacronutrients();
+
       try {
         updateUserData(user);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -143,7 +144,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     groupValue: _target,
                     onChanged: (value) => setState(() => _target = value!),
                   ),
-                  const Text("gain"),
+                  Text(Target.gain.name),
                 ],
               ),
               Padding(

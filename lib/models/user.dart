@@ -92,25 +92,27 @@ class User {
         break;
     }
 
-    switch (target) {
-      case 'cut':
+    Target userTarget = Target.values.firstWhere((e) => e.toString().split('.').last == target);
+    switch (userTarget) {
+      case Target.cut:
         calories = (0.85 * bmr).round();
         proteins = (2.2 * weight!).round();
-        fats = (gender == Gender.male.toString() ? 0.7 * weight! : weight!).round();
+        fats = (gender == Gender.male.name ? 0.7 * weight! : weight!).round();
         break;
-      case 'stay':
+      case Target.stay:
         calories = bmr.round();
         proteins = (1.2 * weight!).round();
         fats = weight!.round();
         break;
-      case 'gain':
+      case Target.gain:
         calories = (1.1 * bmr).round();
         proteins = (1.8 * weight!).round();
-        fats = (gender == Gender.male.toString() ? 0.9 * weight! : 1.1 * weight!).round();
+        fats = (gender == Gender.male.name ? 0.9 * weight! : 1.1 * weight!).round();
         break;
       default:
         break;
     }
+
     carbs = ((calories! - (4 * proteins!) - (9 * fats!)) / 4).round();
   }
 }
