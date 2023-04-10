@@ -1,6 +1,13 @@
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/services/firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+enum NumberInputFieldType {
+  age,
+  height,
+  weight,
+}
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -16,7 +23,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController _weightFieldController = TextEditingController();
   String _gender = "woman";
   double _activity = 3;
-  String _target = "reduce";
+  String _target = "stay";
   double _mealsNumber = 5;
 
   @override
@@ -54,103 +61,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         );
       }
 
-      // TODO: add fields validation
+      // TODO: add bmr calculation
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Padding activitySlider = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Activity:", style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(
-            width: 250,
-            child: Slider(
-              value: _activity,
-              onChanged: (value) => setState(() => _activity = value),
-              divisions: 4,
-              min: 1,
-              max: 5,
-              label: _activity.round().toString(),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    Row genderRow = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Gender:", style: TextStyle(fontWeight: FontWeight.bold)),
-        Radio(
-          value: 'woman',
-          groupValue: _gender,
-          onChanged: (value) => setState(() => _gender = value!),
-        ),
-        const Text("woman"),
-        Radio(
-          value: 'man',
-          groupValue: _gender,
-          onChanged: (value) => setState(() => _gender = value!),
-        ),
-        const Text("man"),
-      ],
-    );
-
-    Row targetRow = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
-        Radio(
-          value: 'cut',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("cut"),
-        Radio(
-          value: 'stay',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("stay"),
-        Radio(
-          value: 'gain',
-          groupValue: _target,
-          onChanged: (value) => setState(() => _target = value!),
-        ),
-        const Text("gain"),
-      ],
-    );
-
-    const headerText = Padding(
-      padding: EdgeInsets.symmetric(vertical: 40),
-      child: Text("Enter your data:", style: TextStyle(fontSize: 18)),
-    );
-
-    Padding mealsNumberSlider = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Meals number:", style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(
-            width: 250,
-            child: Slider(
-              value: _mealsNumber,
-              onChanged: (value) => setState(() => _mealsNumber = value),
-              divisions: 4,
-              min: 2,
-              max: 6,
-              label: _mealsNumber.round().toString(),
-            ),
-          ),
-        ],
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(title: const Text("Calculator")),
       body: SingleChildScrollView(
@@ -158,26 +74,105 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           key: _formKey,
           child: Column(
             children: [
-              headerText,
-              genderRow,
-              TextInput(
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Text("Enter your data:", style: TextStyle(fontSize: 18)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Gender:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Radio(
+                    value: 'woman',
+                    groupValue: _gender,
+                    onChanged: (value) => setState(() => _gender = value!),
+                  ),
+                  const Text("woman"),
+                  Radio(
+                    value: 'man',
+                    groupValue: _gender,
+                    onChanged: (value) => setState(() => _gender = value!),
+                  ),
+                  const Text("man"),
+                ],
+              ),
+              _NumberInputField(
                 controller: _ageFieldController,
-                labelText: "Age:",
-                hintText: "years",
+                type: NumberInputFieldType.age,
               ),
-              TextInput(
+              _NumberInputField(
                 controller: _heightFieldController,
-                labelText: "Height:",
-                hintText: "cm",
+                type: NumberInputFieldType.height,
               ),
-              TextInput(
+              _NumberInputField(
                 controller: _weightFieldController,
-                labelText: "Weight:",
-                hintText: "kg",
+                type: NumberInputFieldType.weight,
+                isDecimal: true,
               ),
-              activitySlider,
-              targetRow,
-              mealsNumberSlider,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Activity:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      width: 250,
+                      child: Slider(
+                        value: _activity,
+                        onChanged: (value) => setState(() => _activity = value),
+                        divisions: 4,
+                        min: 1,
+                        max: 5,
+                        label: _activity.round().toString(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Radio(
+                    value: 'cut',
+                    groupValue: _target,
+                    onChanged: (value) => setState(() => _target = value!),
+                  ),
+                  const Text("cut"),
+                  Radio(
+                    value: 'stay',
+                    groupValue: _target,
+                    onChanged: (value) => setState(() => _target = value!),
+                  ),
+                  const Text("stay"),
+                  Radio(
+                    value: 'gain',
+                    groupValue: _target,
+                    onChanged: (value) => setState(() => _target = value!),
+                  ),
+                  const Text("gain"),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Meals number:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      width: 250,
+                      child: Slider(
+                        value: _mealsNumber,
+                        onChanged: (value) => setState(() => _mealsNumber = value),
+                        divisions: 4,
+                        min: 2,
+                        max: 6,
+                        label: _mealsNumber.round().toString(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: () => _submitForm(),
@@ -191,20 +186,41 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 }
 
-class TextInput extends StatelessWidget {
-  const TextInput({
-    super.key,
+class _NumberInputField extends StatelessWidget {
+  const _NumberInputField({
     required this.controller,
-    required this.labelText,
-    this.hintText,
+    required this.type,
+    bool? isDecimal,
   });
 
   final TextEditingController controller;
-  final String labelText;
-  final String? hintText;
+  final NumberInputFieldType type;
+  final bool isDecimal = false;
 
   @override
   Widget build(BuildContext context) {
+    String labelText = '';
+    String hintText = '';
+    String? Function(String?) validator = (value) => null;
+
+    switch (type) {
+      case NumberInputFieldType.age:
+        labelText = 'Age:';
+        hintText = 'years';
+        validator = _ageValidator;
+        break;
+      case NumberInputFieldType.weight:
+        labelText = 'Weight:';
+        hintText = 'kg';
+        validator = _weightValidator;
+        break;
+      case NumberInputFieldType.height:
+        labelText = 'Height:';
+        hintText = 'cm';
+        validator = _heightValidator;
+        break;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -217,17 +233,54 @@ class TextInput extends StatelessWidget {
           const SizedBox(width: 20),
           SizedBox(
             width: 200,
-            child: TextField(
+            child: TextFormField(
               controller: controller,
               decoration: InputDecoration(
                 border: const UnderlineInputBorder(),
                 hintText: hintText,
                 hintStyle: TextStyle(fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
               ),
+              keyboardType: isDecimal ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
+              inputFormatters:
+                  isDecimal ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))] : [FilteringTextInputFormatter.digitsOnly],
+              validator: validator,
             ),
           ),
         ],
       ),
     );
+  }
+
+  String? _ageValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your age';
+    }
+    final age = int.tryParse(value);
+    if (age == null || age < 0 || age > 120) {
+      return 'Please enter a valid age';
+    }
+    return null;
+  }
+
+  String? _heightValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your height';
+    }
+    final height = int.tryParse(value);
+    if (height == null || height < 0 || height > 300) {
+      return 'Please enter a valid height';
+    }
+    return null;
+  }
+
+  String? _weightValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your weight';
+    }
+    final weight = int.tryParse(value);
+    if (weight == null || weight < 0 || weight > 500) {
+      return 'Please enter a valid weight';
+    }
+    return null;
   }
 }
