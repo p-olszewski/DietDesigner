@@ -16,10 +16,10 @@ Future<bool> checkUserHasCalculatedData() async {
   }
 }
 
-// TODO: add bmr calculation
 bool updateUserData(user_model.User user) {
   try {
-    // update only non-null fields and set hasCalculatedData flag to true
+    user.calculateCaloriesAndMacronutrients();
+    // update only non-null fields
     final Map<String, dynamic> data = user.toJson()..removeWhere((key, value) => value == null);
     data['hasCalculatedData'] = true;
     _database.doc('users/$_uid').update(data);

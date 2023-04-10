@@ -2,16 +2,16 @@ class User {
   final int? activity;
   final int? age;
   final bool? hasCalculatedData;
-  final double? calories;
-  final double? carbs;
   final String? email;
-  final double? fats;
   final String? gender;
   final int? height;
   final int? mealsNumber;
-  final double? proteins;
   final String? target;
   final double? weight;
+  int? calories;
+  double? carbs;
+  double? proteins;
+  double? fats;
 
   User({
     this.activity,
@@ -59,4 +59,50 @@ class User {
         'target': target,
         'weight': weight,
       };
+
+  // Harris-Benedict equation
+  void calculateCaloriesAndMacronutrients() {
+    double bmr;
+    if (gender == 'man') {
+      bmr = 66.5 + (13.75 * weight!) + (5.003 * height!) - (6.75 * age!);
+    } else {
+      bmr = 655.1 + (9.563 * weight!) + (1.850 * height!) - (4.676 * age!);
+    }
+
+    switch (activity) {
+      case 1:
+        bmr = bmr * 1.2;
+        break;
+      case 2:
+        bmr = bmr * 1.375;
+        break;
+      case 3:
+        bmr = bmr * 1.55;
+        break;
+      case 4:
+        bmr = bmr * 1.725;
+        break;
+      case 5:
+        bmr = bmr * 1.9;
+        break;
+      default:
+        bmr = bmr;
+        break;
+    }
+
+    switch (target) {
+      case 'cut':
+        bmr = 0.85 * bmr;
+        break;
+      case 'stay':
+        break;
+      case 'gain':
+        bmr = 1.1 * bmr;
+        break;
+      default:
+        break;
+    }
+
+    calories = bmr.round();
+  }
 }
