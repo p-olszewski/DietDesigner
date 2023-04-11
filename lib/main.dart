@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Diet Designer',
+      title: 'DietDesigner',
       theme: appTheme,
       initialRoute: '/login', // temporary
       routes: appRoutes,
