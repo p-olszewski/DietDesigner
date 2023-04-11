@@ -74,9 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: screenHeight / 15),
                 SizedBox(
-                  width: widgetWidth / 1.3,
+                  width: widgetWidth / 1.5,
                   height: 40,
-                  child: FilledButton(
+                  child: ElevatedButton(
                     onPressed: () async {
                       bool shouldRedirect = _isLoginPage
                           ? await signIn(_emailFieldController.text, _passwordFieldController.text)
