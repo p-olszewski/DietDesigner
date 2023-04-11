@@ -9,7 +9,6 @@ final String? _uid = FirebaseAuth.instance.currentUser?.uid;
 Future<bool> checkUserHasCalculatedData() async {
   final userSnapshot = await _database.doc('users/$_uid').get();
   if (userSnapshot.data() == null || userSnapshot.data()!['hasCalculatedData'] != true) {
-    PopupMessenger.error('You have no calculated data, go to calculator!');
     return false;
   } else {
     return true;
@@ -26,5 +25,14 @@ bool updateUserData(user_model.User user) {
   } catch (e) {
     PopupMessenger.error(e.toString());
     return false;
+  }
+}
+
+Future<user_model.User?> getUserData() async {
+  final userSnapshot = await _database.doc('users/$_uid').get();
+  if (userSnapshot.data() == null || userSnapshot.data()!['hasCalculatedData'] != true) {
+    return null;
+  } else {
+    return user_model.User.fromJson(userSnapshot.data()!);
   }
 }

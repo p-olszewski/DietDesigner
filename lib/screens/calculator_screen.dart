@@ -22,14 +22,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String _target = Target.stay.name;
   double _mealsNumber = 5;
 
-  @override
-  void dispose() {
-    _ageFieldController.dispose();
-    _heightFieldController.dispose();
-    _weightFieldController.dispose();
-    super.dispose();
-  }
-
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final age = int.tryParse(_ageFieldController.text);
@@ -52,8 +44,42 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         PopupMessenger.info("Data saved successfully");
       } catch (e) {
         PopupMessenger.error(e.toString());
+      } finally {
+        Navigator.pushReplacementNamed(context, '/');
       }
     }
+  }
+
+  Future<void> _checkUserHasCalculatedData() async {
+    final hasData = await checkUserHasCalculatedData();
+    if (hasData) {
+      final userData = await getUserData();
+      if (userData == null) return;
+
+      setState(() {
+        _ageFieldController.text = userData.age.toString();
+        _heightFieldController.text = userData.height.toString();
+        _weightFieldController.text = userData.weight.toString();
+        _gender = userData.gender!;
+        _activity = userData.activity!.toDouble();
+        _target = userData.target!;
+        _mealsNumber = userData.mealsNumber!.toDouble();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _ageFieldController.dispose();
+    _heightFieldController.dispose();
+    _weightFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserHasCalculatedData();
   }
 
   @override

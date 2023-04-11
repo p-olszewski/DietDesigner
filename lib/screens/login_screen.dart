@@ -85,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         bool hasCalculatedCalories = await checkUserHasCalculatedData();
                         if (!mounted) return;
                         Navigator.pushNamed(context, hasCalculatedCalories ? '/' : '/calculator');
+                        if (!hasCalculatedCalories) PopupMessenger.error('You have no calculated data, go to calculator!');
                       }
                     },
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
