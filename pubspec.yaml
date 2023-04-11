@@ -45,10 +45,18 @@ dependencies:
   google_fonts: ^4.0.3
   animations: ^2.0.7
   provider: ^6.0.5
+  flutter_launcher_icons: ^0.13.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_foreground: "assets/ic_launcher_foreground.png"
+  adaptive_icon_background: "assets/ic_launcher_background.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
