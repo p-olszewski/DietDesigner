@@ -13,16 +13,19 @@ class BottomNavbarMenu extends StatelessWidget {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       destinations: const [
         NavigationDestination(
-          icon: Icon(Icons.home),
+          selectedIcon: Icon(Icons.home),
+          icon: Icon(Icons.home_outlined),
           label: 'Home',
         ),
         NavigationDestination(
-          icon: Icon(Icons.calculate),
-          label: 'Calculator',
+          selectedIcon: Icon(Icons.favorite),
+          icon: Icon(Icons.favorite_border),
+          label: 'Favourites',
         ),
         NavigationDestination(
-          icon: Icon(Icons.account_circle),
-          label: 'Account',
+          selectedIcon: Icon(Icons.shopping_cart),
+          icon: Icon(Icons.shopping_cart_outlined),
+          label: 'Shopping list',
         ),
       ],
     );

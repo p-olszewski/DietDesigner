@@ -24,12 +24,19 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
           const SizedBox(height: 30),
           TextButton(
-            onPressed: () {},
-            child: const Text("Szczegóły konta"),
+            onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
+            child: const Text("Account details"),
           ),
           TextButton(
-            onPressed: () {},
-            child: const Text("Ustawienia"),
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pushNamed(context, "/calculator");
+            },
+            child: const Text("Calculator"),
+          ),
+          TextButton(
+            onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
+            child: const Text("Settings"),
           ),
           TextButton(
             onPressed: () async {
@@ -40,7 +47,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 Navigator.pushNamed(context, "/login");
               }
             },
-            child: const Text("Wyloguj"),
+            child: const Text("Logout"),
           ),
         ],
       ),

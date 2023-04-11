@@ -2,25 +2,17 @@ import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeTab extends StatefulWidget {
+  const HomeTab({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("DietDesigner"),
-        centerTitle: true,
-        elevation: 4,
-        shadowColor: Theme.of(context).shadowColor,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
-      drawer: const DrawerMenu(),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         child: SingleChildScrollView(
@@ -53,7 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavbarMenu(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
+        child: const Icon(Icons.sync),
+      ),
     );
   }
 }
