@@ -22,10 +22,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: const DrawerMenu(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 30),
               const Text(
                 "Your meal plan today: ",
                 style: TextStyle(fontSize: 18),
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const ScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                itemCount: 5,
+                itemCount: 7,
                 itemBuilder: (context, index) {
                   return MealCard(
                     meal: {
