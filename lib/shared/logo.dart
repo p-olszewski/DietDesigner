@@ -9,8 +9,9 @@ class Logo extends StatelessWidget {
     return Text(
       "DietDesigner",
       style: TextStyle(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
         fontSize: 50,
+        fontWeight: FontWeight.w600,
         fontFamily: GoogleFonts.indieFlower().fontFamily,
       ),
     );

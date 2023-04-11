@@ -24,8 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final widgetWidth = screenWidth / 1.3;
-    const backgroundColor = Colors.green;
-    const fontColor = Colors.white;
+    final backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+    final fontColor = Theme.of(context).colorScheme.onPrimaryContainer;
 
     return Scaffold(
       body: Container(
@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 _isLoginPage
                     ? Column(
-                        children: const [
+                        children: [
                           Text(
                             "Sign in to",
                             style: TextStyle(fontSize: 24, color: fontColor),
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Logo(),
                         ],
                       )
-                    : const Text(
+                    : Text(
                         "Create Account",
                         style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: fontColor),
                       ),
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: widgetWidth / 1.3,
                   height: 40,
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () async {
                       bool shouldRedirect = _isLoginPage
                           ? await signIn(_emailFieldController.text, _passwordFieldController.text)
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
                   child: Text(
                     _isLoginPage ? "or go to registration page" : "or go back to the login page",
-                    style: const TextStyle(color: fontColor, fontWeight: FontWeight.w400),
+                    style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],

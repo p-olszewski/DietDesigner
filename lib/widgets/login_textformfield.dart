@@ -18,7 +18,7 @@ class LoginTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var widgetWidth = screenWidth / 1.3;
-    Color mainColor = Theme.of(context).colorScheme.onPrimary;
+    Color mainColor = Theme.of(context).colorScheme.onPrimaryContainer;
     Color accentColor = const Color.fromARGB(255, 155, 207, 110);
 
     return SizedBox(
