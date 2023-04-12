@@ -207,12 +207,12 @@ class _NumberInputField extends StatelessWidget {
   const _NumberInputField({
     required this.controller,
     required this.type,
-    bool? isDecimal,
+    this.isDecimal = false,
   });
 
   final TextEditingController controller;
   final NumberInputFieldType type;
-  final bool isDecimal = false;
+  final bool isDecimal;
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +294,7 @@ class _NumberInputField extends StatelessWidget {
     if (value == null || value.isEmpty) {
       return 'Please enter your weight';
     }
-    final weight = int.tryParse(value);
+    final weight = double.tryParse(value);
     if (weight == null || weight < 0 || weight > 500) {
       return 'Please enter a valid weight';
     }
