@@ -10,7 +10,7 @@ class ShoppingListTab extends StatefulWidget {
 class _ShoppingListTabState extends State<ShoppingListTab> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text("Shopping list tab"),
       ),
