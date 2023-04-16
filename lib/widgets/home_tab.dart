@@ -54,6 +54,6 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   _getMealsFromAPI() async {
-    await APIService.instance.getMeals(550, 40, 5);
+    await APIService.instance.fetchMeals(550, 40, 5);
   }
 }
