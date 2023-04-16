@@ -15,10 +15,10 @@ class APIService {
       double kcal, double proteins, int mealsNumber) async {
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
-      'x-api-key': apiKey,
+      'x-api-key': apiKey
     };
 
-    final Map<String, String> parameters = {
+    final Map<String, dynamic> parameters = {
       'minCalories': kcal - 50,
       'maxCalories': kcal + 50,
       'minProtein': proteins - 20,
@@ -28,17 +28,19 @@ class APIService {
       'offset': 60,
       'addRecipeInformation': true,
       'addRecipeNutrition': true,
-    }.map(
-      (key, value) => MapEntry(key, value.toString()),
+    }.map((key, value) => MapEntry(key, value.toString()));
+
+    // does not work but seems to be the correct way to do it
+    // Uri uri = Uri.https(
+    //   _baseUrl,
+    //   '/recipes/complexSearch',
+    //   parameters,
+    // );
+
+    Uri uri = Uri.parse(
+      '$_baseUrl/recipes/complexSearch?${Uri(queryParameters: parameters).query}',
     );
 
-    Uri uri = Uri.https(
-      _baseUrl,
-      '/recipes/complexSearch',
-      parameters,
-    );
-
-    debugPrint(uri.toString());
     try {
       final response = await http.get(uri, headers: headers);
       if (response.statusCode == 200) {
