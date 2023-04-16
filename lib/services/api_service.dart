@@ -11,22 +11,20 @@ class APIService {
   static const String _baseUrl = 'https://api.spoonacular.com';
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 
-  Future<NutritionPlan?> getNutritionPlan(double kcal, double proteins,
-      double carbs, double fats, int mealsNumber) async {
+  Future<NutritionPlan?> getMeals(
+      double kcal, double proteins, int mealsNumber) async {
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
       'x-api-key': apiKey,
     };
 
     final Map<String, String> parameters = {
-      'minCalories': kcal - 100,
-      'maxCalories': kcal + 100,
-      'minProtein': proteins - 10,
-      'maxProtein': proteins + 10,
-      'minFats': fats - 10,
-      'maxFats': fats + 10,
-      'number': mealsNumber,
+      'minCalories': kcal - 50,
+      'maxCalories': kcal + 50,
+      'minProtein': proteins - 20,
+      'maxProtein': proteins + 20,
       'minCarbs': 20,
+      'number': mealsNumber,
       'offset': 60,
       'addRecipeInformation': true,
       'addRecipeNutrition': true,

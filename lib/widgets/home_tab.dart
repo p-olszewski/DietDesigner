@@ -1,4 +1,4 @@
-import 'package:diet_designer/shared/shared.dart';
+import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +36,8 @@ class _HomeTabState extends State<HomeTab> {
                       'protein': '32',
                       'fat': '15',
                       'carbs': '74',
-                      'image': 'https://spoonacular.com/recipeImages/658418-312x231.jpg',
+                      'image':
+                          'https://spoonacular.com/recipeImages/658418-312x231.jpg',
                     },
                   );
                 },
@@ -46,9 +47,13 @@ class _HomeTabState extends State<HomeTab> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
+        onPressed: () => _getMealsFromAPI(),
         child: const Icon(Icons.sync),
       ),
     );
+  }
+
+  _getMealsFromAPI() async {
+    await APIService.instance.getMeals(550, 40, 5);
   }
 }
