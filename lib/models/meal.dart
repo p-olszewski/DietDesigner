@@ -27,11 +27,16 @@ class Meal {
     this.dishTypes,
   );
 
+  // TODO check fromJson method
   Meal.fromJson(Map<String, dynamic> json)
-      : calories = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Calories')['amount'],
-        carbs = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
-        fats = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
-        proteins = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
+      : calories = json['nutrition']['nutrients']
+            .firstWhere((nutrient) => nutrient['name'] == 'Calories')['amount'],
+        carbs = json['nutrition']['nutrients'].firstWhere(
+            (nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
+        fats = json['nutrition']['nutrients']
+            .firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
+        proteins = json['nutrition']['nutrients']
+            .firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
         id = json['id'],
         pricePerServing = json['pricePerServing'],
         readyInMinutes = json['readyInMinutes'],
@@ -44,7 +49,9 @@ class Meal {
                   'unit': ingredient['unit'],
                 })
             .toList(),
-        steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList(),
+        steps = json['analyzedInstructions'][0]['steps']
+            .map((step) => step['step'])
+            .toList(),
         dishTypes = List<String>.from(json['dishTypes']);
 
   Map<String, dynamic> toJson() => {

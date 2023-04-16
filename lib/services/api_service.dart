@@ -49,7 +49,6 @@ class APIService {
         var responseResults = data['results'];
         List<Meal> meals = [];
         for (var meal in responseResults) {
-          // TODO check fromJson method
           meals.add(Meal.fromJson(meal));
         }
         return meals;
