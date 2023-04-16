@@ -1,4 +1,6 @@
+import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/services/api_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 
@@ -54,6 +56,13 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   _getMealsFromAPI() async {
-    await APIService.instance.fetchMeals(550, 40, 5);
+    List<Meal>? meals = [];
+    try {
+      meals = await APIService.instance.fetchMeals(550, 40, 2);
+      PopupMessenger.info('Successfully loaded meals!');
+    } catch (e) {
+      PopupMessenger.error(e.toString());
+    }
+    debugPrint(meals.toString());
   }
 }

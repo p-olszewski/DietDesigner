@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:diet_designer/models/nutrition_plan.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class APIService {
@@ -13,7 +13,7 @@ class APIService {
   static const String _path = '/recipes/complexSearch';
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 
-  Future<NutritionPlan?> fetchMeals(
+  Future<List<Meal>?> fetchMeals(
       double kcal, double proteins, int mealsNumber) async {
     Map<String, String> headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
@@ -45,16 +45,19 @@ class APIService {
       if (response.statusCode == 200) {
         PopupMessenger.info(
             'Successfully loaded ${response.body.length} B of data!');
-        debugPrint(response.body);
-        return null;
+        var data = jsonDecode(response.body);
+        var responseResults = data['results'];
+        List<Meal> meals = [];
+        for (var meal in responseResults) {
+          // TODO check fromJson method
+          meals.add(Meal.fromJson(meal));
+        }
+        return meals;
       } else {
-        PopupMessenger.error('Failed to load data');
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint(e.toString());
-      PopupMessenger.error('Failed to load data');
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load data: $e');
     }
   }
 }
