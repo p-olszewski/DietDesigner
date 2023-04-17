@@ -38,8 +38,7 @@ class _HomeTabState extends State<HomeTab> {
                       'protein': '32',
                       'fat': '15',
                       'carbs': '74',
-                      'image':
-                          'https://spoonacular.com/recipeImages/658418-312x231.jpg',
+                      'image': 'https://spoonacular.com/recipeImages/658418-312x231.jpg',
                     },
                   );
                 },
@@ -60,6 +59,9 @@ class _HomeTabState extends State<HomeTab> {
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 2);
       PopupMessenger.info('Successfully loaded meals!');
+      for (Meal meal in meals!) {
+        debugPrint(meal.ingredients.toString());
+      }
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
