@@ -33,7 +33,7 @@ class Meal {
         fats = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
         proteins = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
         id = json['id'],
-        pricePerServing = json['pricePerServing'],
+        pricePerServing = double.parse((json['pricePerServing'] / 100).toStringAsFixed(2)),
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
         title = json['title'],
@@ -49,17 +49,17 @@ class Meal {
         dishTypes = List<String>.from(json['dishTypes']);
 
   Map<String, dynamic> toJson() => {
-        'Calories': calories,
-        'Carbohydrates': carbs,
-        'Fat': fats,
-        'Protein': proteins,
+        'kcal': calories,
+        'carbs': carbs,
+        'fat': fats,
+        'protein': proteins,
         'id': id,
-        'pricePerServing': pricePerServing,
-        'readyInMinutes': readyInMinutes,
+        'price_per_serving': pricePerServing,
+        'ready_in_minutes': readyInMinutes,
         'servings': servings,
         'title': title,
         'ingredients': ingredients,
         'steps': steps,
-        'dishTypes': dishTypes,
+        'dish_types': dishTypes,
       };
 }
