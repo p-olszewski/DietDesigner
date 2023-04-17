@@ -8,7 +8,7 @@ class Meal {
   final int? readyInMinutes;
   final int? servings;
   final String? title;
-  final List<Map<String, dynamic>>? ingredients;
+  // final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
 
@@ -22,36 +22,30 @@ class Meal {
     this.readyInMinutes,
     this.servings,
     this.title,
-    this.ingredients,
+    // this.ingredients,
     this.steps,
     this.dishTypes,
   );
 
   // TODO check fromJson method
   Meal.fromJson(Map<String, dynamic> json)
-      : calories = json['nutrition']['nutrients']
-            .firstWhere((nutrient) => nutrient['name'] == 'Calories')['amount'],
-        carbs = json['nutrition']['nutrients'].firstWhere(
-            (nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
-        fats = json['nutrition']['nutrients']
-            .firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
-        proteins = json['nutrition']['nutrients']
-            .firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
+      : calories = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Calories')['amount'],
+        carbs = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
+        fats = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
+        proteins = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
         id = json['id'],
         pricePerServing = json['pricePerServing'],
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
         title = json['title'],
-        ingredients = json['ingredients']
-            .map((ingredient) => {
-                  'name': ingredient['name'],
-                  'amount': ingredient['amount'],
-                  'unit': ingredient['unit'],
-                })
-            .toList(),
-        steps = json['analyzedInstructions'][0]['steps']
-            .map((step) => step['step'])
-            .toList(),
+        // ingredients = json['ingredients']
+        //     .map((ingredient) => {
+        //           'name': ingredient['name'],
+        //           'amount': ingredient['amount'],
+        //           'unit': ingredient['unit'],
+        //         })
+        //     .toList(),
+        steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList().cast<String>(),
         dishTypes = List<String>.from(json['dishTypes']);
 
   Map<String, dynamic> toJson() => {
@@ -64,7 +58,7 @@ class Meal {
         'readyInMinutes': readyInMinutes,
         'servings': servings,
         'title': title,
-        'ingredients': ingredients,
+        // 'ingredients': ingredients,
         'steps': steps,
         'dishTypes': dishTypes,
       };
