@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'DietDesigner',
       theme: appTheme,
-      initialRoute: '/', // temporary
+      initialRoute: '/login', // temporary
       routes: appRoutes,
     );
   }
