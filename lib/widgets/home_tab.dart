@@ -60,7 +60,7 @@ class _HomeTabState extends State<HomeTab> {
       meals = await APIService.instance.fetchMeals(550, 40, 2);
       PopupMessenger.info('Successfully loaded meals!');
       for (Meal meal in meals!) {
-        debugPrint(meal.steps.toString());
+        debugPrint(meal.ingredients.toString());
       }
     } catch (e) {
       PopupMessenger.error(e.toString());
