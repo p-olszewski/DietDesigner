@@ -42,10 +42,10 @@ Future<user_model.User?> getUserData() async {
 Future<bool> saveMealsToDatabase(List<Meal> meals) async {
   try {
     final String currentDate = getCurrentDate();
-    final mealCollection = _database.collection('users/$_uid/nutritionPlans/$currentDate/meals');
+    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$currentDate/meals');
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
-      final mealId = 'meal${i + 1}';
+      final mealId = 'meal_${i + 1}';
       await mealCollection.doc(mealId).set(meal.toJson());
     }
     return true;
