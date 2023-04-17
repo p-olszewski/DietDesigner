@@ -41,7 +41,7 @@ Future<user_model.User?> getUserData() async {
 
 Future<bool> saveMealsToDatabase(List<Meal> meals) async {
   try {
-    final String currentDate = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    final String currentDate = getCurrentDate();
     final mealCollection = _database.collection('users/$_uid/nutritionPlans/$currentDate/meals');
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
@@ -54,3 +54,5 @@ Future<bool> saveMealsToDatabase(List<Meal> meals) async {
     return false;
   }
 }
+
+String getCurrentDate() => DateFormat('dd.MM.yyyy').format(DateTime.now());
