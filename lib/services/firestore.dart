@@ -39,7 +39,7 @@ Future<user_model.User?> getUserData() async {
   }
 }
 
-Future<bool> saveMealsToDatabase(List<Meal> meals) async {
+Future saveMealsToDatabase(List<Meal> meals) async {
   try {
     final String currentDate = getCurrentDate();
     final mealCollection = _database.collection('users/$_uid/nutrition_plans/$currentDate/meals');
@@ -48,10 +48,8 @@ Future<bool> saveMealsToDatabase(List<Meal> meals) async {
       final mealId = 'meal_${i + 1}';
       await mealCollection.doc(mealId).set(meal.toJson());
     }
-    return true;
   } catch (e) {
-    PopupMessenger.error(e.toString());
-    return false;
+    throw Exception('Failed to load data: $e');
   }
 }
 

@@ -55,16 +55,15 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  _getMealsFromAPI() async {
+  void _getMealsFromAPI() async {
     List<Meal>? meals = [];
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
-      PopupMessenger.info('Successfully loaded meals!');
-      if (meals != null) await saveMealsToDatabase(meals);
-      PopupMessenger.info('Successfully saved meals to the Firestore!');
+      if (meals == null) return;
+      await saveMealsToDatabase(meals);
+      PopupMessenger.info('Successfully saved ${meals.length} meals to the Firestore!');
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
-    debugPrint(meals.toString());
   }
 }

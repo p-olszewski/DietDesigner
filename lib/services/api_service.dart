@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:diet_designer/models/meal.dart';
-import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,12 +12,8 @@ class APIService {
   static const String _path = '/recipes/complexSearch';
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 
-  Future<List<Meal>?> fetchMeals(
-      double kcal, double proteins, int mealsNumber) async {
-    Map<String, String> headers = {
-      HttpHeaders.contentTypeHeader: 'application/json',
-      'x-api-key': apiKey
-    };
+  Future<List<Meal>?> fetchMeals(double kcal, double proteins, int mealsNumber) async {
+    Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
 
     final Map<String, String> parameters = {
       'minCalories': kcal - 50,
@@ -43,8 +38,6 @@ class APIService {
     try {
       final response = await http.get(uri, headers: headers);
       if (response.statusCode == 200) {
-        PopupMessenger.info(
-            'Successfully loaded ${response.body.length} B of data!');
         var data = jsonDecode(response.body);
         var responseResults = data['results'];
         List<Meal> meals = [];
