@@ -60,14 +60,14 @@ class Meal {
         'fat': fats,
         'protein': proteins,
         'id': id,
-        'price_per_serving': pricePerServing,
-        'ready_in_minutes': readyInMinutes,
+        'pricePerServing': pricePerServing,
+        'readyInMinutes': readyInMinutes,
         'servings': servings,
         'title': title,
         'ingredients': ingredients,
         'steps': steps,
-        'dish_types': dishTypes,
+        'dishTypes': dishTypes,
         'image': image,
-        'source_url': sourceUrl,
+        'sourceUrl': sourceUrl,
       };
 }
