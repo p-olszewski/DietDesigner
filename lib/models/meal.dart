@@ -7,11 +7,11 @@ class Meal {
   final double? pricePerServing;
   final int? readyInMinutes;
   final int? servings;
-  final String? title;
+  final String title;
   final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
-  final String? image;
+  final String image;
   final String? sourceUrl;
 
   Meal(

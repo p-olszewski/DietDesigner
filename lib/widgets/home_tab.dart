@@ -22,9 +22,9 @@ class _HomeTabState extends State<HomeTab> {
           child: Column(
             children: [
               const SizedBox(height: 30),
-              const Text(
-                "Your meal plan today: ",
-                style: TextStyle(fontSize: 18),
+              Text(
+                "Your meal plan for ${getCurrentDate()}r.",
+                style: const TextStyle(fontSize: 18),
               ),
               FutureBuilder(
                 future: getMealsFromDatabase(),
