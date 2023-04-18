@@ -26,22 +26,20 @@ class _HomeTabState extends State<HomeTab> {
                 "Your meal plan today: ",
                 style: TextStyle(fontSize: 18),
               ),
-              ListView.builder(
-                physics: const ScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: 7,
-                itemBuilder: (context, index) {
-                  return MealCard(
-                    meal: {
-                      'title': 'Meal ${index + 1}',
-                      'calories': '523',
-                      'protein': '32',
-                      'fat': '15',
-                      'carbs': '74',
-                      'image': 'https://spoonacular.com/recipeImages/658418-312x231.jpg',
-                    },
-                  );
+              FutureBuilder(
+                future: getMealsFromDatabase(),
+                builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return MealCard(meal: snapshot.data![index]);
+                      },
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                 },
               ),
             ],
