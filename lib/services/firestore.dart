@@ -53,4 +53,22 @@ Future saveMealsToDatabase(List<Meal> meals) async {
   }
 }
 
+Future<List<Meal>> getMealsFromDatabase() async {
+  try {
+    final String currentDate = getCurrentDate();
+    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$currentDate/meals');
+    final mealSnapshot = await mealCollection.get();
+    final List<Meal> meals = [];
+    for (var doc in mealSnapshot.docs) {
+      meals.add(Meal.fromFirestore(doc.data()));
+    }
+    if (meals.isEmpty) {
+      throw Exception('No meals found in the database!');
+    }
+    return meals;
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
 String getCurrentDate() => DateFormat('dd.MM.yyyy').format(DateTime.now());

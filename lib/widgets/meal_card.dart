@@ -1,3 +1,4 @@
+import 'package:diet_designer/models/meal.dart';
 import 'package:flutter/material.dart';
 
 class MealCard extends StatelessWidget {
@@ -6,16 +7,16 @@ class MealCard extends StatelessWidget {
     required this.meal,
   });
 
-  final dynamic meal;
+  final Meal meal;
 
-/* card to display each meal */
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
-        Text("${meal['title']} - ${meal['calories']} kcal, ${meal['protein']}g/${meal['fat']}g/${meal['carbs']}g"),
+        Text(
+            "${meal.calories.round()} kcal, ${meal.proteins.round()}g proteins / ${meal.fats.round()}g fats / ${meal.carbs.round()}g carbs"),
         Card(
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -34,13 +35,13 @@ class MealCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(meal['image']),
+                  image: NetworkImage(meal.image),
                 ),
               ),
             ),
-            title: Text(meal['title']),
+            title: Text(meal.title),
             subtitle: Text(
-              '${meal['calories']} kcal\n${meal['protein']} protein, ${meal['fat']} fat, ${meal['carbs']} carbs',
+              '${meal.calories} kcal\n${meal.proteins} protein, ${meal.fats} fat, ${meal.carbs} carbs',
             ),
           ),
         ),

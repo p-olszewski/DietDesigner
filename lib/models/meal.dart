@@ -7,10 +7,12 @@ class Meal {
   final double? pricePerServing;
   final int? readyInMinutes;
   final int? servings;
-  final String? title;
+  final String title;
   final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
+  final String image;
+  final String? sourceUrl;
 
   Meal(
     this.calories,
@@ -25,6 +27,8 @@ class Meal {
     this.ingredients,
     this.steps,
     this.dishTypes,
+    this.image,
+    this.sourceUrl,
   );
 
   Meal.fromJson(Map<String, dynamic> json)
@@ -46,7 +50,9 @@ class Meal {
             .toList()
             .cast<Map<String, dynamic>>(),
         steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList().cast<String>(),
-        dishTypes = List<String>.from(json['dishTypes']);
+        dishTypes = List<String>.from(json['dishTypes']),
+        image = json['image'],
+        sourceUrl = json['sourceUrl'];
 
   Map<String, dynamic> toJson() => {
         'kcal': calories,
@@ -54,12 +60,30 @@ class Meal {
         'fat': fats,
         'protein': proteins,
         'id': id,
-        'price_per_serving': pricePerServing,
-        'ready_in_minutes': readyInMinutes,
+        'pricePerServing': pricePerServing,
+        'readyInMinutes': readyInMinutes,
         'servings': servings,
         'title': title,
         'ingredients': ingredients,
         'steps': steps,
-        'dish_types': dishTypes,
+        'dishTypes': dishTypes,
+        'image': image,
+        'sourceUrl': sourceUrl,
       };
+
+  Meal.fromFirestore(Map<String, dynamic> json)
+      : calories = json['kcal'],
+        carbs = json['carbs'],
+        fats = json['fat'],
+        proteins = json['protein'],
+        id = json['id'],
+        pricePerServing = json['pricePerServing'],
+        readyInMinutes = json['readyInMinutes'],
+        servings = json['servings'],
+        title = json['title'],
+        ingredients = json['ingredients'].map((ingredient) => Map<String, dynamic>.from(ingredient)).toList().cast<Map<String, dynamic>>(),
+        steps = json['steps'].map((step) => step.toString()).toList().cast<String>(),
+        dishTypes = json['dishTypes'].map((dishType) => dishType.toString()).toList().cast<String>(),
+        image = json['image'],
+        sourceUrl = json['sourceUrl'];
 }
