@@ -60,7 +60,7 @@ Future<List<Meal>> getMealsFromDatabase() async {
     final mealSnapshot = await mealCollection.get();
     final List<Meal> meals = [];
     for (var doc in mealSnapshot.docs) {
-      meals.add(Meal.fromJson(doc.data()));
+      meals.add(Meal.fromFirestore(doc.data()));
     }
     if (meals.isEmpty) {
       throw Exception('No meals found in the database!');

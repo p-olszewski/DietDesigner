@@ -70,4 +70,20 @@ class Meal {
         'image': image,
         'sourceUrl': sourceUrl,
       };
+
+  Meal.fromFirestore(Map<String, dynamic> json)
+      : calories = json['kcal'],
+        carbs = json['carbs'],
+        fats = json['fat'],
+        proteins = json['protein'],
+        id = json['id'],
+        pricePerServing = json['pricePerServing'],
+        readyInMinutes = json['readyInMinutes'],
+        servings = json['servings'],
+        title = json['title'],
+        ingredients = json['ingredients'].map((ingredient) => Map<String, dynamic>.from(ingredient)).toList().cast<Map<String, dynamic>>(),
+        steps = json['steps'].map((step) => step.toString()).toList().cast<String>(),
+        dishTypes = json['dishTypes'].map((dishType) => dishType.toString()).toList().cast<String>(),
+        image = json['image'],
+        sourceUrl = json['sourceUrl'];
 }
