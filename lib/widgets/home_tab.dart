@@ -31,6 +31,8 @@ class _HomeTabState extends State<HomeTab> {
                 builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
+                      physics: const ScrollPhysics(),
+                      scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
