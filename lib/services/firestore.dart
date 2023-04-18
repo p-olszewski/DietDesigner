@@ -62,9 +62,6 @@ Future<List<Meal>> getMealsFromDatabase() async {
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
     }
-    if (meals.isEmpty) {
-      throw Exception('No meals found in the database!');
-    }
     return meals;
   } catch (e) {
     throw Exception('Failed to load data: $e');

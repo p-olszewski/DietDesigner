@@ -20,25 +20,48 @@ class _HomeTabState extends State<HomeTab> {
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
               Text(
                 "Your meal plan for ${getCurrentDate()}r.",
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 16),
               ),
               FutureBuilder(
                 future: getMealsFromDatabase(),
                 builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return MealCard(meal: snapshot.data![index]);
-                      },
-                    );
+                    return snapshot.data!.isEmpty
+                        // TODO - make this look better
+                        ? SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text('No meals found.'),
+                                  const SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () => _getMealsFromAPI(),
+                                    child: const Text('Generate nutrition plan'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            physics: const ScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return MealCard(meal: snapshot.data![index]);
+                            },
+                          );
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -49,7 +72,8 @@ class _HomeTabState extends State<HomeTab> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _getMealsFromAPI(),
+        onPressed: () =>
+            PopupMessenger.info('This is no longer used to generate nutrition plans. Use the button in the center of the screen instead.'),
         child: const Icon(Icons.sync),
       ),
     );
