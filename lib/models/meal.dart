@@ -11,6 +11,8 @@ class Meal {
   final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
+  final String? image;
+  final String? sourceUrl;
 
   Meal(
     this.calories,
@@ -25,6 +27,8 @@ class Meal {
     this.ingredients,
     this.steps,
     this.dishTypes,
+    this.image,
+    this.sourceUrl,
   );
 
   Meal.fromJson(Map<String, dynamic> json)
@@ -46,7 +50,9 @@ class Meal {
             .toList()
             .cast<Map<String, dynamic>>(),
         steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList().cast<String>(),
-        dishTypes = List<String>.from(json['dishTypes']);
+        dishTypes = List<String>.from(json['dishTypes']),
+        image = json['image'],
+        sourceUrl = json['sourceUrl'];
 
   Map<String, dynamic> toJson() => {
         'kcal': calories,
@@ -61,5 +67,7 @@ class Meal {
         'ingredients': ingredients,
         'steps': steps,
         'dish_types': dishTypes,
+        'image': image,
+        'source_url': sourceUrl,
       };
 }
