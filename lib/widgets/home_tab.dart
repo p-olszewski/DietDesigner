@@ -28,6 +28,14 @@ class _HomeTabState extends State<HomeTab> {
                 "Your meal plan for ${getCurrentDate()}r.",
                 style: const TextStyle(fontSize: 16),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_before)),
+                  TextButton(onPressed: () {}, child: const Text('01.01.2023')),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_next))
+                ],
+              ),
               FutureBuilder(
                 future: getMealsFromDatabase(),
                 builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
