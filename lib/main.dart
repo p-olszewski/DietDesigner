@@ -1,3 +1,4 @@
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/routes.dart';
 import 'package:diet_designer/theme.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<NavBarProvider>(create: (_) => NavBarProvider()),
+        ChangeNotifierProvider<DateProvider>(create: (_) => DateProvider()),
       ],
       child: const MyApp(),
     ),
