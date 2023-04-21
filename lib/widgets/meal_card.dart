@@ -15,8 +15,7 @@ class MealCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
-        Text(
-            "${meal.calories.round()} kcal, ${meal.proteins.round()}g proteins / ${meal.fats.round()}g fats / ${meal.carbs.round()}g carbs"),
+        Text("${meal.calories.round()} kcal, ${meal.proteins.round()}g proteins, ${meal.fats.round()}g fats, ${meal.carbs.round()}g carbs"),
         Card(
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),

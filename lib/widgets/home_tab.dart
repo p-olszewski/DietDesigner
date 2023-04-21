@@ -16,6 +16,7 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     final dateProvider = context.read<DateProvider>();
@@ -33,67 +34,69 @@ class _HomeTabState extends State<HomeTab> {
                 style: const TextStyle(fontSize: 16),
               ),
               const DatePicker(),
-              FutureBuilder(
-                future: getMealsFromDatabase(dateProvider.formattedDate),
-                builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data!.isEmpty
-                        // TODO - make this look better
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.6,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text('No meals found.'),
-                                  const SizedBox(height: 10),
-                                  ElevatedButton(
-                                    onPressed: () => _getMealsFromAPI(),
-                                    child: const Text('Generate nutrition plan'),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : FutureBuilder(
+                      future: getMealsFromDatabase(dateProvider.formattedDate),
+                      builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!.isEmpty
+                              // TODO - make this look better
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  height: MediaQuery.of(context).size.height * 0.6,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        const Text('No meals found.'),
+                                        const SizedBox(height: 10),
+                                        ElevatedButton(
+                                          onPressed: () => _getMealsFromAPI(),
+                                          child: const Text('Generate nutrition plan'),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            physics: const ScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              return MealCard(meal: snapshot.data![index]);
-                            },
-                          );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+                                )
+                              : ListView.builder(
+                                  physics: const ScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (context, index) {
+                                    return MealCard(meal: snapshot.data![index]);
+                                  },
+                                );
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
+                    ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            PopupMessenger.info('This is no longer used to generate nutrition plans. Use the button in the center of the screen instead.'),
+        onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
         child: const Icon(Icons.sync),
       ),
     );
   }
 
   void _getMealsFromAPI() async {
+    setState(() => _isLoading = true);
     List<Meal>? meals = [];
     String date = context.read<DateProvider>().formattedDate;
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
       if (meals == null) return;
       await saveMealsToDatabase(meals, date);
-      PopupMessenger.info('Successfully saved ${meals.length} meals to the Firestore!');
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
+    setState(() => _isLoading = false);
   }
 }
