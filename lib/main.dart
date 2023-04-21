@@ -1,7 +1,7 @@
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/routes.dart';
-import 'package:diet_designer/providers/authentication_provider.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +17,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthenticationProvider>(create: (_) => AuthenticationProvider(FirebaseAuth.instance)),
-        StreamProvider<User?>(create: (context) => context.read<AuthenticationProvider>().authStateChanges, initialData: null),
+        Provider<AuthProvider>(create: (_) => AuthProvider(FirebaseAuth.instance)),
+        StreamProvider<User?>(create: (context) => context.read<AuthProvider>().authStateChanges, initialData: null),
         ChangeNotifierProvider<NavBarProvider>(create: (_) => NavBarProvider()),
         ChangeNotifierProvider<DateProvider>(create: (_) => DateProvider()),
       ],

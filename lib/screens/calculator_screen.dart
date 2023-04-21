@@ -1,9 +1,11 @@
 import 'package:diet_designer/models/user.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -24,10 +26,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      final uid = context.read<AuthProvider>().uid!;
       final age = int.tryParse(_ageFieldController.text);
       final height = int.tryParse(_heightFieldController.text);
       final weight = double.tryParse(_weightFieldController.text);
-
       final user = User(
         gender: _gender,
         age: age,
@@ -37,23 +39,24 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         target: _target,
         mealsNumber: _mealsNumber.round(),
       );
-      user.calculateCaloriesAndMacronutrients();
 
+      user.calculateCaloriesAndMacronutrients();
       try {
-        updateUserData(user);
+        updateUserData(uid, user);
         PopupMessenger.info("Data saved successfully");
       } catch (e) {
         PopupMessenger.error(e.toString());
       } finally {
-        Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushReplacementNamed(context, '/home');
       }
     }
   }
 
-  Future<void> _checkUserHasCalculatedData() async {
-    final hasData = await checkUserHasCalculatedData();
+  Future<void> _checkUserData() async {
+    final uid = context.read<AuthProvider>().uid!;
+    final hasData = await checkUserHasCalculatedData(uid);
     if (hasData) {
-      final userData = await getUserData();
+      final userData = await getUserData(uid);
       if (userData == null) return;
 
       setState(() {
@@ -79,7 +82,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    _checkUserHasCalculatedData();
+    _checkUserData();
   }
 
   @override

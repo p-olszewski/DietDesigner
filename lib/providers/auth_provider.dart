@@ -1,12 +1,14 @@
+
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthenticationProvider {
+class AuthProvider {
   final FirebaseAuth _firebaseAuth;
-  AuthenticationProvider(this._firebaseAuth);
+  AuthProvider(this._firebaseAuth);
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  String? get uid => _firebaseAuth.currentUser?.uid;
 
   Future<bool> signIn(String email, String password) async {
     try {
@@ -55,9 +57,5 @@ class AuthenticationProvider {
       PopupMessenger.error(e.toString());
       return false;
     }
-  }
-
-  String? getUserId() {
-    return _firebaseAuth.currentUser?.uid;
   }
 }
