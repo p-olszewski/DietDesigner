@@ -1,6 +1,7 @@
-import 'package:diet_designer/services/auth.dart';
+import 'package:diet_designer/providers/authentication_provider.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DrawerMenu extends StatefulWidget {
   const DrawerMenu({
@@ -40,7 +41,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
           TextButton(
             onPressed: () async {
-              bool shouldRedirect = await signOut();
+              bool shouldRedirect = await context.read<AuthenticationProvider>().signOut();
               if (shouldRedirect) {
                 PopupMessenger.info('You have been logged out!');
                 if (!mounted) return;

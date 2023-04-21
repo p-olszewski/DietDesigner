@@ -1,9 +1,10 @@
 import 'package:animations/animations.dart';
-import 'package:diet_designer/services/auth.dart';
-import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/providers/authentication_provider.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/login_textformfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,10 +15,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailFieldController = TextEditingController();
-  final TextEditingController _passwordFieldController =
-      TextEditingController();
-  final TextEditingController _repeatedPasswordFieldController =
-      TextEditingController();
+  final TextEditingController _passwordFieldController = TextEditingController();
+  final TextEditingController _repeatedPasswordFieldController = TextEditingController();
   bool _isLoginPage = true;
   int _key = 1;
 
@@ -38,8 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) => FadeThroughTransition(
             animation: animation,
-            secondaryAnimation:
-                Tween<double>(begin: 0, end: 0).animate(animation),
+            secondaryAnimation: Tween<double>(begin: 0, end: 0).animate(animation),
             child: child,
           ),
           child: Container(
@@ -62,31 +60,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     : Text(
                         "Create Account",
-                        style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w600,
-                            color: fontColor),
+                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: fontColor),
                       ),
                 SizedBox(height: screenHeight / 25),
                 LoginTextFormField(
-                    controller: _emailFieldController,
-                    labelText: "Email",
-                    hintText: "youremail@email.com",
-                    obscureText: false),
+                    controller: _emailFieldController, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
                 SizedBox(height: screenHeight / 100),
-                LoginTextFormField(
-                    controller: _passwordFieldController,
-                    labelText: "Password",
-                    hintText: "password",
-                    obscureText: true),
+                LoginTextFormField(controller: _passwordFieldController, labelText: "Password", hintText: "password", obscureText: true),
                 SizedBox(height: screenHeight / 100),
                 Visibility(
                   visible: !_isLoginPage,
                   child: LoginTextFormField(
-                      controller: _repeatedPasswordFieldController,
-                      labelText: "Repeat password",
-                      hintText: "password",
-                      obscureText: true),
+                      controller: _repeatedPasswordFieldController, labelText: "Repeat password", hintText: "password", obscureText: true),
                 ),
                 SizedBox(height: screenHeight / 15),
                 SizedBox(
@@ -95,21 +80,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       bool shouldRedirect = _isLoginPage
-                          ? await signIn(_emailFieldController.text,
-                              _passwordFieldController.text)
-                          : await signUp(
-                              _emailFieldController.text,
-                              _passwordFieldController.text,
-                              _repeatedPasswordFieldController.text);
+                          ? await context.read<AuthenticationProvider>().signIn(
+                                _emailFieldController.text,
+                                _passwordFieldController.text,
+                              )
+                          : await context.read<AuthenticationProvider>().signUp(
+                                _emailFieldController.text,
+                                _passwordFieldController.text,
+                                _repeatedPasswordFieldController.text,
+                              );
                       if (shouldRedirect) {
-                        bool hasCalculatedCalories =
-                            await checkUserHasCalculatedData();
+                        bool hasCalculatedCalories = await checkUserHasCalculatedData();
                         if (!mounted) return;
-                        Navigator.pushNamed(context,
-                            hasCalculatedCalories ? '/' : '/calculator');
+                        Navigator.pushNamed(context, hasCalculatedCalories ? '/home' : '/calculator');
                         if (!hasCalculatedCalories) {
-                          PopupMessenger.error(
-                              'You have no calculated data, go to calculator!');
+                          PopupMessenger.error('You have no calculated data, go to calculator!');
                         }
                       }
                     },
@@ -127,11 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     _key = _isLoginPage ? 1 : 2;
                   }),
                   child: Text(
-                    _isLoginPage
-                        ? "or go to registration page"
-                        : "or go back to the login page",
-                    style: TextStyle(
-                        color: fontColor, fontWeight: FontWeight.w400),
+                    _isLoginPage ? "or go to registration page" : "or go back to the login page",
+                    style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
                   ),
                 ),
               ],

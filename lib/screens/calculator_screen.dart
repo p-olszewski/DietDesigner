@@ -1,5 +1,5 @@
 import 'package:diet_designer/models/user.dart';
-import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/enums.dart';
 import 'package:flutter/material.dart';

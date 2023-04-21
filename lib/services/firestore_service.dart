@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/shared/shared.dart';
@@ -6,6 +7,20 @@ import 'package:diet_designer/models/user.dart' as user_model;
 
 final FirebaseFirestore _database = FirebaseFirestore.instance;
 final String? _uid = FirebaseAuth.instance.currentUser?.uid;
+
+Future<bool> addUserDocument(String uid, String email) async {
+  if (uid.isEmpty || email.isEmpty) {
+    return false;
+  }
+  try {
+    await _database.doc('users/$uid').set({
+      'email': email,
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 Future<bool> checkUserHasCalculatedData() async {
   final userSnapshot = await _database.doc('users/$_uid').get();

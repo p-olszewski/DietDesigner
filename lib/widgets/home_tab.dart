@@ -1,7 +1,7 @@
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
-import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/date_picker.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
