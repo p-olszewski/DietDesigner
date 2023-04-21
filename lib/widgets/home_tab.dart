@@ -23,61 +23,63 @@ class _HomeTabState extends State<HomeTab> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 30),
-              const Text(
-                "Your meal plan for:",
-                style: TextStyle(fontSize: 16),
-              ),
-              const DatePicker(),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : FutureBuilder(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 30),
+                    const Text(
+                      "Your meal plan for:",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const DatePicker(),
+                    FutureBuilder(
                       future: getMealsFromDatabase(dateProvider.dateFormattedWithDots),
                       builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                         if (snapshot.hasData) {
-                          return snapshot.data!.isEmpty
-                              // TODO - make this look better
-                              ? SizedBox(
-                                  width: double.infinity,
-                                  height: MediaQuery.of(context).size.height * 0.6,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const Text('No meals found.'),
-                                        const SizedBox(height: 10),
-                                        ElevatedButton(
-                                          onPressed: () => _getMealsFromAPI(),
-                                          child: const Text('Generate nutrition plan'),
-                                        ),
-                                      ],
+                          if (snapshot.data!.isEmpty) {
+                            return SizedBox(
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text('No meals found.'),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: () => _getMealsFromAPI(),
+                                      child: const Text('Generate nutrition plan'),
                                     ),
-                                  ),
-                                )
-                              : ListView.builder(
-                                  physics: const ScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    return MealCard(meal: snapshot.data![index]);
-                                  },
-                                );
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return ListView.builder(
+                              physics: const ScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return MealCard(meal: snapshot.data![index]);
+                              },
+                            );
+                          }
                         } else {
                           return const Center(child: CircularProgressIndicator());
                         }
                       },
                     ),
-            ],
-          ),
-        ),
+                  ],
+                ),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
