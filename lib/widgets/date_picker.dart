@@ -9,38 +9,29 @@ class DatePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = context.read<DateProvider>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {
-            DateTime currentDate = context.read<DateProvider>().date;
-            context.read<DateProvider>().setDate(
-                  currentDate.subtract(const Duration(days: 1)),
-                );
-          },
+          onPressed: () => dateProvider.setDate(dateProvider.date.subtract(const Duration(days: 1))),
           icon: const Icon(Icons.navigate_before),
         ),
         TextButton(
           onPressed: () async {
             DateTime? newDate = await showDatePicker(
               context: context,
-              initialDate: context.read<DateProvider>().date,
+              initialDate: dateProvider.date,
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
             );
             if (newDate == null) return;
-            context.read<DateProvider>().setDate(newDate);
+            dateProvider.setDate(newDate);
           },
-          child: const DateButton(),
+          child: const DateButtonText(),
         ),
         IconButton(
-          onPressed: () {
-            DateTime currentDate = context.read<DateProvider>().date;
-            context.read<DateProvider>().setDate(
-                  currentDate.add(const Duration(days: 1)),
-                );
-          },
+          onPressed: () => dateProvider.setDate(dateProvider.date.add(const Duration(days: 1))),
           icon: const Icon(Icons.navigate_next),
         )
       ],
@@ -48,8 +39,8 @@ class DatePicker extends StatelessWidget {
   }
 }
 
-class DateButton extends StatelessWidget {
-  const DateButton({
+class DateButtonText extends StatelessWidget {
+  const DateButtonText({
     super.key,
   });
 
