@@ -16,23 +16,31 @@ class DatePicker extends StatelessWidget {
         IconButton(
           onPressed: () => dateProvider.setDate(dateProvider.date.subtract(const Duration(days: 1))),
           icon: const Icon(Icons.navigate_before),
+          iconSize: 26,
         ),
         TextButton(
-          onPressed: () async {
-            DateTime? newDate = await showDatePicker(
-              context: context,
-              initialDate: dateProvider.date,
-              firstDate: DateTime(1900),
-              lastDate: DateTime(2100),
-            );
-            if (newDate == null) return;
-            dateProvider.setDate(newDate);
-          },
-          child: const DateButtonText(),
-        ),
+            onPressed: () async {
+              DateTime? newDate = await showDatePicker(
+                context: context,
+                initialDate: dateProvider.date,
+                firstDate: DateTime(1900),
+                lastDate: DateTime(2100),
+              );
+              if (newDate == null) return;
+              dateProvider.setDate(newDate);
+            },
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+              ),
+            ),
+            child: const DateButtonText()),
         IconButton(
           onPressed: () => dateProvider.setDate(dateProvider.date.add(const Duration(days: 1))),
           icon: const Icon(Icons.navigate_next),
+          iconSize: 26,
         )
       ],
     );
@@ -46,6 +54,6 @@ class DateButtonText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(context.watch<DateProvider>().formattedDate);
+    return Text(context.watch<DateProvider>().dateFormattedWithWords);
   }
 }

@@ -19,7 +19,7 @@ class _HomeTabState extends State<HomeTab> {
   bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
-    final dateProvider = context.read<DateProvider>();
+    final dateProvider = context.watch<DateProvider>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -29,15 +29,15 @@ class _HomeTabState extends State<HomeTab> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
-              Text(
-                "Your meal plan for ${context.watch<DateProvider>().formattedDate}r.",
-                style: const TextStyle(fontSize: 16),
+              const Text(
+                "Your meal plan for:",
+                style: TextStyle(fontSize: 16),
               ),
               const DatePicker(),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : FutureBuilder(
-                      future: getMealsFromDatabase(dateProvider.formattedDate),
+                      future: getMealsFromDatabase(dateProvider.dateFormattedWithDots),
                       builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                         if (snapshot.hasData) {
                           return snapshot.data!.isEmpty
@@ -89,7 +89,7 @@ class _HomeTabState extends State<HomeTab> {
   void _getMealsFromAPI() async {
     setState(() => _isLoading = true);
     List<Meal>? meals = [];
-    String date = context.read<DateProvider>().formattedDate;
+    String date = context.read<DateProvider>().dateFormattedWithDots;
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
       if (meals == null) return;
