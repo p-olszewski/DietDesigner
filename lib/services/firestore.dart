@@ -3,7 +3,6 @@ import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
-import 'package:intl/intl.dart';
 
 final FirebaseFirestore _database = FirebaseFirestore.instance;
 final String? _uid = FirebaseAuth.instance.currentUser?.uid;
@@ -39,10 +38,9 @@ Future<user_model.User?> getUserData() async {
   }
 }
 
-Future saveMealsToDatabase(List<Meal> meals) async {
+Future saveMealsToDatabase(List<Meal> meals, String date) async {
   try {
-    final String currentDate = getCurrentDate();
-    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$currentDate/meals');
+    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$date/meals');
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
       final mealId = 'meal_${i + 1}';
@@ -53,22 +51,16 @@ Future saveMealsToDatabase(List<Meal> meals) async {
   }
 }
 
-Future<List<Meal>> getMealsFromDatabase() async {
+Future<List<Meal>> getMealsFromDatabase(String date) async {
   try {
-    final String currentDate = getCurrentDate();
-    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$currentDate/meals');
+    final mealCollection = _database.collection('users/$_uid/nutrition_plans/$date/meals');
     final mealSnapshot = await mealCollection.get();
     final List<Meal> meals = [];
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
-    }
-    if (meals.isEmpty) {
-      throw Exception('No meals found in the database!');
     }
     return meals;
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
 }
-
-String getCurrentDate() => DateFormat('dd.MM.yyyy').format(DateTime.now());
