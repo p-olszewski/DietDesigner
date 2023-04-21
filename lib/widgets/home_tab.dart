@@ -2,6 +2,7 @@ import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/services/firestore.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
+import 'package:diet_designer/widgets/date_picker.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 
@@ -28,14 +29,7 @@ class _HomeTabState extends State<HomeTab> {
                 "Your meal plan for ${getCurrentDate()}r.",
                 style: const TextStyle(fontSize: 16),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_before)),
-                  TextButton(onPressed: () {}, child: const Text('01.01.2023')),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_next))
-                ],
-              ),
+              const DatePicker(),
               FutureBuilder(
                 future: getMealsFromDatabase(),
                 builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
