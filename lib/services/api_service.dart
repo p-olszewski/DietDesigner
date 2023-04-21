@@ -26,6 +26,7 @@ class APIService {
       'offset': Random().nextInt(100),
       'addRecipeInformation': true,
       'addRecipeNutrition': true,
+      'sort': 'random',
     }.map(
       (key, value) => MapEntry(key, value.toString()),
     );
