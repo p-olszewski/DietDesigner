@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateProvider with ChangeNotifier {
-  String _date = '';
+  DateTime _date = DateTime.now();
 
-  String get date => _date;
+  DateTime get date => _date;
+  String get formattedDate => DateFormat('dd.MM.yyyy').format(date);
 
   void setDate(DateTime date) {
-    final String formattedDate = DateFormat('dd.MM.yyyy').format(date);
-    _date = formattedDate;
+    _date = date;
     notifyListeners();
   }
 
