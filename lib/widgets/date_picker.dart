@@ -12,20 +12,37 @@ class DatePicker extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_before)),
+        IconButton(
+          onPressed: () {
+            DateTime currentDate = context.read<DateProvider>().date;
+            context.read<DateProvider>().setDate(
+                  currentDate.subtract(const Duration(days: 1)),
+                );
+          },
+          icon: const Icon(Icons.navigate_before),
+        ),
         TextButton(
-            onPressed: () async {
-              DateTime? newDate = await showDatePicker(
-                context: context,
-                initialDate: context.read<DateProvider>().date,
-                firstDate: DateTime(1900),
-                lastDate: DateTime(2100),
-              );
-              if (newDate == null) return;
-              context.read<DateProvider>().setDate(newDate);
-            },
-            child: const DateButton()),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.navigate_next))
+          onPressed: () async {
+            DateTime? newDate = await showDatePicker(
+              context: context,
+              initialDate: context.read<DateProvider>().date,
+              firstDate: DateTime(1900),
+              lastDate: DateTime(2100),
+            );
+            if (newDate == null) return;
+            context.read<DateProvider>().setDate(newDate);
+          },
+          child: const DateButton(),
+        ),
+        IconButton(
+          onPressed: () {
+            DateTime currentDate = context.read<DateProvider>().date;
+            context.read<DateProvider>().setDate(
+                  currentDate.add(const Duration(days: 1)),
+                );
+          },
+          icon: const Icon(Icons.navigate_next),
+        )
       ],
     );
   }
