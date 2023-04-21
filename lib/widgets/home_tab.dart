@@ -1,10 +1,12 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/services/firestore.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/date_picker.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -16,6 +18,7 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
+    final dateProvider = context.read<DateProvider>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -26,12 +29,12 @@ class _HomeTabState extends State<HomeTab> {
             children: [
               const SizedBox(height: 30),
               Text(
-                "Your meal plan for ${getCurrentDate()}r.",
+                "Your meal plan for ${context.watch<DateProvider>().formattedDate}r.",
                 style: const TextStyle(fontSize: 16),
               ),
               const DatePicker(),
               FutureBuilder(
-                future: getMealsFromDatabase(),
+                future: getMealsFromDatabase(dateProvider.formattedDate),
                 builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                   if (snapshot.hasData) {
                     return snapshot.data!.isEmpty
@@ -83,10 +86,11 @@ class _HomeTabState extends State<HomeTab> {
 
   void _getMealsFromAPI() async {
     List<Meal>? meals = [];
+    String date = context.read<DateProvider>().formattedDate;
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
       if (meals == null) return;
-      await saveMealsToDatabase(meals);
+      await saveMealsToDatabase(meals, date);
       PopupMessenger.info('Successfully saved ${meals.length} meals to the Firestore!');
     } catch (e) {
       PopupMessenger.error(e.toString());

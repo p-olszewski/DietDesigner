@@ -11,6 +11,4 @@ class DateProvider with ChangeNotifier {
     _date = date;
     notifyListeners();
   }
-
-  String getCurrentDate() => DateFormat('dd.MM.yyyy').format(DateTime.now());
 }
