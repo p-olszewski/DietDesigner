@@ -1,7 +1,8 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
-import 'package:diet_designer/services/firestore.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/date_picker.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
@@ -17,9 +18,16 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = context.watch<DateProvider>();
+    final uid = context.watch<AuthProvider>().uid!;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -38,7 +46,7 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     const DatePicker(),
                     FutureBuilder(
-                      future: getMealsFromDatabase(dateProvider.dateFormattedWithDots),
+                      future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
                       builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data!.isEmpty) {
@@ -92,10 +100,11 @@ class _HomeTabState extends State<HomeTab> {
     setState(() => _isLoading = true);
     List<Meal>? meals = [];
     String date = context.read<DateProvider>().dateFormattedWithDots;
+    String uid = context.read<AuthProvider>().uid!;
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
       if (meals == null) return;
-      await saveMealsToDatabase(meals, date);
+      await saveMealsToDatabase(uid, meals, date);
     } catch (e) {
       PopupMessenger.error(e.toString());
     }

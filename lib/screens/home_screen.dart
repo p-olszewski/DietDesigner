@@ -6,14 +6,14 @@ import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
