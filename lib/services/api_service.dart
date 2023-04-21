@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:diet_designer/models/meal.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,7 +23,7 @@ class APIService {
       'maxProtein': proteins + 20,
       'minCarbs': 20,
       'number': mealsNumber,
-      'offset': 60,
+      'offset': Random().nextInt(100),
       'addRecipeInformation': true,
       'addRecipeNutrition': true,
     }.map(
