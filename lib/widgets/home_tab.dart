@@ -26,7 +26,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    final dateProvider = context.watch<DateProvider>();
+    final date = context.watch<DateProvider>().dateFormattedWithDots;
     final uid = context.watch<AuthProvider>().uid!;
     return Scaffold(
       body: Padding(
@@ -46,7 +46,7 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     const DatePicker(),
                     FutureBuilder(
-                      future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
+                      future: getMealsFromDatabase(uid, date),
                       builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data!.isEmpty) {
@@ -62,7 +62,7 @@ class _HomeTabState extends State<HomeTab> {
                                     const Text('No meals found.'),
                                     const SizedBox(height: 10),
                                     ElevatedButton(
-                                      onPressed: () => _getMealsFromAPI(),
+                                      onPressed: () => _generateNutritionPlan(uid, date),
                                       child: const Text('Generate nutrition plan'),
                                     ),
                                   ],
@@ -96,11 +96,9 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  void _getMealsFromAPI() async {
+  void _generateNutritionPlan(String uid, String date) async {
     setState(() => _isLoading = true);
     List<Meal>? meals = [];
-    String date = context.read<DateProvider>().dateFormattedWithDots;
-    String uid = context.read<AuthProvider>().uid!;
     try {
       meals = await APIService.instance.fetchMeals(550, 40, 5);
       if (meals == null) return;
