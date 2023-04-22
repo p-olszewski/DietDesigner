@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/login_textformfield.dart';
@@ -27,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final widgetWidth = screenWidth / 1.3;
     final backgroundColor = Theme.of(context).colorScheme.primaryContainer;
     final fontColor = Theme.of(context).colorScheme.onPrimaryContainer;
-    final authProvider = context.read<AuthProvider>();
 
     return Scaffold(
       body: Container(
@@ -79,28 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: widgetWidth / 1.5,
                   height: 40,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      bool shouldRedirect = _isLoginPage
-                          ? await authProvider.signIn(
-                              _emailFieldController.text,
-                              _passwordFieldController.text,
-                            )
-                          : await authProvider.signUp(
-                              _emailFieldController.text,
-                              _passwordFieldController.text,
-                              _repeatedPasswordFieldController.text,
-                            );
-                      if (shouldRedirect) {
-                        bool hasCalculatedCalories = await checkUserHasCalculatedData(authProvider.uid!);
-                        if (!mounted) return;
-                        if (!hasCalculatedCalories) {
-                          Navigator.pushReplacementNamed(context, '/calculator');
-                          PopupMessenger.error('You have no calculated data, go to calculator!');
-                        } else {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        }
-                      }
-                    },
+                    onPressed: loginOrRegisterUser,
                     child: Text(_isLoginPage ? "Login" : "Register and login"),
                   ),
                 ),
@@ -125,5 +104,30 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void loginOrRegisterUser() async {
+    final authProvider = context.read<AuthProvider>();
+    bool shouldRedirect = _isLoginPage
+        ? await authProvider.signIn(
+            _emailFieldController.text,
+            _passwordFieldController.text,
+          )
+        : await authProvider.signUp(
+            _emailFieldController.text,
+            _passwordFieldController.text,
+            _repeatedPasswordFieldController.text,
+          );
+    if (shouldRedirect) {
+      bool hasCalculatedCalories = await checkUserHasCalculatedData(authProvider.uid!);
+      if (!mounted) return;
+      context.read<DateProvider>().setDate(DateTime.now());
+      if (!hasCalculatedCalories) {
+        Navigator.pushReplacementNamed(context, '/calculator');
+        PopupMessenger.error('You have no calculated data, go to calculator!');
+      } else {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    }
   }
 }
