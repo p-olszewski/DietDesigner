@@ -100,7 +100,9 @@ class _HomeTabState extends State<HomeTab> {
     setState(() => _isLoading = true);
     List<Meal>? meals = [];
     try {
-      meals = await APIService.instance.fetchMeals(550, 40, 5);
+      final user = await getUserData(uid);
+      if (user == null) return;
+      meals = await APIService.instance.fetchMeals(user);
       if (meals == null) return;
       await saveMealsToDatabase(uid, meals, date);
     } catch (e) {
