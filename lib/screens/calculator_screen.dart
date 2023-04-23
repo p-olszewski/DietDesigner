@@ -56,17 +56,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final uid = context.read<AuthProvider>().uid!;
     final hasData = await checkUserHasCalculatedData(uid);
     if (hasData) {
-      final userData = await getUserData(uid);
-      if (userData == null) return;
+      final user = await getUserData(uid);
+      if (user == null) return;
 
       setState(() {
-        _ageFieldController.text = userData.age.toString();
-        _heightFieldController.text = userData.height.toString();
-        _weightFieldController.text = userData.weight.toString();
-        _gender = userData.gender!;
-        _activity = userData.activity!.toDouble();
-        _target = userData.target!;
-        _mealsNumber = userData.mealsNumber!.toDouble();
+        _ageFieldController.text = user.age.toString();
+        _heightFieldController.text = user.height.toString();
+        _weightFieldController.text = user.weight.toString();
+        _gender = user.gender!;
+        _activity = user.activity!.toDouble();
+        _target = user.target!;
+        _mealsNumber = user.mealsNumber!.toDouble();
       });
     }
   }
@@ -184,8 +184,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       child: Slider(
                         value: _mealsNumber,
                         onChanged: (value) => setState(() => _mealsNumber = value),
-                        divisions: 4,
-                        min: 2,
+                        divisions: 3,
+                        min: 3,
                         max: 6,
                         label: _mealsNumber.round().toString(),
                       ),
