@@ -99,10 +99,23 @@ class _HomeTabState extends State<HomeTab> {
   void _generateNutritionPlan(String uid, String date) async {
     setState(() => _isLoading = true);
     List<Meal>? meals = [];
+    int retryCount = 0;
+    const maxRetries = 5;
+
     try {
       final user = await getUserData(uid);
       if (user == null) return;
-      meals = await APIService.instance.fetchMeals(user);
+      do {
+        try {
+          meals = await APIService.instance.fetchMeals(user);
+        } catch (e) {
+          debugPrint('Error fetching meals: $e');
+          PopupMessenger.error("Try again.");
+        }
+        retryCount++;
+        await Future.delayed(const Duration(seconds: 1));
+      } while (meals == null && retryCount < maxRetries);
+
       if (meals == null) return;
       await saveMealsToDatabase(uid, meals, date);
     } catch (e) {
