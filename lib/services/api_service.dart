@@ -15,30 +15,9 @@ class APIService {
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 
   Future<List<Meal>?> fetchMeals(User user) async {
-    Map<String, String> headers = {
-      HttpHeaders.contentTypeHeader: 'application/json',
-      'x-api-key': apiKey,
-    };
-    final Map<String, String> parameters = {
-      'minCalories': 500,
-      'maxCalories': 600,
-      'minProtein': 20,
-      'maxProtein': 60,
-      'minCarbs': 20,
-      'number': 5,
-      'offset': Random().nextInt(100),
-      'addRecipeInformation': true,
-      'addRecipeNutrition': true,
-      'sort': 'random',
-    }.map(
-      (key, value) => MapEntry(key, value.toString()),
-    );
-
-    Uri uri = Uri.https(
-      _baseUrl,
-      _path,
-      parameters,
-    );
+    Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
+    final Map<String, String> parameters = _getPersonalizedParameters(user);
+    Uri uri = Uri.https(_baseUrl, _path, parameters);
 
     try {
       final response = await http.get(uri, headers: headers);
@@ -56,5 +35,22 @@ class APIService {
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
+  }
+
+  Map<String, String> _getPersonalizedParameters(User user) {
+    int mealsNumber = user.mealsNumber!;
+    int kcal = (user.calories! / mealsNumber).round();
+    int protein = (user.proteins! / mealsNumber).round();
+    return {
+      'minCalories': (kcal - 50).toString(),
+      'maxCalories': (kcal + 50).toString(),
+      'minProtein': (protein - 10).toString(),
+      'maxProtein': (protein + 10).toString(),
+      'number': mealsNumber.toString(),
+      'offset': Random().nextInt(50).toString(),
+      'addRecipeInformation': true.toString(),
+      'addRecipeNutrition': true.toString(),
+      'sort': 'random',
+    };
   }
 }

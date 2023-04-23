@@ -184,8 +184,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       child: Slider(
                         value: _mealsNumber,
                         onChanged: (value) => setState(() => _mealsNumber = value),
-                        divisions: 4,
-                        min: 2,
+                        divisions: 3,
+                        min: 3,
                         max: 6,
                         label: _mealsNumber.round().toString(),
                       ),
