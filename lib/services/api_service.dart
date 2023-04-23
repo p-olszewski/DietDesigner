@@ -14,20 +14,21 @@ class APIService {
   static const String _baseUrl = 'api.spoonacular.com';
   static const String _path = '/recipes/complexSearch';
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
+  List<Meal>? _breakfastResults;
+  List<Meal>? _restOfMealsResults;
 
   Future<List<Meal>?> getMealsFromAPI(User user) async {
     try {
-      List<Meal> meals = [];
-      List<Meal>? breakfastResults = (await _fetchMeals(user, mealsNumber: 1, mealType: 'breakfast'))?.cast<Meal>();
-      List<Meal>? restOfMealsResults = (await _fetchMeals(user, mealsNumber: user.mealsNumber! - 1))?.cast<Meal>();
-      if (breakfastResults == null || restOfMealsResults == null) return null;
+      _breakfastResults = (await _fetchMeals(user, mealsNumber: 1, mealType: 'breakfast'))?.cast<Meal>();
+      _restOfMealsResults = (await _fetchMeals(user, mealsNumber: user.mealsNumber! - 1))?.cast<Meal>();
+      if (_breakfastResults == null || _restOfMealsResults == null) return null;
 
-      meals.add(breakfastResults[0]);
-      for (var meal in restOfMealsResults) {
-        meals.add(meal);
+      List<Meal> allMeals = [];
+      allMeals.add(_breakfastResults![0]);
+      for (var meal in _restOfMealsResults!) {
+        allMeals.add(meal);
       }
-
-      return meals;
+      return allMeals;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Failed to load data: $e');
@@ -47,7 +48,6 @@ class APIService {
       for (var meal in responseResults) {
         meals.add(Meal.fromJson(meal));
       }
-
       return meals;
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -55,24 +55,30 @@ class APIService {
   }
 
   Map<String, String> _getPersonalizedParameters(User user, {required int mealsNumber, String mealType = ''}) {
-    final kcal = (user.calories! / user.mealsNumber!).round();
-    final protein = (user.proteins! / user.mealsNumber!).round();
+    int kcalPerMeal = (user.calories! / user.mealsNumber!).round();
+    int proteinsPerMeal;
+
     Map<String, String> parameters;
     switch (mealType) {
       case 'breakfast':
         parameters = {
-          'minCalories': (kcal - 150).toString(),
-          'maxCalories': (kcal + 150).toString(),
+          'minProtein': '15',
+          'minCalories': (kcalPerMeal - 150).toString(),
+          'maxCalories': (kcalPerMeal + 150).toString(),
           'offset': Random().nextInt(20).toString(),
           'type': mealType,
         };
         break;
       default:
+        int remainingKcal = (user.calories! - _breakfastResults![0].calories).round();
+        int remainingProteins = (user.proteins! - _breakfastResults![0].proteins).round();
+        kcalPerMeal = (remainingKcal / mealsNumber).round();
+        proteinsPerMeal = (remainingProteins / mealsNumber).round();
         parameters = {
-          'minCalories': (kcal - 50).toString(),
-          'maxCalories': (kcal + 50).toString(),
-          'minProtein': (protein - 10).toString(),
-          'maxProtein': (protein + 10).toString(),
+          'minCalories': (kcalPerMeal - 50).toString(),
+          'maxCalories': (kcalPerMeal + 50).toString(),
+          'minProtein': (proteinsPerMeal - 10).toString(),
+          'maxProtein': (proteinsPerMeal + 10).toString(),
           'offset': Random().nextInt(50).toString(),
         };
         break;
