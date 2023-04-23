@@ -15,29 +15,42 @@ class APIService {
   static const String _path = '/recipes/complexSearch';
   final String apiKey = dotenv.env['SPOONACULAR_API_KEY']!;
 
-  Future<List<Meal>?> fetchMeals(User user) async {
+  Future<List<Meal>?> getMealsFromAPI(User user) async {
     try {
-      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
       List<Meal> meals = [];
+      List<Meal>? breakfastResults = (await _fetchMeals(user, mealsNumber: 1, mealType: 'breakfast'))?.cast<Meal>();
+      List<Meal>? restOfMealsResults = (await _fetchMeals(user, mealsNumber: user.mealsNumber! - 1))?.cast<Meal>();
+      if (breakfastResults == null || restOfMealsResults == null) return null;
 
-      final breakfastParameters = _getPersonalizedParameters(user, mealsNumber: 1, mealType: 'breakfast');
-      final restOfMealsParameters = _getPersonalizedParameters(user, mealsNumber: user.mealsNumber! - 1);
-
-      final breakfastResponse = await _makeRequest(_baseUrl, _path, breakfastParameters, headers);
-      final restOfMealsResponse = await _makeRequest(_baseUrl, _path, restOfMealsParameters, headers);
-
-      var breakfastResults = breakfastResponse['results'];
-      var restOfMealsResults = restOfMealsResponse['results'];
-
-      meals.add(Meal.fromJson(breakfastResults[0]));
+      meals.add(breakfastResults[0]);
       for (var meal in restOfMealsResults) {
-        meals.add(Meal.fromJson(meal));
+        meals.add(meal);
       }
 
       return meals;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Failed to load data: $e');
+    }
+  }
+
+  Future<List<dynamic>?> _fetchMeals(User user, {required int mealsNumber, String mealType = ''}) async {
+    Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
+    Map<String, String> parameters = _getPersonalizedParameters(user, mealsNumber: mealsNumber, mealType: mealType);
+    Uri uri = Uri.https(_baseUrl, _path, parameters);
+
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      var responseResults = data['results'];
+      List<Meal> meals = [];
+      for (var meal in responseResults) {
+        meals.add(Meal.fromJson(meal));
+      }
+
+      return meals;
+    } else {
+      throw Exception('Failed to load data: ${response.statusCode}');
     }
   }
 
@@ -50,7 +63,7 @@ class APIService {
         parameters = {
           'minCalories': (kcal - 150).toString(),
           'maxCalories': (kcal + 150).toString(),
-          'offset': Random().nextInt(50).toString(),
+          'offset': Random().nextInt(20).toString(),
           'type': mealType,
         };
         break;
@@ -72,21 +85,5 @@ class APIService {
       'sort': 'random',
       ...parameters
     };
-  }
-
-  Future<Map<String, dynamic>> _makeRequest(
-    String baseUrl,
-    String path,
-    Map<String, String> parameters,
-    Map<String, String> headers,
-  ) async {
-    Uri uri = Uri.https(baseUrl, path, parameters);
-    final response = await http.get(uri, headers: headers);
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load data: ${response.statusCode}');
-    }
   }
 }

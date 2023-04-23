@@ -107,7 +107,7 @@ class _HomeTabState extends State<HomeTab> {
       if (user == null) return;
       do {
         try {
-          meals = await APIService.instance.fetchMeals(user);
+          meals = await APIService.instance.getMealsFromAPI(user);
         } catch (e) {
           debugPrint('Error fetching meals: $e');
           PopupMessenger.error("Try again.");
