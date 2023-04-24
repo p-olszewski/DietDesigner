@@ -9,26 +9,29 @@ class MealDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meal details'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Hero(
-              tag: 'meal',
-              child: Container(
-                width: double.infinity,
-                height: 300,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(meal.image),
-                    fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250,
+            pinned: true,
+            forceElevated: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(meal.title),
+              background: Hero(
+                tag: 'meal',
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(meal.image),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
             ),
-            Padding(
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +72,8 @@ class MealDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
