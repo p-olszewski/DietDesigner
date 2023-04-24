@@ -11,6 +11,7 @@ class Meal {
   final List<Map<String, dynamic>>? ingredients;
   final List<String>? steps;
   final List<String>? dishTypes;
+  final List<String>? diets;
   final String imageThumbnail;
   final String image;
   final String? sourceUrl;
@@ -28,6 +29,7 @@ class Meal {
     this.ingredients,
     this.steps,
     this.dishTypes,
+    this.diets,
     this.imageThumbnail,
     this.image,
     this.sourceUrl,
@@ -53,6 +55,7 @@ class Meal {
             .cast<Map<String, dynamic>>(),
         steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList().cast<String>(),
         dishTypes = List<String>.from(json['dishTypes']),
+        diets = List<String>.from(json['diets']),
         imageThumbnail = 'https://spoonacular.com/recipeImages/${json['id']}-90x90.jpg',
         image = 'https://spoonacular.com/recipeImages/${json['id']}-636x393.jpg',
         sourceUrl = json['sourceUrl'];
@@ -70,6 +73,7 @@ class Meal {
         'ingredients': ingredients,
         'steps': steps,
         'dishTypes': dishTypes,
+        'diets': diets,
         'imageThumbnail': imageThumbnail,
         'image': image,
         'sourceUrl': sourceUrl,
@@ -88,6 +92,7 @@ class Meal {
         ingredients = json['ingredients'].map((ingredient) => Map<String, dynamic>.from(ingredient)).toList().cast<Map<String, dynamic>>(),
         steps = json['steps'].map((step) => step.toString()).toList().cast<String>(),
         dishTypes = json['dishTypes'].map((dishType) => dishType.toString()).toList().cast<String>(),
+        diets = json['diets'].map((diet) => diet.toString()).toList().cast<String>(),
         imageThumbnail = json['imageThumbnail'],
         image = json['image'],
         sourceUrl = json['sourceUrl'];
