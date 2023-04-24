@@ -17,22 +17,38 @@ class MealDetailsScreen extends StatelessWidget {
           children: [
             Hero(
               tag: 'meal',
-              child: AspectRatio(
-                aspectRatio: 4 / 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(meal.image),
-                      fit: BoxFit.cover,
+              child: Stack(
+                fit: StackFit.loose,
+                children: [
+                  Container(
+                    height: 350,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(meal.image),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    top: 42,
+                    left: 21,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                      child: const BackButton(),
+                    ),
+                  ),
+                ],
               ),
             ),
             DraggableScrollableSheet(
               initialChildSize: 0.7,
               minChildSize: 0.7,
-              maxChildSize: 0.9,
+              maxChildSize: 0.90,
               builder: (context, scrollController) {
                 return SafeArea(
                   child: Container(
