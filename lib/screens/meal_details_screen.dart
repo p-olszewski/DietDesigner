@@ -32,6 +32,7 @@ class MealDetailsScreen extends StatelessWidget {
             DraggableScrollableSheet(
               initialChildSize: 0.7,
               minChildSize: 0.7,
+              maxChildSize: 0.9,
               builder: (context, scrollController) {
                 return SafeArea(
                   child: Container(
