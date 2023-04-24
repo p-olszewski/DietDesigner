@@ -93,35 +93,6 @@ class MealDetailsData extends StatelessWidget {
 
   final Meal meal;
 
-  Container _buildNutritionInfoContainer(String value, String label) {
-    return Container(
-      width: 80,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -135,7 +106,7 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 28.0, top: 28, right: 28.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 28.0, top: 34, right: 28.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -161,15 +132,7 @@ class MealDetailsData extends StatelessWidget {
                         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildNutritionInfoContainer('${meal.calories.round()}', 'kcal'),
-                          _buildNutritionInfoContainer('${meal.proteins.round()}g', 'proteins'),
-                          _buildNutritionInfoContainer('${meal.fats.round()}g', 'fats'),
-                          _buildNutritionInfoContainer('${meal.carbs.round()}g', 'carbs'),
-                        ],
-                      ),
+                      MealDetailsNutritionsRow(meal: meal),
                       const SizedBox(height: 16),
                       Text(
                           'Ready in: ${meal.readyInMinutes} min\nServings: ${meal.servings}\nPrice per serving: ${meal.pricePerServing}\$'),
@@ -217,6 +180,76 @@ class MealDetailsData extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class MealDetailsNutritionsRow extends StatelessWidget {
+  final Meal meal;
+
+  const MealDetailsNutritionsRow({Key? key, required this.meal}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildNutritionItem(
+          context,
+          '${meal.calories.round().toString()}g',
+          'kcal',
+        ),
+        _buildNutritionItem(
+          context,
+          '${meal.proteins.round().toString()}g',
+          'protein',
+        ),
+        _buildNutritionItem(
+          context,
+          '${meal.fats.round().toString()}g',
+          'fat',
+        ),
+        _buildNutritionItem(
+          context,
+          '${meal.carbs.round().toString()}g',
+          'carbs',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNutritionItem(
+    BuildContext context,
+    String value,
+    String nutrient,
+  ) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyMedium!.copyWith(
+      color: theme.colorScheme.onSecondaryContainer,
+    );
+
+    return Container(
+      width: 80,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: textStyle.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            nutrient,
+            style: textStyle,
+          ),
+        ],
+      ),
     );
   }
 }
