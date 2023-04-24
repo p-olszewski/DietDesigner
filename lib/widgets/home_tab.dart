@@ -76,7 +76,13 @@ class _HomeTabState extends State<HomeTab> {
                               shrinkWrap: true,
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
-                                return MealCard(meal: snapshot.data![index]);
+                                return GestureDetector(
+                                  onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
+                                  child: Hero(
+                                    tag: 'meal-${snapshot.data![index].id}',
+                                    child: MealCard(meal: snapshot.data![index]),
+                                  ),
+                                );
                               },
                             );
                           }
