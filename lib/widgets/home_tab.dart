@@ -116,7 +116,7 @@ class _HomeTabState extends State<HomeTab> {
           meals = await APIService.instance.getMealsFromAPI(user);
         } catch (e) {
           debugPrint('Error fetching meals: $e');
-          PopupMessenger.error("Try again.");
+          PopupMessenger.error("Please try again later.");
         }
         retryCount++;
         await Future.delayed(const Duration(seconds: 1));
