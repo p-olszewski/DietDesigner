@@ -34,7 +34,7 @@ class MealCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(meal.image),
+                  image: NetworkImage(meal.imageThumbnail),
                 ),
               ),
             ),
