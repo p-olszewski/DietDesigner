@@ -1,6 +1,8 @@
 import 'package:animations/animations.dart';
+import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/login_textformfield.dart';
@@ -120,8 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
           );
     if (shouldRedirect) {
       bool hasCalculatedCalories = await checkUserHasCalculatedData(authProvider.uid!);
+      await setProviders(authProvider.uid!);
       if (!mounted) return;
-      context.read<DateProvider>().setDate(DateTime.now());
       if (!hasCalculatedCalories) {
         Navigator.pushReplacementNamed(context, '/calculator');
         PopupMessenger.error('You have no calculated data, go to calculator!');
@@ -129,5 +131,12 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacementNamed(context, '/home');
       }
     }
+  }
+
+  Future setProviders(String uid) async {
+    User? user = await getUserData(uid);
+    if (!mounted) return;
+    context.read<DateProvider>().setDate(DateTime.now());
+    context.read<UserDataProvider>().setUser(user!);
   }
 }

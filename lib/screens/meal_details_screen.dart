@@ -1,6 +1,8 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class MealDetailsScreen extends StatefulWidget {
   final Meal meal;
@@ -16,6 +18,11 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
 
   void _addToFavourites() {
     setState(() => isFavourite = !isFavourite);
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -207,16 +214,17 @@ class MealDetailsData extends StatelessWidget {
     TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
           color: Colors.grey[600],
         );
+    var user = context.read<UserDataProvider>().user;
 
     nutrientItem(String value, String label, double percent) {
       Color progressColor = percent < 0.5
           ? Theme.of(context).colorScheme.primary
-          : percent < 0.8
+          : percent < 0.75
               ? Colors.orange
               : Colors.red;
       return CircularPercentIndicator(
         radius: 36.0,
-        lineWidth: 10.0,
+        lineWidth: 9.0,
         percent: percent,
         progressColor: progressColor,
         backgroundColor: progressColor.withOpacity(0.2),
@@ -241,23 +249,23 @@ class MealDetailsData extends StatelessWidget {
       children: [
         nutrientItem(
           meal.calories.round().toString(),
-          'calories',
-          meal.calories / 3000,
+          'kcal',
+          meal.calories / user.calories!,
         ),
         nutrientItem(
           '${meal.proteins.round().toString()}g',
           'protein',
-          meal.proteins / 200,
+          meal.proteins / user.proteins!,
         ),
         nutrientItem(
           '${meal.fats.round().toString()}g',
           'fat',
-          meal.fats / 50,
+          meal.fats / user.fats!,
         ),
         nutrientItem(
           '${meal.carbs.round().toString()}g',
           'carbs',
-          meal.carbs / 300,
+          meal.carbs / user.carbs!,
         ),
       ],
     );
