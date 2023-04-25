@@ -53,40 +53,46 @@ class MealDetailsPhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'meal',
-      child: Stack(
-        fit: StackFit.loose,
-        children: [
-          Container(
-            height: 400,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(meal.image),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 40,
-            left: 24,
-            child: Container(
-              width: 45,
-              height: 45,
+      tag: 'meal-photo-${meal.id}',
+      child: GestureDetector(
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => MealPhotoDialog(meal: meal),
+        ),
+        child: Stack(
+          fit: StackFit.loose,
+          children: [
+            Container(
+              height: 400,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 1,
-                    offset: const Offset(1, 1),
-                  ),
-                ],
+                image: DecorationImage(
+                  image: NetworkImage(meal.image),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: const BackButton(),
             ),
-          ),
-        ],
+            Positioned(
+              top: 40,
+              left: 24,
+              child: Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 1,
+                      offset: const Offset(1, 1),
+                    ),
+                  ],
+                ),
+                child: const BackButton(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -315,6 +321,45 @@ class MealDetailsData extends StatelessWidget {
           return Text(dishType);
         }).toList(),
       ],
+    );
+  }
+}
+
+class MealPhotoDialog extends StatelessWidget {
+  const MealPhotoDialog({Key? key, required this.meal}) : super(key: key);
+
+  final Meal meal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Hero(
+          tag: 'meal-photo-${meal.id}',
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: InteractiveViewer(
+              minScale: 1.0,
+              maxScale: 4.0,
+              child: AspectRatio(
+                aspectRatio: 636 / 393,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(meal.image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
