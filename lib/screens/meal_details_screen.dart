@@ -52,47 +52,49 @@ class MealDetailsPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: 'meal-photo-${meal.id}',
-      child: GestureDetector(
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => MealPhotoDialog(meal: meal),
-        ),
-        child: Stack(
-          fit: StackFit.loose,
-          children: [
-            Container(
-              height: 400,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(meal.image),
-                  fit: BoxFit.cover,
-                ),
+    return GestureDetector(
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => MealPhotoDialog(meal: meal),
+      ),
+      child: Stack(
+        fit: StackFit.loose,
+        children: [
+          Container(
+            height: 400,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(meal.image),
+                fit: BoxFit.cover,
               ),
             ),
-            Positioned(
-              top: 40,
-              left: 24,
-              child: Container(
-                width: 45,
-                height: 45,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 1,
-                      offset: const Offset(1, 1),
+          ),
+          Positioned(
+            top: 40,
+            left: 24,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Stack(
+                children: const <Widget>[
+                  Positioned(
+                    left: 2.0,
+                    top: 2.0,
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black54,
+                      size: 32,
                     ),
-                  ],
-                ),
-                child: const BackButton(),
+                  ),
+                  Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -152,7 +154,7 @@ class MealDetailsData extends StatelessWidget {
                       _buildIngredients(context, meal, subtitleStyle, textStyle),
                       const SizedBox(height: 32),
                       _buildRecipe(context, meal, subtitleStyle, textStyle),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 24),
                       _buildDishTypes(context, meal, subtitleStyle, textStyle),
                       const SizedBox(height: 32),
                     ],
@@ -227,7 +229,7 @@ class MealDetailsData extends StatelessWidget {
         ),
         circularStrokeCap: CircularStrokeCap.round,
         animation: true,
-        animationDuration: 600,
+        animationDuration: 800,
         footer: Text(
           label,
           style: labelStyle,
@@ -294,7 +296,10 @@ class MealDetailsData extends StatelessWidget {
         ...meal.steps!.asMap().entries.map((entry) {
           final index = entry.key + 1;
           final step = entry.value;
-          return Text('$index. $step\n', style: textStyle);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text('$index. $step', style: textStyle),
+          );
         }).toList(),
       ],
     );
@@ -326,24 +331,21 @@ class MealPhotoDialog extends StatelessWidget {
     return Dialog(
       child: GestureDetector(
         onTap: () => Navigator.of(context).pop(),
-        child: Hero(
-          tag: 'meal-photo-${meal.id}',
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: InteractiveViewer(
-              minScale: 1.0,
-              maxScale: 4.0,
-              child: AspectRatio(
-                aspectRatio: 636 / 393,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: NetworkImage(meal.image),
-                      fit: BoxFit.cover,
-                    ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: InteractiveViewer(
+            minScale: 1.0,
+            maxScale: 4.0,
+            child: AspectRatio(
+              aspectRatio: 636 / 393,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(meal.image),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
