@@ -29,76 +29,83 @@ class _HomeTabState extends State<HomeTab> {
     final dateProvider = context.watch<DateProvider>();
     final uid = context.watch<AuthProvider>().uid!;
 
-    // final dateProvider = context.read<DateProvider>();
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20),
-                    WeeklyDatePicker(
-                      selectedDay: dateProvider.date, // DateTime
-                      changeDay: (value) => setState(() {
-                        context.read<DateProvider>().setDate(value);
-                      }),
-                      enableWeeknumberText: false,
-                      selectedBackgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    FutureBuilder(
-                      future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
-                      builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isEmpty) {
-                            return SizedBox(
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text('No meals found.'),
-                                    const SizedBox(height: 10),
-                                    ElevatedButton(
-                                      onPressed: () => _generateNutritionPlan(uid, dateProvider.dateFormattedWithDots),
-                                      child: const Text('Generate nutrition plan'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            return ListView.builder(
-                              physics: const ScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                                  child: Hero(
-                                    tag: 'meal-${snapshot.data![index].id}',
-                                    child: MealCard(meal: snapshot.data![index]),
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        } else {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-                      },
-                    ),
-                  ],
-                ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: WeeklyDatePicker(
+                selectedDay: dateProvider.date, // DateTime
+                changeDay: (value) => setState(() {
+                  context.read<DateProvider>().setDate(value);
+                }),
+                enableWeeknumberText: false,
+                selectedBackgroundColor: Theme.of(context).colorScheme.primary,
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          FutureBuilder(
+                            future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
+                            builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data!.isEmpty) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height * 0.6,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Text('No meals found.'),
+                                          const SizedBox(height: 10),
+                                          ElevatedButton(
+                                            onPressed: () => _generateNutritionPlan(uid, dateProvider.dateFormattedWithDots),
+                                            child: const Text('Generate nutrition plan'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                    physics: const ScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
+                                        child: Hero(
+                                          tag: 'meal-${snapshot.data![index].id}',
+                                          child: MealCard(meal: snapshot.data![index]),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              } else {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
