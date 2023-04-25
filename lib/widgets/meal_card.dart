@@ -19,22 +19,23 @@ class MealCard extends StatelessWidget {
         Card(
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            leading: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 6,
-                    offset: const Offset(1, 1),
+            leading: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: const Offset(1, 1),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(15.0),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(meal.imageThumbnail),
                   ),
-                ],
-                borderRadius: BorderRadius.circular(15.0),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(meal.image),
                 ),
               ),
             ),
