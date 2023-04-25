@@ -49,7 +49,6 @@ class _HomeTabState extends State<HomeTab> {
                       }),
                       enableWeeknumberText: false,
                       selectedBackgroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundColor: Colors.transparent,
                     ),
                     FutureBuilder(
                       future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
