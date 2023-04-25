@@ -4,10 +4,10 @@ import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
-import 'package:diet_designer/widgets/date_picker.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weekly_date_picker/weekly_date_picker.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -26,8 +26,10 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    final date = context.watch<DateProvider>().dateFormattedWithDots;
+    final dateProvider = context.watch<DateProvider>();
     final uid = context.watch<AuthProvider>().uid!;
+
+    // final dateProvider = context.read<DateProvider>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -39,14 +41,18 @@ class _HomeTabState extends State<HomeTab> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 30),
-                    const Text(
-                      "Your meal plan for:",
-                      style: TextStyle(fontSize: 16),
+                    const SizedBox(height: 20),
+                    WeeklyDatePicker(
+                      selectedDay: dateProvider.date, // DateTime
+                      changeDay: (value) => setState(() {
+                        context.read<DateProvider>().setDate(value);
+                      }),
+                      enableWeeknumberText: false,
+                      selectedBackgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Colors.transparent,
                     ),
-                    const DatePicker(),
                     FutureBuilder(
-                      future: getMealsFromDatabase(uid, date),
+                      future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
                       builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data!.isEmpty) {
@@ -62,7 +68,7 @@ class _HomeTabState extends State<HomeTab> {
                                     const Text('No meals found.'),
                                     const SizedBox(height: 10),
                                     ElevatedButton(
-                                      onPressed: () => _generateNutritionPlan(uid, date),
+                                      onPressed: () => _generateNutritionPlan(uid, dateProvider.dateFormattedWithDots),
                                       child: const Text('Generate nutrition plan'),
                                     ),
                                   ],
