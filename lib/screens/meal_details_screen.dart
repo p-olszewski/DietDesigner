@@ -20,23 +20,20 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SizedBox(
-          height: double.infinity,
-          width: double.infinity,
-          child: Stack(
-            fit: StackFit.loose,
-            children: [
-              MealDetailsPhoto(meal: widget.meal),
-              MealDetailsData(meal: widget.meal),
-            ],
-          ),
+      body: Stack(
+        fit: StackFit.loose,
+        children: [
+          MealDetailsPhoto(meal: widget.meal),
+          MealDetailsData(meal: widget.meal),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _addToFavourites(),
+        child: Icon(
+          isFavourite ? Icons.favorite : Icons.favorite_border,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _addToFavourites(),
-          child: Icon(
-            isFavourite ? Icons.favorite : Icons.favorite_border,
-          ),
-        ));
+      ),
+    );
   }
 }
 
@@ -62,13 +59,13 @@ class MealDetailsPhoto extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 42,
-            left: 21,
+            top: 40,
+            left: 24,
             child: Container(
-              width: 48,
-              height: 48,
+              width: 45,
+              height: 45,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
@@ -106,12 +103,12 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 30.0, top: 30.0, right: 30.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 28.0, top: 30.0, right: 28.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(40.0),
-                    topRight: Radius.circular(40.0),
+                    topLeft: Radius.circular(36.0),
+                    topRight: Radius.circular(36.0),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -147,7 +144,7 @@ class MealDetailsData extends StatelessWidget {
                                 size: 20,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              Text(' ${meal.pricePerServing!.toStringAsFixed(2)}\$ ps'),
+                              Text(' ${meal.pricePerServing!.toStringAsFixed(2)}\$'),
                             ],
                           ),
                         ],
@@ -160,15 +157,26 @@ class MealDetailsData extends StatelessWidget {
                       const SizedBox(height: 24),
                       MealDetailsNutritionsRow(meal: meal),
                       const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.restaurant_outlined,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.primary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.secondaryContainer,
+                            width: 1,
                           ),
-                          Text('  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}'),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.restaurant_outlined,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            Text('  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}'),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 16),
                       const Text(
@@ -180,7 +188,7 @@ class MealDetailsData extends StatelessWidget {
                       }).toList(),
                       const SizedBox(height: 16),
                       const Text(
-                        "Steps:",
+                        "Recipe:",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       ...meal.steps!.asMap().entries.map((entry) {
@@ -231,7 +239,7 @@ class MealDetailsNutritionsRow extends StatelessWidget {
       children: [
         _buildNutritionItem(
           context,
-          '${meal.calories.round().toString()}g',
+          meal.calories.round().toString(),
           'kcal',
         ),
         _buildNutritionItem(
@@ -263,27 +271,25 @@ class MealDetailsNutritionsRow extends StatelessWidget {
       color: theme.colorScheme.onSecondaryContainer,
     );
 
-    return Container(
-      width: 80,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: textStyle.copyWith(
-              fontWeight: FontWeight.bold,
+    return Card(
+      child: SizedBox(
+        width: 70,
+        height: 70,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              value,
+              style: textStyle.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            nutrient,
-            style: textStyle,
-          ),
-        ],
+            Text(
+              nutrient,
+              style: textStyle,
+            ),
+          ],
+        ),
       ),
     );
   }
