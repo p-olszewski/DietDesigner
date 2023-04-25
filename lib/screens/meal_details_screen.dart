@@ -69,10 +69,9 @@ class MealDetailsPhoto extends StatelessWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: const Offset(0, 3),
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 1,
+                    offset: const Offset(1, 1),
                   ),
                 ],
               ),
@@ -103,7 +102,7 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 28.0, top: 30.0, right: 28.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 32.0, top: 28.0, right: 32.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -124,99 +123,26 @@ class MealDetailsData extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.timer_outlined,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              Text(' ${meal.readyInMinutes} min'),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.paid_outlined,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              Text(' ${meal.pricePerServing!.toStringAsFixed(2)}\$'),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 12),
                       Text(
                         meal.title,
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
-                      MealDetailsNutritionsRow(meal: meal),
-                      const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.secondaryContainer,
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.restaurant_outlined,
-                              size: 20,
-                              color: Theme.of(context).colorScheme.primary,
+                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text('  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}'),
-                          ],
-                        ),
                       ),
+                      const SizedBox(height: 12),
+                      _buildIconRow(context),
+                      const SizedBox(height: 32),
+                      _buildNutritionRow(context, meal),
+                      const SizedBox(height: 24),
+                      _buildIngredients(context, meal),
                       const SizedBox(height: 16),
-                      const Text(
-                        "Ingredients:",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      ...meal.ingredients!.map((ingredient) {
-                        return Text('${ingredient['amount']} ${ingredient['unit']} ${ingredient['name']}');
-                      }).toList(),
+                      _buildRecipe(context, meal),
                       const SizedBox(height: 16),
-                      const Text(
-                        "Recipe:",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      ...meal.steps!.asMap().entries.map((entry) {
-                        final index = entry.key + 1;
-                        final step = entry.value;
-                        return Text('$index. $step');
-                      }).toList(),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Dish types:",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      ...meal.dishTypes!.map((dishType) {
-                        return Text(dishType);
-                      }).toList(),
+                      _buildDishTypes(context, meal),
                       const SizedBox(height: 16),
                     ],
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.favorite),
-                  onPressed: () {
-                    // akcja wykonywana po kliknięciu ikony
-                  },
                 ),
               ),
             ],
@@ -225,35 +151,112 @@ class MealDetailsData extends StatelessWidget {
       },
     );
   }
-}
 
-class MealDetailsNutritionsRow extends StatelessWidget {
-  final Meal meal;
-
-  const MealDetailsNutritionsRow({Key? key, required this.meal}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Row _buildIconRow(BuildContext context) {
+    TextStyle? textStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
+          color: Colors.grey[600],
+        );
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildNutritionItem(
-          context,
-          meal.calories.round().toString(),
-          'kcal',
+        Row(
+          children: [
+            Icon(
+              Icons.timer_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Text(
+              '  ${meal.readyInMinutes} min',
+              style: textStyle,
+            ),
+          ],
         ),
-        _buildNutritionItem(
-          context,
+        Row(
+          children: [
+            Icon(
+              Icons.restaurant_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Text(
+              '  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}',
+              style: textStyle,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Icon(
+              Icons.paid_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Text(
+              '  ${meal.pricePerServing!.toStringAsFixed(2)}\$ ps',
+              style: textStyle,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  _buildNutritionRow(BuildContext context, Meal meal) {
+    TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
+          color: Colors.grey[600],
+        );
+
+    nutritionItem(String value, String label) {
+      return Container(
+        height: 70,
+        width: 85,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 1,
+              offset: const Offset(1, 1),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              label,
+              style: labelStyle,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        nutritionItem(
+          meal.calories.round().toString(),
+          'calories',
+        ),
+        nutritionItem(
           '${meal.proteins.round().toString()}g',
           'protein',
         ),
-        _buildNutritionItem(
-          context,
+        nutritionItem(
           '${meal.fats.round().toString()}g',
           'fat',
         ),
-        _buildNutritionItem(
-          context,
+        nutritionItem(
           '${meal.carbs.round().toString()}g',
           'carbs',
         ),
@@ -261,36 +264,50 @@ class MealDetailsNutritionsRow extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionItem(
-    BuildContext context,
-    String value,
-    String nutrient,
-  ) {
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.bodyMedium!.copyWith(
-      color: theme.colorScheme.onSecondaryContainer,
-    );
-
-    return Card(
-      child: SizedBox(
-        width: 70,
-        height: 70,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              value,
-              style: textStyle.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              nutrient,
-              style: textStyle,
-            ),
-          ],
+  Column _buildIngredients(BuildContext context, Meal meal) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Ingredients:",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-      ),
+        ...meal.ingredients!.map((ingredient) {
+          return Text('${ingredient['amount']} ${ingredient['unit']} ${ingredient['name']}');
+        }).toList(),
+      ],
+    );
+  }
+
+  _buildRecipe(BuildContext context, Meal meal) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Recipe:",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        ...meal.steps!.asMap().entries.map((entry) {
+          final index = entry.key + 1;
+          final step = entry.value;
+          return Text('$index. $step');
+        }).toList(),
+      ],
+    );
+  }
+
+  _buildDishTypes(BuildContext context, Meal meal) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Dish types:",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        ...meal.dishTypes!.map((dishType) {
+          return Text(dishType);
+        }).toList(),
+      ],
     );
   }
 }
