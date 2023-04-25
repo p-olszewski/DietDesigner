@@ -105,6 +105,11 @@ class MealDetailsData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle titleStyle = Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold);
+    TextStyle subtitleStyle = Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold);
+    TextStyle textStyle = Theme.of(context).textTheme.bodyMedium!;
+    TextStyle labelStyle = Theme.of(context).textTheme.labelLarge!.copyWith(color: Colors.grey[600]);
+
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.6,
@@ -138,23 +143,18 @@ class MealDetailsData extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      Text(
-                        meal.title,
-                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
+                      Text(meal.title, style: titleStyle),
                       const SizedBox(height: 12),
-                      _buildIconRow(context),
-                      const SizedBox(height: 40),
-                      _buildNutrientsRow(context, meal),
-                      const SizedBox(height: 40),
-                      _buildIngredients(context, meal),
-                      const SizedBox(height: 16),
-                      _buildRecipe(context, meal),
-                      const SizedBox(height: 16),
-                      _buildDishTypes(context, meal),
-                      const SizedBox(height: 16),
+                      _buildIconRow(context, style: labelStyle),
+                      const SizedBox(height: 44),
+                      _buildNutrientsRow(context, meal, labelStyle),
+                      const SizedBox(height: 32),
+                      _buildIngredients(context, meal, subtitleStyle, textStyle),
+                      const SizedBox(height: 32),
+                      _buildRecipe(context, meal, subtitleStyle, textStyle),
+                      const SizedBox(height: 32),
+                      _buildDishTypes(context, meal, subtitleStyle, textStyle),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
@@ -166,10 +166,7 @@ class MealDetailsData extends StatelessWidget {
     );
   }
 
-  Row _buildIconRow(BuildContext context) {
-    TextStyle? textStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
-          color: Colors.grey[600],
-        );
+  Row _buildIconRow(BuildContext context, {TextStyle? style}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -180,10 +177,7 @@ class MealDetailsData extends StatelessWidget {
               size: 20,
               color: Theme.of(context).colorScheme.primary,
             ),
-            Text(
-              '  ${meal.readyInMinutes} min',
-              style: textStyle,
-            ),
+            Text('  ${meal.readyInMinutes} min', style: style),
           ],
         ),
         Row(
@@ -193,10 +187,7 @@ class MealDetailsData extends StatelessWidget {
               size: 20,
               color: Theme.of(context).colorScheme.primary,
             ),
-            Text(
-              '  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}',
-              style: textStyle,
-            ),
+            Text('  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}', style: style),
           ],
         ),
         Row(
@@ -206,20 +197,14 @@ class MealDetailsData extends StatelessWidget {
               size: 20,
               color: Theme.of(context).colorScheme.primary,
             ),
-            Text(
-              '  ${meal.pricePerServing!.toStringAsFixed(2)}\$ ps',
-              style: textStyle,
-            ),
+            Text('  ${meal.pricePerServing!.toStringAsFixed(2)}\$ ps', style: style),
           ],
         ),
       ],
     );
   }
 
-  _buildNutrientsRow(BuildContext context, Meal meal) {
-    TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
-          color: Colors.grey[600],
-        );
+  _buildNutrientsRow(BuildContext context, Meal meal, TextStyle labelStyle) {
     var user = context.read<UserDataProvider>().user;
 
     nutrientItem(String value, String label, double percent) {
@@ -277,48 +262,54 @@ class MealDetailsData extends StatelessWidget {
     );
   }
 
-  Column _buildIngredients(BuildContext context, Meal meal) {
+  Column _buildIngredients(BuildContext context, Meal meal, TextStyle titleStyle, TextStyle textStyle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Ingredients:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            "Ingredients:",
+            style: titleStyle,
+          ),
         ),
         ...meal.ingredients!.map((ingredient) {
-          return Text('${ingredient['amount']} ${ingredient['unit']} ${ingredient['name']}');
+          return Text('${ingredient['amount']} ${ingredient['unit']} ${ingredient['name']}', style: textStyle);
         }).toList(),
       ],
     );
   }
 
-  _buildRecipe(BuildContext context, Meal meal) {
+  _buildRecipe(BuildContext context, Meal meal, TextStyle titleStyle, TextStyle textStyle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Recipe:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            "Recipe:",
+            style: titleStyle,
+          ),
         ),
         ...meal.steps!.asMap().entries.map((entry) {
           final index = entry.key + 1;
           final step = entry.value;
-          return Text('$index. $step');
+          return Text('$index. $step\n', style: textStyle);
         }).toList(),
       ],
     );
   }
 
-  _buildDishTypes(BuildContext context, Meal meal) {
+  _buildDishTypes(BuildContext context, Meal meal, TextStyle titleStyle, TextStyle textStyle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Dish types:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text("Dish types:", style: titleStyle),
         ),
         ...meal.dishTypes!.map((dishType) {
-          return Text(dishType);
+          return Text(dishType, style: textStyle);
         }).toList(),
       ],
     );
