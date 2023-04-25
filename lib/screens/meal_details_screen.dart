@@ -53,7 +53,7 @@ class MealDetailsPhoto extends StatelessWidget {
         fit: StackFit.loose,
         children: [
           Container(
-            height: 350,
+            height: 400,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(meal.image),
@@ -96,8 +96,8 @@ class MealDetailsData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.7,
+      initialChildSize: 0.6,
+      minChildSize: 0.6,
       maxChildSize: 0.90,
       builder: (context, scrollController) {
         return SafeArea(
@@ -106,7 +106,7 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 28.0, top: 34, right: 28.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 30.0, top: 30.0, right: 30.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -127,23 +127,49 @@ class MealDetailsData extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              Text(' ${meal.readyInMinutes} min'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.paid_outlined,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              Text(' ${meal.pricePerServing!.toStringAsFixed(2)}\$ ps'),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         meal.title,
                         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 24),
                       MealDetailsNutritionsRow(meal: meal),
-                      const SizedBox(height: 16),
-                      Text(
-                          'Ready in: ${meal.readyInMinutes} min\nServings: ${meal.servings}\nPrice per serving: ${meal.pricePerServing}\$'),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Dish types:",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.restaurant_outlined,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          Text('  ${meal.servings} ${meal.servings == 1 ? 'serving' : 'servings'}'),
+                        ],
                       ),
-                      ...meal.dishTypes!.map((dishType) {
-                        return Text(dishType);
-                      }).toList(),
                       const SizedBox(height: 16),
                       const Text(
                         "Ingredients:",
@@ -162,6 +188,15 @@ class MealDetailsData extends StatelessWidget {
                         final step = entry.value;
                         return Text('$index. $step');
                       }).toList(),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Dish types:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      ...meal.dishTypes!.map((dishType) {
+                        return Text(dishType);
+                      }).toList(),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
