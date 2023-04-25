@@ -77,8 +77,8 @@ class MealDetailsPhoto extends StatelessWidget {
               child: Stack(
                 children: const <Widget>[
                   Positioned(
-                    left: 2.0,
-                    top: 2.0,
+                    left: 1.0,
+                    top: 4.0,
                     child: Icon(
                       Icons.arrow_back,
                       color: Colors.black54,
@@ -88,7 +88,7 @@ class MealDetailsPhoto extends StatelessWidget {
                   Icon(
                     Icons.arrow_back,
                     color: Colors.white,
-                    size: 32,
+                    size: 36,
                   ),
                 ],
               ),
