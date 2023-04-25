@@ -1,5 +1,6 @@
 import 'package:diet_designer/models/meal.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class MealDetailsScreen extends StatefulWidget {
   final Meal meal;
@@ -123,7 +124,7 @@ class MealDetailsData extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Text(
                         meal.title,
                         style: Theme.of(context).textTheme.headlineLarge!.copyWith(
@@ -132,9 +133,9 @@ class MealDetailsData extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       _buildIconRow(context),
-                      const SizedBox(height: 32),
-                      _buildNutritionRow(context, meal),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 40),
+                      _buildNutrientsRow(context, meal),
+                      const SizedBox(height: 40),
                       _buildIngredients(context, meal),
                       const SizedBox(height: 16),
                       _buildRecipe(context, meal),
@@ -202,41 +203,35 @@ class MealDetailsData extends StatelessWidget {
     );
   }
 
-  _buildNutritionRow(BuildContext context, Meal meal) {
+  _buildNutrientsRow(BuildContext context, Meal meal) {
     TextStyle? labelStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
           color: Colors.grey[600],
         );
 
-    nutritionItem(String value, String label) {
-      return Container(
-        height: 70,
-        width: 85,
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 1,
-              offset: const Offset(1, 1),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 18,
+    nutrientItem(String value, String label, double percent) {
+      Color progressColor = percent < 0.5
+          ? Theme.of(context).colorScheme.primary
+          : percent < 0.8
+              ? Colors.orange
+              : Colors.red;
+      return CircularPercentIndicator(
+        radius: 36.0,
+        lineWidth: 10.0,
+        percent: percent,
+        progressColor: progressColor,
+        backgroundColor: progressColor.withOpacity(0.2),
+        center: Text(
+          value,
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            Text(
-              label,
-              style: labelStyle,
-            ),
-          ],
+        ),
+        circularStrokeCap: CircularStrokeCap.round,
+        animation: true,
+        animationDuration: 600,
+        footer: Text(
+          label,
+          style: labelStyle,
         ),
       );
     }
@@ -244,21 +239,25 @@ class MealDetailsData extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        nutritionItem(
+        nutrientItem(
           meal.calories.round().toString(),
           'calories',
+          meal.calories / 3000,
         ),
-        nutritionItem(
+        nutrientItem(
           '${meal.proteins.round().toString()}g',
           'protein',
+          meal.proteins / 200,
         ),
-        nutritionItem(
+        nutrientItem(
           '${meal.fats.round().toString()}g',
           'fat',
+          meal.fats / 50,
         ),
-        nutritionItem(
+        nutrientItem(
           '${meal.carbs.round().toString()}g',
           'carbs',
+          meal.carbs / 300,
         ),
       ],
     );
