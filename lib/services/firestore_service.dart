@@ -109,12 +109,22 @@ deleteShoppingList(String listId) {
   );
 }
 
-Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getShoppingListProducts(String listId) async {
+Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingListProducts(String listId) {
   try {
     final shoppingListCollection = _database.collection('shopping_lists/$listId/products').orderBy('order');
     return shoppingListCollection.snapshots();
   } catch (e) {
     throw Exception('Failed to get products: $e');
+  }
+}
+
+Future<int> getShoppingListProductsCount(String listId) async {
+  try {
+    final shoppingListCollection = _database.collection('shopping_lists/$listId/products');
+    final snapshot = await shoppingListCollection.get();
+    return snapshot.docs.length;
+  } catch (e) {
+    throw Exception('Failed to get products count: $e');
   }
 }
 
