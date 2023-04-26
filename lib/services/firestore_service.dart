@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/shopping_list.dart';
+import 'package:diet_designer/models/shopping_list_product.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
 
@@ -75,4 +77,101 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
+}
+
+Future<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) async {
+  try {
+    final shoppingListCollection =
+        _database.collection('shopping_lists').where('users', arrayContains: uid).where('archived', isEqualTo: false);
+    return await shoppingListCollection.get();
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+addShoppingList(ShoppingList newList) {
+  try {
+    _database.collection('shopping_lists').add(newList.toJson());
+  } catch (e) {
+    throw Exception('Failed to add shopping list: $e');
+  }
+}
+
+deleteShoppingList(String listId) {
+  // delete all products in the list first
+  _database.collection('shopping_lists').doc(listId).collection('products').get().then(
+    (QuerySnapshot<Map<String, dynamic>> value) {
+      for (var element in value.docs) {
+        _database.collection('shopping_lists').doc(listId).collection('products').doc(element.id).delete();
+      }
+      _database.collection('shopping_lists').doc(listId).delete();
+    },
+  );
+}
+
+Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getShoppingListProducts(String listId) async {
+  try {
+    final shoppingListCollection = _database.collection('shopping_lists/$listId/products').orderBy('order');
+    return shoppingListCollection.snapshots();
+  } catch (e) {
+    throw Exception('Failed to get products: $e');
+  }
+}
+
+addProductToShoppingList(ShoppingListProduct newProduct, String listId) {
+  try {
+    _database.collection('shopping_lists/$listId/products').add(newProduct.toJson());
+  } catch (e) {
+    throw Exception('Failed to add product: $e');
+  }
+}
+
+updateProductInShoppingList(ShoppingListProduct newProduct, String listId, String productId) {
+  try {
+    _database.doc('/shopping_lists/$listId/products/$productId').update(newProduct.toJson());
+  } catch (e) {
+    throw Exception('Failed to update product: $e');
+  }
+}
+
+deleteProductFromShoppingList(String listId, String productId) {
+  try {
+    _database.doc('/shopping_lists/$listId/products/$productId').delete();
+  } catch (e) {
+    throw Exception('Failed to delete product: $e');
+  }
+}
+
+addUserToShoppingList(String listId, String userEmail) async {
+  final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
+  if (userSnapshot.docs.isEmpty) {
+    throw 'Nie znaleziono użytkownika $userEmail.';
+  }
+  final shoppingListSnapshot = await _database.doc('shopping_lists/$listId').get();
+  final userIds = List.from((shoppingListSnapshot.data())?['users']);
+  if (userIds.contains(userSnapshot.docs.first.id)) {
+    throw 'Użytkownik jest już dodany do tej listy.';
+  }
+  _database.doc('shopping_lists/$listId').update({
+    'users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
+  });
+}
+
+archiveShoppingList(String listId) {
+  try {
+    _database.doc('/shopping_lists/$listId').update({'archived': true});
+  } catch (e) {
+    throw Exception('Failed to archive shopping list: $e');
+  }
+}
+
+deleteUserFromShoppingList(String listId, String userEmail) async {
+  final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
+  if (userSnapshot.docs.isEmpty) {
+    throw 'Nie znaleziono użytkownika $userEmail.';
+  }
+  final userId = userSnapshot.docs.first.id;
+  _database.doc('shopping_lists/$listId').update({
+    'users': FieldValue.arrayRemove([userId]),
+  });
 }
