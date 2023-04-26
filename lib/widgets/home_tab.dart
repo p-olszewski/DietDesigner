@@ -41,6 +41,7 @@ class _HomeTabState extends State<HomeTab> {
               }),
               enableWeeknumberText: false,
               selectedBackgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             ),
           ),
           Expanded(
