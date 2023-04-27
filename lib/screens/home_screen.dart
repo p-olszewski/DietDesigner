@@ -1,4 +1,5 @@
 import 'package:diet_designer/providers/navbar_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/widgets/favourites_tab.dart';
 import 'package:diet_designer/widgets/home_tab.dart';
 import 'package:diet_designer/widgets/shopping_list_tab.dart';
@@ -6,23 +7,16 @@ import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
+    var user = context.read<UserDataProvider>().user;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("DietDesigner"),
-        centerTitle: true,
-        elevation: 4,
-        shadowColor: Theme.of(context).shadowColor,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text('Hello, ${user.firstname ?? user.email}!'),
+        scrolledUnderElevation: 0,
       ),
       drawer: const DrawerMenu(),
       body: [
