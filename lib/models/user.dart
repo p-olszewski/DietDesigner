@@ -1,6 +1,8 @@
 import 'package:diet_designer/utils/enums.dart';
 
 class User {
+  final String? firstname;
+  final String? lastname;
   final int? activity;
   final int? age;
   final bool? hasCalculatedData;
@@ -16,6 +18,8 @@ class User {
   int? fats;
 
   User({
+    this.firstname,
+    this.lastname,
     this.activity,
     this.age,
     this.hasCalculatedData,
@@ -32,7 +36,9 @@ class User {
   });
 
   User.fromJson(Map<String, dynamic> json)
-      : activity = json['activity'],
+      : firstname = json['firstname'],
+        lastname = json['lastname'],
+        activity = json['activity'],
         age = json['age'],
         hasCalculatedData = json['hasCalculatedData'],
         calories = json['calories'],
@@ -47,6 +53,8 @@ class User {
         weight = json['weight'];
 
   Map<String, dynamic> toJson() => {
+        'firstname': firstname,
+        'lastname': lastname,
         'activity': activity,
         'age': age,
         'hasCalculatedData': hasCalculatedData,
