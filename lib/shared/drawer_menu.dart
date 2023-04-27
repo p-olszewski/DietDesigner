@@ -21,7 +21,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           const SizedBox(height: 70),
           const CircleAvatar(
             radius: 50,
-            backgroundImage: NetworkImage("https://i.pravatar.cc/300"),
+            backgroundImage: NetworkImage("https://i.pravatar.cc/300?img=24"),
           ),
           const SizedBox(height: 30),
           TextButton(

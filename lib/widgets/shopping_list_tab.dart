@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/widgets/new_list_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -129,6 +130,13 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => const NewListDialog(),
+        ),
+        child: const Icon(Icons.add),
       ),
     );
   }
