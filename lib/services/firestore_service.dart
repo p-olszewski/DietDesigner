@@ -4,6 +4,8 @@ import 'package:diet_designer/models/shopping_list.dart';
 import 'package:diet_designer/models/shopping_list_product.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final FirebaseFirestore _database = FirebaseFirestore.instance;
 
@@ -95,7 +97,46 @@ Future<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) async {
 
 generateNewShoppingList(String uid, ShoppingList newList, String startDate, String endDate) async {
   try {
-    _database.collection('shopping_lists').add(newList.toJson());
+    final DateFormat formatter = DateFormat('dd.MM.yyyy');
+    final DateTime start = formatter.parse(startDate);
+    final DateTime end = formatter.parse(endDate);
+
+    final List<Meal> mealsList = [];
+    for (DateTime date = start;
+        date.isBefore(end.add(const Duration(days: 1)));
+        date = date.add(
+      const Duration(days: 1),
+    ),) {
+      final String formattedDate = formatter.format(date);
+      final List<Meal> meals = await getMealsFromDatabase(uid, formattedDate);
+      mealsList.addAll(meals);
+    }
+
+    List<String> ingredientsList = [];
+    for (var meal in mealsList) {
+      for (var ingredient in meal.ingredients!) {
+        ingredientsList.add(ingredient['name']);
+      }
+    }
+    ingredientsList = ingredientsList.toSet().toList();
+    final DocumentReference shoppingListsRef = await _database.collection('shopping_lists').add(
+          newList.toJson(),
+        );
+
+    final CollectionReference productsRef = shoppingListsRef.collection('products');
+
+    for (var ingredient in ingredientsList) {
+      final ShoppingListProduct newProduct = ShoppingListProduct(
+        name: ingredient,
+        bought: false,
+        order: ingredientsList.indexOf(ingredient).toDouble(),
+      );
+
+      final DocumentReference productRef = await productsRef.add(
+        newProduct.toJson(),
+      );
+      debugPrint('Added product: ${productRef.id}');
+    }
   } catch (e) {
     throw Exception('Failed to add shopping list: $e');
   }

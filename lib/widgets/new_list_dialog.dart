@@ -1,5 +1,10 @@
+import 'package:diet_designer/models/shopping_list.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class NewListDialog extends StatefulWidget {
   const NewListDialog({Key? key}) : super(key: key);
@@ -46,7 +51,7 @@ class _NewListDialogState extends State<NewListDialog> {
                 style: textStyle,
               ),
               Text(
-                ' (${duration.inDays} days)',
+                ' (${duration.inDays + 1} days)',
                 style: labelStyle,
               ),
             ],
@@ -83,7 +88,22 @@ class _NewListDialogState extends State<NewListDialog> {
         ),
         FilledButton(
           child: const Text('Generate'),
-          onPressed: () {},
+          onPressed: () {
+            var userId = context.read<AuthProvider>().uid;
+            if (userId != null) {
+              var title = _listTitleController.text;
+              generateNewShoppingList(
+                userId,
+                ShoppingList(title, users: [userId]),
+                DateFormat('dd.MM.yyyy').format(startDate),
+                DateFormat('dd.MM.yyyy').format(endDate),
+              );
+              PopupMessenger.info('List $title has been added!');
+            } else {
+              PopupMessenger.error('You have to be logged in to add a list!');
+            }
+            Navigator.of(context).pop();
+          },
         ),
       ],
     );

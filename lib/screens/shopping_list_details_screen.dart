@@ -36,33 +36,34 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
         height: screenHeight,
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  const SizedBox(height: 40),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: snapshot,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      return ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8),
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          var doc = snapshot.data!.docs[index];
-                          return ListTile(
-                            title: Text(doc['name']),
+            : SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: snapshot,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
-                        },
-                      );
-                    },
-                  ),
-                ],
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(8),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var doc = snapshot.data!.docs[index];
+                            return ListTile(
+                              title: Text(doc['name']),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
       ),
     );
