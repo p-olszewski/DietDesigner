@@ -24,58 +24,46 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Text(
-                  widget.listTitle,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                ),
+      appBar: AppBar(
+        title: Text(widget.listTitle),
+      ),
+      body: SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  const SizedBox(height: 40),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: snapshot,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(8),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var doc = snapshot.data!.docs[index];
+                          return ListTile(
+                            title: Text(doc['name']),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     child: Column(
-              //       children: [
-              //         Padding(
-              //           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-              //           child: _isLoading
-              //               ? const Center(child: CircularProgressIndicator())
-              //               : StreamBuilder<QuerySnapshot>(
-              //                   stream: snapshot,
-              //                   builder: (context, snapshot) {
-              //                     if (!snapshot.hasData) {
-              //                       return const Center(
-              //                         child: CircularProgressIndicator(),
-              //                       );
-              //                     }
-              //                     return ListView.builder(
-              //                       physics: const AlwaysScrollableScrollPhysics(),
-              //                       scrollDirection: Axis.vertical,
-              //                       shrinkWrap: true,
-              //                       padding: const EdgeInsets.all(8),
-              //                       itemCount: snapshot.data!.docs.length,
-              //                       itemBuilder: (BuildContext context, int index) {
-              //                         var doc = snapshot.data!.docs[index];
-              //                         return ListTile(
-              //                           title: Text(doc['name']),
-              //                         );
-              //                       },
-              //                     );
-              //                   },
-              //                 ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-        ],
       ),
     );
   }

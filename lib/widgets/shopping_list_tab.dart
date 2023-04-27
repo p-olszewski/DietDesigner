@@ -76,19 +76,20 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                       itemCount: snapshot.data!.docs.length,
                                       itemBuilder: (context, index) {
                                         var doc = snapshot.data!.docs[index];
-                                        return Card(
-                                          child: ListTile(
-                                            title: Text(doc['title']),
-                                            trailing: const Icon(Icons.arrow_forward),
-                                            onTap: () {
-                                              if (!mounted) return;
-                                              Navigator.pushNamed(
-                                                context,
-                                                '/shopping_list_details',
-                                                arguments: {'id': doc.reference.id, 'title': doc['title']},
-                                              );
-                                            },
-                                          ),
+                                        return ListTile(
+                                          title: Text(doc['title']),
+                                          trailing: const Icon(Icons.arrow_forward),
+                                          onTap: () {
+                                            if (!mounted) return;
+                                            Navigator.pushNamed(
+                                              context,
+                                              '/shopping_list_details',
+                                              arguments: {
+                                                'id': doc.reference.id,
+                                                'title': doc['title'],
+                                              },
+                                            );
+                                          },
                                         );
                                       },
                                     );
