@@ -54,6 +54,10 @@ Future<user_model.User?> getUserData(String uid) async {
 
 Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
   try {
+    final nutritionPlanCollection = _database.collection('users/$uid/nutrition_plans');
+    await nutritionPlanCollection.doc(date).set({
+      'date': date,
+    });
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
@@ -89,7 +93,7 @@ Future<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) async {
   }
 }
 
-addShoppingList(ShoppingList newList) {
+generateNewShoppingList(String uid, ShoppingList newList, String startDate, String endDate) async {
   try {
     _database.collection('shopping_lists').add(newList.toJson());
   } catch (e) {
