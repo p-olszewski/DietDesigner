@@ -90,6 +90,29 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                               },
                                             );
                                           },
+                                          onLongPress: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: const Text('Czy chcesz usunąć listę?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Nie'),
+                                                  ),
+                                                  FilledButton(
+                                                    onPressed: () {
+                                                      deleteShoppingList(doc.reference.id);
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Tak'),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         );
                                       },
                                     );
