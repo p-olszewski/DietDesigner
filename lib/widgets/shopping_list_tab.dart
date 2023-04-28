@@ -53,20 +53,9 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                     return SizedBox(
                                       width: double.infinity,
                                       height: MediaQuery.of(context).size.height * 0.6,
-                                      child: Align(
+                                      child: const Align(
                                         alignment: Alignment.center,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            const Text('No shopping lists yet.'),
-                                            const SizedBox(height: 10),
-                                            ElevatedButton(
-                                              onPressed: () {},
-                                              child: const Text('Generate shopping list'),
-                                            ),
-                                          ],
-                                        ),
+                                        child: Text('No shopping lists yet.'),
                                       ),
                                     );
                                   } else {

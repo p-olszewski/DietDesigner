@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/shopping_list.dart';
-import 'package:diet_designer/models/shopping_list_product.dart';
+import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
 import 'package:intl/intl.dart';
@@ -133,7 +133,7 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
 
     // add all ingredients to the shopping list
     for (var ingredient in ingredientsList) {
-      final ShoppingListProduct newProduct = ShoppingListProduct(
+      final ListElement newProduct = ListElement(
         name: ingredient,
         bought: false,
         order: ingredientsList.indexOf(ingredient).toDouble(),
@@ -157,7 +157,7 @@ deleteShoppingList(String listId) {
   );
 }
 
-Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingListProducts(String listId) {
+Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingListElements(String listId) {
   try {
     final shoppingListCollection = _database.collection('shopping_lists/$listId/products').orderBy('order');
     return shoppingListCollection.snapshots();
@@ -166,7 +166,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingListProducts(String listI
   }
 }
 
-Future<int> getShoppingListProductsCount(String listId) async {
+Future<int> getShoppingListElementsCount(String listId) async {
   try {
     final shoppingListCollection = _database.collection('shopping_lists/$listId/products');
     final snapshot = await shoppingListCollection.get();
@@ -176,7 +176,7 @@ Future<int> getShoppingListProductsCount(String listId) async {
   }
 }
 
-addProductToShoppingList(ShoppingListProduct newProduct, String listId) {
+addProductToShoppingList(ListElement newProduct, String listId) {
   try {
     _database.collection('shopping_lists/$listId/products').add(newProduct.toJson());
   } catch (e) {
@@ -184,7 +184,7 @@ addProductToShoppingList(ShoppingListProduct newProduct, String listId) {
   }
 }
 
-updateProductInShoppingList(ShoppingListProduct newProduct, String listId, String productId) {
+updateListElement(ListElement newProduct, String listId, String productId) {
   try {
     _database.doc('/shopping_lists/$listId/products/$productId').update(newProduct.toJson());
   } catch (e) {
@@ -192,7 +192,7 @@ updateProductInShoppingList(ShoppingListProduct newProduct, String listId, Strin
   }
 }
 
-deleteProductFromShoppingList(String listId, String productId) {
+deleteListElement(String listId, String productId) {
   try {
     _database.doc('/shopping_lists/$listId/products/$productId').delete();
   } catch (e) {

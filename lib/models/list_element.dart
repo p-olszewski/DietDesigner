@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ShoppingListProduct {
+class ListElement {
   String name;
   bool bought;
   FieldValue? timestamp;
   double order;
 
-  ShoppingListProduct({required this.name, this.bought = false, this.timestamp, this.order = 0});
+  ListElement({required this.name, this.bought = false, this.timestamp, this.order = 0});
 
-  ShoppingListProduct.fromJson(Map<String, dynamic> json)
+  ListElement.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         bought = json['bought'],
         timestamp = json['timestamp'],
