@@ -229,12 +229,12 @@ Future<dynamic> getShoppingListUserEmails(String listId) async {
 addUserToShoppingList(String listId, String userEmail) async {
   final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
   if (userSnapshot.docs.isEmpty) {
-    throw 'Nie znaleziono użytkownika $userEmail.';
+    throw 'Cannot find user with email $userEmail.';
   }
   final shoppingListSnapshot = await _database.doc('shopping_lists/$listId').get();
   final userIds = List.from((shoppingListSnapshot.data())?['users']);
   if (userIds.contains(userSnapshot.docs.first.id)) {
-    throw 'Użytkownik jest już dodany do tej listy.';
+    throw 'User $userEmail is already on the list.';
   }
   _database.doc('shopping_lists/$listId').update({
     'users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
@@ -252,7 +252,7 @@ archiveShoppingList(String listId) {
 deleteUserFromShoppingList(String listId, String userEmail) async {
   final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
   if (userSnapshot.docs.isEmpty) {
-    throw 'Nie znaleziono użytkownika $userEmail.';
+    throw 'Cannot find user with email $userEmail.';
   }
   final userId = userSnapshot.docs.first.id;
   _database.doc('shopping_lists/$listId').update({
