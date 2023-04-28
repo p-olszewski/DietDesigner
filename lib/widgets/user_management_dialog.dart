@@ -51,7 +51,7 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
         onPressed: () => Navigator.of(context).pop(),
         child: const Text('Anuluj'),
       ),
-      ElevatedButton(
+      FilledButton(
         child: const Text('Udostępnij'),
         onPressed: () async {
           if (_emailController.text.isEmpty) {
