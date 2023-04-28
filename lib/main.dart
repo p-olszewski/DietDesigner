@@ -1,5 +1,6 @@
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/navbar_provider.dart';
+import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/routes.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
@@ -23,6 +24,7 @@ Future<void> main() async {
         ChangeNotifierProvider<NavBarProvider>(create: (_) => NavBarProvider()),
         ChangeNotifierProvider<DateProvider>(create: (_) => DateProvider()),
         ChangeNotifierProvider<UserDataProvider>(create: (_) => UserDataProvider()),
+        ChangeNotifierProvider<ShoppingListProvider>(create: (_) => ShoppingListProvider()),
       ],
       child: const MyApp(),
     ),

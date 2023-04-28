@@ -3,6 +3,7 @@ import 'package:diet_designer/screens/calculator_screen.dart';
 import 'package:diet_designer/screens/home_screen.dart';
 import 'package:diet_designer/screens/login_screen.dart';
 import 'package:diet_designer/screens/meal_details_screen.dart';
+import 'package:diet_designer/screens/shopping_list_details_screen.dart';
 import 'package:flutter/material.dart';
 
 var appRoutes = {
@@ -13,4 +14,5 @@ var appRoutes = {
     final Meal meal = ModalRoute.of(context)!.settings.arguments as Meal;
     return MealDetailsScreen(meal: meal);
   },
+  '/shopping_list_details': (context) => const ShoppingListDetailsScreen(),
 };

@@ -11,6 +11,7 @@ class BottomNavbarMenu extends StatelessWidget {
       selectedIndex: context.watch<NavBarProvider>().currentIndex,
       onDestinationSelected: (int newIndex) => context.read<NavBarProvider>().setCurrentIndex(newIndex),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      height: 70,
       destinations: const [
         NavigationDestination(
           selectedIcon: Icon(Icons.home),

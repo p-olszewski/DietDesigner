@@ -61,7 +61,7 @@ class MealDetailsPhoto extends StatelessWidget {
         fit: StackFit.loose,
         children: [
           Container(
-            height: 400,
+            height: 420,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(meal.image),
