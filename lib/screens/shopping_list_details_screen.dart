@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
-import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/widgets/list_name_dialog.dart';
+import 'package:diet_designer/widgets/products_list_tile.dart';
 import 'package:diet_designer/widgets/user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +86,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     var doc = snapshot.data!.docs[index];
-                                    return ListElementCard(doc: doc, listId: listId);
+                                    return ProductListTile(doc: doc);
                                   },
                                 );
                               },
@@ -98,59 +97,6 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ListElementCard extends StatelessWidget {
-  const ListElementCard({super.key, required this.doc, required this.listId});
-
-  final QueryDocumentSnapshot<Object?> doc;
-  final String listId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(doc.id),
-      onDismissed: (direction) {
-        deleteListElement(listId, doc.id);
-        PopupMessenger.info('${doc['name']} has been deleted');
-      },
-      background: const Card(
-        color: Colors.red,
-        child: Padding(
-          padding: EdgeInsets.only(right: 16),
-          child: Icon(
-            Icons.delete,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(0),
-        trailing: const Icon(Icons.drag_handle),
-        title: Row(
-          children: [
-            Checkbox(
-              value: doc['bought'],
-              onChanged: (bool? value) {
-                updateListElement(
-                  ListElement(
-                    name: doc['name'],
-                    bought: value!,
-                    order: doc['order'],
-                  ),
-                  listId,
-                  doc.id,
-                );
-              },
-            ),
-            Expanded(
-              child: Text(doc['name']),
-            ),
-          ],
         ),
       ),
     );

@@ -70,7 +70,7 @@ class _ListNameDialogState extends State<ListNameDialog> {
       if (!mounted) return;
       context.read<ShoppingListProvider>().setListTitle(_titleController.text);
       Navigator.of(context).pop();
-      PopupMessenger.info('Changed list name to ${_titleController.text}.');
+      PopupMessenger.info('List name has been updated.');
       _titleController.clear();
       setState(() => _nameErrorText = null);
     } catch (e) {
