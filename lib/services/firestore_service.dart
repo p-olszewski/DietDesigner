@@ -4,7 +4,6 @@ import 'package:diet_designer/models/shopping_list.dart';
 import 'package:diet_designer/models/shopping_list_product.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 final FirebaseFirestore _database = FirebaseFirestore.instance;
@@ -101,6 +100,7 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
     final DateTime start = formatter.parse(startDate);
     final DateTime end = formatter.parse(endDate);
 
+    // get all meals from the selected period
     final List<Meal> mealsList = [];
     for (DateTime date = start;
         date.isBefore(end.add(const Duration(days: 1)));
@@ -112,30 +112,33 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
       mealsList.addAll(meals);
     }
 
+    // get all ingredients from the meals
     List<String> ingredientsList = [];
     for (var meal in mealsList) {
       for (var ingredient in meal.ingredients!) {
         ingredientsList.add(ingredient['name']);
       }
     }
+
+    // remove duplicates
     ingredientsList = ingredientsList.toSet().toList();
+
+    // add shopping list to database
     final DocumentReference shoppingListsRef = await _database.collection('shopping_lists').add(
           newList.toJson(),
         );
 
+    // add products to the shopping list's products subcollection
     final CollectionReference productsRef = shoppingListsRef.collection('products');
 
+    // add all ingredients to the shopping list
     for (var ingredient in ingredientsList) {
       final ShoppingListProduct newProduct = ShoppingListProduct(
         name: ingredient,
         bought: false,
         order: ingredientsList.indexOf(ingredient).toDouble(),
       );
-
-      final DocumentReference productRef = await productsRef.add(
-        newProduct.toJson(),
-      );
-      debugPrint('Added product: ${productRef.id}');
+      await productsRef.add(newProduct.toJson());
     }
   } catch (e) {
     throw Exception('Failed to add shopping list: $e');
