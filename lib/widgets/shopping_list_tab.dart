@@ -13,17 +13,17 @@ class ShoppingListTab extends StatefulWidget {
 }
 
 class _ShoppingListTabState extends State<ShoppingListTab> {
+  late Stream<QuerySnapshot<Map<String, dynamic>>> snapshot;
   final bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    snapshot = getShoppingLists(context.read<AuthProvider>().uid!);
   }
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.watch<AuthProvider>().uid!;
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -45,9 +45,9 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
                       child: _isLoading
                           ? const Center(child: CircularProgressIndicator())
-                          : FutureBuilder(
-                              future: getShoppingLists(uid),
-                              builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                          : StreamBuilder(
+                              stream: snapshot,
+                              builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   if (snapshot.data!.docs.isEmpty) {
                                     return SizedBox(
@@ -71,7 +71,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                     );
                                   } else {
                                     return ListView.builder(
-                                      physics: const ScrollPhysics(),
+                                      physics: const AlwaysScrollableScrollPhysics(),
                                       scrollDirection: Axis.vertical,
                                       shrinkWrap: true,
                                       itemCount: snapshot.data!.docs.length,

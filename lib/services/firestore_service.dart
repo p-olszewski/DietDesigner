@@ -84,11 +84,11 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
   }
 }
 
-Future<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) async {
+Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) {
   try {
     final shoppingListCollection =
         _database.collection('shopping_lists').where('users', arrayContains: uid).where('archived', isEqualTo: false);
-    return await shoppingListCollection.get();
+    return shoppingListCollection.snapshots();
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
