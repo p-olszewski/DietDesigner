@@ -19,6 +19,7 @@ class _NewListDialogState extends State<NewListDialog> {
     start: DateTime.now(),
     end: DateTime.now().add(const Duration(days: 7)),
   );
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,82 +33,88 @@ class _NewListDialogState extends State<NewListDialog> {
     return AlertDialog(
       scrollable: true,
       title: const Text('Generate a new shopping list'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _listTitleController,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: 'List name', hintText: 'e.g. Lidl'),
-          ),
-          const SizedBox(height: 20),
-          Text('Date range:', style: subtitleStyle),
-          Row(
-            children: [
-              Text(
-                '${DateFormat('dd.MM.yyyy').format(startDate)} - ${DateFormat('dd.MM.yyyy').format(endDate)}',
-                style: textStyle,
+      content: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _listTitleController,
+                  autofocus: true,
+                  decoration: const InputDecoration(labelText: 'List name', hintText: 'e.g. Lidl'),
+                ),
+                const SizedBox(height: 20),
+                Text('Date range:', style: subtitleStyle),
+                Row(
+                  children: [
+                    Text(
+                      '${DateFormat('dd.MM.yyyy').format(startDate)} - ${DateFormat('dd.MM.yyyy').format(endDate)}',
+                      style: textStyle,
+                    ),
+                    Text(
+                      ' (${duration.inDays + 1} days)',
+                      style: labelStyle,
+                    ),
+                  ],
+                ),
+                TextButton(
+                  child: const Text('Change'),
+                  onPressed: () async {
+                    DateTimeRange? newDateRange = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      initialDateRange: _dateRange,
+                      builder: (context, child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light().copyWith(
+                              primary: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (newDateRange == null) return;
+                    setState(() => _dateRange = newDateRange);
+                  },
+                ),
+              ],
+            ),
+      actions: _isLoading
+          ? null
+          : [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              Text(
-                ' (${duration.inDays + 1} days)',
-                style: labelStyle,
+              FilledButton(
+                child: const Text('Generate'),
+                onPressed: () async {
+                  setState(() => _isLoading = true);
+                  var userId = context.read<AuthProvider>().uid;
+                  if (userId != null) {
+                    var title = _listTitleController.text;
+                    await generateNewShoppingList(
+                      userId,
+                      ShoppingList(title, users: [userId]),
+                      DateFormat('dd.MM.yyyy').format(startDate),
+                      DateFormat('dd.MM.yyyy').format(endDate),
+                    );
+                    setState(() => _isLoading = false);
+                    if (!mounted) return;
+                    PopupMessenger.info('Added $title list.');
+                  } else {
+                    PopupMessenger.error('You have to be logged in to add a list!');
+                  }
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                },
               ),
             ],
-          ),
-          TextButton(
-            child: const Text('Change'),
-            onPressed: () async {
-              DateTimeRange? newDateRange = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                lastDate: DateTime.now().add(const Duration(days: 365)),
-                initialDateRange: _dateRange,
-                builder: (context, child) {
-                  return Theme(
-                    data: ThemeData.light().copyWith(
-                      colorScheme: const ColorScheme.light().copyWith(
-                        primary: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-              if (newDateRange == null) return;
-              setState(() => _dateRange = newDateRange);
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        FilledButton(
-          child: const Text('Generate'),
-          onPressed: () async {
-            var userId = context.read<AuthProvider>().uid;
-            if (userId != null) {
-              var title = _listTitleController.text;
-              await generateNewShoppingList(
-                userId,
-                ShoppingList(title, users: [userId]),
-                DateFormat('dd.MM.yyyy').format(startDate),
-                DateFormat('dd.MM.yyyy').format(endDate),
-              );
-              if (!mounted) return;
-              PopupMessenger.info('Added $title list.');
-            } else {
-              PopupMessenger.error('You have to be logged in to add a list!');
-            }
-            if (!mounted) return;
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
     );
   }
 }
