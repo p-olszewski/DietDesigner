@@ -1,7 +1,7 @@
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class UserManagementDialog extends StatefulWidget {
@@ -39,8 +39,8 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
         controller: _emailController,
         textAlign: TextAlign.left,
         decoration: InputDecoration(
-          labelText: 'Email nowego użytkownika',
-          hintText: 'np. test@test.com',
+          labelText: 'Email',
+          hintText: 'e.g. test@test.com',
           errorText: _nameErrorText,
         ),
       ),
@@ -49,25 +49,20 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
     var actionButtons = [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Anuluj'),
+        child: const Text('Cancel'),
       ),
       FilledButton(
-        child: const Text('Udostępnij'),
+        child: const Text('Share'),
         onPressed: () async {
           if (_emailController.text.isEmpty) {
-            setState(() => _nameErrorText = 'Pole wymagane');
+            setState(() => _nameErrorText = 'Please enter an email address.');
             return;
           }
           try {
             await addUserToShoppingList(listId, _emailController.text);
             if (!mounted) return;
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Udostępniono listę dla ${_emailController.text}'),
-                duration: const Duration(seconds: 1),
-              ),
-            );
+            PopupMessenger.info('Added ${_emailController.text} to the list.');
             _emailController.clear();
             setState(() => _nameErrorText = null);
           } catch (e) {
@@ -78,7 +73,7 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
     ];
 
     return AlertDialog(
-      title: const Text('Zarządzaj użytkownikami'),
+      title: const Text('Manage users'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -123,7 +118,7 @@ class ChipsList extends StatelessWidget {
                   String listId = context.read<ShoppingListProvider>().listId;
                   deleteUserFromShoppingList(listId, snapshot.data![index]);
                   Navigator.of(context).pop();
-                  Fluttertoast.showToast(msg: 'Usunięto ${snapshot.data![index]} z listy.');
+                  PopupMessenger.info('Removed ${snapshot.data![index]} from the list.');
                 },
               );
             },
