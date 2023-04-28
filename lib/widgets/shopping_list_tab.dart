@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/widgets/new_list_dialog.dart';
 import 'package:flutter/material.dart';
@@ -74,14 +75,9 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                           ),
                                           onTap: () {
                                             if (!mounted) return;
-                                            Navigator.pushNamed(
-                                              context,
-                                              '/shopping_list_details',
-                                              arguments: {
-                                                'id': doc.reference.id,
-                                                'title': doc['title'],
-                                              },
-                                            );
+                                            context.read<ShoppingListProvider>().setListId(doc.reference.id);
+                                            context.read<ShoppingListProvider>().setListTitle(doc['title']);
+                                            Navigator.pushNamed(context, '/shopping_list_details');
                                           },
                                           onLongPress: () {
                                             showDialog(

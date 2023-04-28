@@ -14,10 +14,5 @@ var appRoutes = {
     final Meal meal = ModalRoute.of(context)!.settings.arguments as Meal;
     return MealDetailsScreen(meal: meal);
   },
-  '/shopping_list_details': (context) {
-    final Map<String, dynamic> arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String listId = arguments['id'] as String;
-    final String listTitle = arguments['title'] as String;
-    return ShoppingListDetailsScreen(listId: listId, listTitle: listTitle);
-  },
+  '/shopping_list_details': (context) => const ShoppingListDetailsScreen(),
 };

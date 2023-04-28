@@ -200,6 +200,16 @@ deleteListElement(String listId, String productId) {
   }
 }
 
+Future<dynamic> getShoppingListUserEmails(String listId) async {
+  final shoppingListSnapshot = await _database.doc('shopping_lists/$listId').get();
+  final userIds = List.from((shoppingListSnapshot.data())?['users']);
+  final userEmails = await Future.wait(
+    userIds.map((userId) async => (await _database.doc('users/$userId').get()).data()!['email']),
+  );
+
+  return userEmails.where((email) => email != null).cast<String>().toList();
+}
+
 addUserToShoppingList(String listId, String userEmail) async {
   final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
   if (userSnapshot.docs.isEmpty) {

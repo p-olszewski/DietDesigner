@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/list_element.dart';
+import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
+import 'package:diet_designer/widgets/user_management_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ShoppingListDetailsScreen extends StatefulWidget {
-  final String listId;
-  final String listTitle;
-
-  const ShoppingListDetailsScreen({super.key, required this.listId, required this.listTitle});
+  const ShoppingListDetailsScreen({super.key});
 
   @override
   State<ShoppingListDetailsScreen> createState() => _ShoppingListDetailsScreenState();
@@ -17,11 +17,16 @@ class ShoppingListDetailsScreen extends StatefulWidget {
 class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> snapshot;
   final bool _isLoading = false;
+  late String listId;
+  late String listTitle;
+  late double totalPrice;
 
   @override
   void initState() {
     super.initState();
-    snapshot = getShoppingListElements(widget.listId);
+    listId = context.read<ShoppingListProvider>().listId;
+    listTitle = context.read<ShoppingListProvider>().listTitle;
+    snapshot = getShoppingListElements(listId);
   }
 
   @override
@@ -31,14 +36,17 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.listTitle),
+        title: Text(listTitle),
         actions: [
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.edit),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const UserManagementDialog(),
+            ),
             icon: const Icon(Icons.manage_accounts),
           ),
         ],
@@ -78,7 +86,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     var doc = snapshot.data!.docs[index];
-                                    return ListElementCard(doc: doc, listId: widget.listId);
+                                    return ListElementCard(doc: doc, listId: listId);
                                   },
                                 );
                               },
