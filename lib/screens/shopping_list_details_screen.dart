@@ -3,6 +3,7 @@ import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
+import 'package:diet_designer/widgets/list_name_dialog.dart';
 import 'package:diet_designer/widgets/user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,14 +19,11 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> snapshot;
   final bool _isLoading = false;
   late String listId;
-  late String listTitle;
-  late double totalPrice;
 
   @override
   void initState() {
     super.initState();
     listId = context.read<ShoppingListProvider>().listId;
-    listTitle = context.read<ShoppingListProvider>().listTitle;
     snapshot = getShoppingListElements(listId);
   }
 
@@ -36,10 +34,13 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(listTitle),
+        title: Text(context.watch<ShoppingListProvider>().listTitle),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const ListNameDialog(),
+            ),
             icon: const Icon(Icons.edit),
           ),
           IconButton(
@@ -127,30 +128,29 @@ class ListElementCard extends StatelessWidget {
           ),
         ),
       ),
-      child: Card(
-        child: ListTile(
-          trailing: const Icon(Icons.drag_handle),
-          title: Row(
-            children: [
-              Checkbox(
-                value: doc['bought'],
-                onChanged: (bool? value) {
-                  updateListElement(
-                    ListElement(
-                      name: doc['name'],
-                      bought: value!,
-                      order: doc['order'],
-                    ),
-                    listId,
-                    doc.id,
-                  );
-                },
-              ),
-              Expanded(
-                child: Text(doc['name']),
-              ),
-            ],
-          ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(0),
+        trailing: const Icon(Icons.drag_handle),
+        title: Row(
+          children: [
+            Checkbox(
+              value: doc['bought'],
+              onChanged: (bool? value) {
+                updateListElement(
+                  ListElement(
+                    name: doc['name'],
+                    bought: value!,
+                    order: doc['order'],
+                  ),
+                  listId,
+                  doc.id,
+                );
+              },
+            ),
+            Expanded(
+              child: Text(doc['name']),
+            ),
+          ],
         ),
       ),
     );

@@ -145,6 +145,14 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
   }
 }
 
+updateShoppingListName(String listId, String title) async {
+  try {
+    _database.doc('shopping_lists/$listId').update({'title': title});
+  } catch (e) {
+    throw Exception('Failed to update shopping list name: $e');
+  }
+}
+
 deleteShoppingList(String listId) {
   // delete all products in the list first
   _database.collection('shopping_lists').doc(listId).collection('products').get().then(

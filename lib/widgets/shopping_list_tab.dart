@@ -83,20 +83,21 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                             showDialog(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: const Text('Czy chcesz usunąć listę?'),
+                                                title: const Text('Are you sure?'),
+                                                content: const Text('Do you want to delete this shopping list?'),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
-                                                    child: const Text('Nie'),
+                                                    child: const Text('No'),
                                                   ),
                                                   FilledButton(
                                                     onPressed: () {
                                                       deleteShoppingList(doc.reference.id);
                                                       Navigator.of(context).pop();
                                                     },
-                                                    child: const Text('Tak'),
+                                                    child: const Text('Yes'),
                                                   )
                                                 ],
                                               ),
