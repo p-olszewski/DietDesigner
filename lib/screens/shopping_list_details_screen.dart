@@ -46,35 +46,50 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       body: SizedBox(
         width: screenWidth,
         height: screenHeight,
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    StreamBuilder<QuerySnapshot>(
-                      stream: snapshot,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.all(8),
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            var doc = snapshot.data!.docs[index];
-                            return ListElementCard(doc: doc, listId: widget.listId);
-                          },
-                        );
-                      },
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14.0),
+                  child: Text(
+                    "Products:",
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            StreamBuilder<QuerySnapshot>(
+                              stream: snapshot,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return ListView.builder(
+                                  physics: const ScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.docs.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    var doc = snapshot.data!.docs[index];
+                                    return ListElementCard(doc: doc, listId: widget.listId);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -106,6 +121,7 @@ class ListElementCard extends StatelessWidget {
       ),
       child: Card(
         child: ListTile(
+          trailing: const Icon(Icons.drag_handle),
           title: Row(
             children: [
               Checkbox(

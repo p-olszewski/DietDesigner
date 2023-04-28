@@ -31,7 +31,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 14.0),
               child: Text(
                 "Your lists:",
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
@@ -41,34 +41,37 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-                      child: _isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : StreamBuilder(
-                              stream: snapshot,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data!.docs.isEmpty) {
-                                    return SizedBox(
-                                      width: double.infinity,
-                                      height: MediaQuery.of(context).size.height * 0.6,
-                                      child: const Align(
-                                        alignment: Alignment.center,
-                                        child: Text('No shopping lists yet.'),
-                                      ),
-                                    );
-                                  } else {
-                                    return ListView.builder(
-                                      physics: const AlwaysScrollableScrollPhysics(),
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemCount: snapshot.data!.docs.length,
-                                      itemBuilder: (context, index) {
-                                        var doc = snapshot.data!.docs[index];
-                                        return ListTile(
+                    _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : StreamBuilder(
+                            stream: snapshot,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data!.docs.isEmpty) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height * 0.6,
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Text('No shopping lists yet.'),
+                                    ),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                    physics: const ScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      var doc = snapshot.data!.docs[index];
+                                      return Card(
+                                        child: ListTile(
                                           title: Text(doc['title']),
+                                          subtitle: const Text('Items: 14'),
                                           trailing: const Icon(Icons.arrow_forward),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
                                           onTap: () {
                                             if (!mounted) return;
                                             Navigator.pushNamed(
@@ -103,16 +106,16 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                               ),
                                             );
                                           },
-                                        );
-                                      },
-                                    );
-                                  }
-                                } else {
-                                  return const Center(child: CircularProgressIndicator());
+                                        ),
+                                      );
+                                    },
+                                  );
                                 }
-                              },
-                            ),
-                    ),
+                              } else {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                            },
+                          ),
                   ],
                 ),
               ),
