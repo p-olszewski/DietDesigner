@@ -30,6 +30,16 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.listTitle),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.manage_accounts),
+          ),
+        ],
       ),
       body: SizedBox(
         width: screenWidth,
@@ -56,7 +66,17 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
                           itemBuilder: (BuildContext context, int index) {
                             var doc = snapshot.data!.docs[index];
                             return ListTile(
-                              title: Text(doc['name']),
+                              title: Row(
+                                children: [
+                                  Checkbox(
+                                    value: doc['bought'],
+                                    onChanged: (bool? value) {},
+                                  ),
+                                  Expanded(
+                                    child: Text(doc['name']),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         );
