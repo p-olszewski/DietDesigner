@@ -16,15 +16,15 @@ class ShoppingListDetailsScreen extends StatefulWidget {
 }
 
 class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> snapshot;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> _snapshot;
   final bool _isLoading = false;
-  late String listId;
+  late String _listId;
 
   @override
   void initState() {
     super.initState();
-    listId = context.read<ShoppingListProvider>().listId;
-    snapshot = getShoppingListElements(listId);
+    _listId = context.read<ShoppingListProvider>().listId;
+    _snapshot = getShoppingListElements(_listId);
   }
 
   @override
@@ -33,93 +33,94 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
     var screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(context.watch<ShoppingListProvider>().listTitle),
-          actions: [
-            IconButton(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => const ListNameDialog(),
-              ),
-              icon: const Icon(Icons.edit),
+      appBar: AppBar(
+        title: Text(context.watch<ShoppingListProvider>().listTitle),
+        actions: [
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const ListNameDialog(),
             ),
-            IconButton(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => const UserManagementDialog(),
-              ),
-              icon: const Icon(Icons.manage_accounts),
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const UserManagementDialog(),
             ),
-          ],
-        ),
-        body: SizedBox(
-          width: screenWidth,
-          height: screenHeight,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Products:",
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Row(
+            icon: const Icon(Icons.manage_accounts),
+          ),
+        ],
+      ),
+      body: SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Products:",
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.swipe, color: Colors.grey, size: 12),
+                          Text(
+                            "  Swipe product to delete.",
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        child: Column(
                           children: [
-                            const Icon(Icons.swipe, color: Colors.grey, size: 12),
-                            Text(
-                              "  Swipe product to delete.",
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: _snapshot,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return ListView.builder(
+                                  physics: const ScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.docs.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    var doc = snapshot.data!.docs[index];
+                                    return ProductListTile(doc: doc);
+                                  },
+                                );
+                              },
                             ),
                           ],
-                        )
-                      ],
-                    ),
-                  ),
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              StreamBuilder<QuerySnapshot>(
-                                stream: snapshot,
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  return ListView.builder(
-                                    physics: const ScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      var doc = snapshot.data!.docs[index];
-                                      return ProductListTile(doc: doc);
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
                         ),
-                ],
-              ),
+                      ),
+              ],
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) => const AddProductDialog(),
-          ),
-          child: const Icon(Icons.add),
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => const AddProductDialog(),
+        ),
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }

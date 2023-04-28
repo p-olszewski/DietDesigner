@@ -14,13 +14,14 @@ class ShoppingListTab extends StatefulWidget {
 }
 
 class _ShoppingListTabState extends State<ShoppingListTab> {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> snapshot;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> _snapshot;
   final bool _isLoading = false;
+  bool isGenerating = false;
 
   @override
   void initState() {
     super.initState();
-    snapshot = getShoppingLists(context.read<AuthProvider>().uid!);
+    _snapshot = getShoppingLists(context.read<AuthProvider>().uid!);
   }
 
   @override
@@ -45,7 +46,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : StreamBuilder(
-                            stream: snapshot,
+                            stream: _snapshot,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 if (snapshot.data!.docs.isEmpty) {
@@ -123,6 +124,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) => const NewListDialog(),
         ),

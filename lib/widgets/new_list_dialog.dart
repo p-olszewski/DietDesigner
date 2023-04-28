@@ -17,9 +17,10 @@ class _NewListDialogState extends State<NewListDialog> {
   final TextEditingController _listTitleController = TextEditingController();
   DateTimeRange _dateRange = DateTimeRange(
     start: DateTime.now(),
-    end: DateTime.now().add(const Duration(days: 7)),
+    end: DateTime.now().add(const Duration(days: 6)),
   );
   bool _isLoading = false;
+  String? _nameErrorText;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class _NewListDialogState extends State<NewListDialog> {
 
     return AlertDialog(
       scrollable: true,
-      title: const Text('Generate a new shopping list'),
+      title: const Text('Generate new shopping list'),
       content: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -43,7 +44,11 @@ class _NewListDialogState extends State<NewListDialog> {
                 TextField(
                   controller: _listTitleController,
                   autofocus: true,
-                  decoration: const InputDecoration(labelText: 'List name', hintText: 'e.g. Lidl'),
+                  decoration: InputDecoration(
+                    labelText: 'List name',
+                    hintText: 'e.g. Lidl',
+                    errorText: _nameErrorText,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text('Date range:', style: subtitleStyle),
@@ -78,8 +83,15 @@ class _NewListDialogState extends State<NewListDialog> {
                         );
                       },
                     );
+
                     if (newDateRange == null) return;
-                    setState(() => _dateRange = newDateRange);
+                    if (newDateRange.duration.inDays > 6) {
+                      PopupMessenger.error('Maximum date range is 7 days! Changing to 7 days.');
+                      final endDate = newDateRange.start.add(const Duration(days: 6));
+                      newDateRange = DateTimeRange(start: newDateRange.start, end: endDate);
+                      return;
+                    }
+                    setState(() => _dateRange = newDateRange!);
                   },
                 ),
               ],
@@ -94,6 +106,14 @@ class _NewListDialogState extends State<NewListDialog> {
               FilledButton(
                 child: const Text('Generate'),
                 onPressed: () async {
+                  if (_listTitleController.text.isEmpty) {
+                    setState(() => _nameErrorText = 'List name cannot be empty!');
+                    return;
+                  }
+                  if (duration.inDays > 6) {
+                    PopupMessenger.error('Date range cannot be longer than 7 days!');
+                    return;
+                  }
                   setState(() => _isLoading = true);
                   var userId = context.read<AuthProvider>().uid;
                   if (userId != null) {
