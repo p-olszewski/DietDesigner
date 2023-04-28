@@ -113,7 +113,9 @@ class ChipsList extends StatelessWidget {
             itemBuilder: (context, index) {
               return Chip(
                 label: Text(snapshot.data![index]),
-                labelStyle: const TextStyle(fontSize: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
                 onDeleted: () {
                   String listId = context.read<ShoppingListProvider>().listId;
                   deleteUserFromShoppingList(listId, snapshot.data![index]);
