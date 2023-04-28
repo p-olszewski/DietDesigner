@@ -39,11 +39,14 @@ class _ProductListTileState extends State<ProductListTile> {
       key: ValueKey(widget.doc.id),
       onDismissed: (direction) {
         deleteListElement(listId, widget.doc.id);
-        PopupMessenger.info('${widget.doc['name']} has been deleted');
+        PopupMessenger.info('${widget.doc['name']} has been deleted.');
       },
-      background: const Card(
-        color: Colors.red,
-        child: Padding(
+      background: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: Theme.of(context).colorScheme.error,
+        ),
+        child: const Padding(
           padding: EdgeInsets.only(right: 16),
           child: Icon(
             Icons.delete,
@@ -52,8 +55,9 @@ class _ProductListTileState extends State<ProductListTile> {
         ),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(0),
-        trailing: const Icon(Icons.drag_handle),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
         title: Row(
           children: [
             Checkbox(

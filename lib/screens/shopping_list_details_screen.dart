@@ -61,10 +61,24 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 14.0),
-                  child: Text(
-                    "Products:",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Products:",
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.swipe, color: Colors.grey, size: 12),
+                          Text(
+                            "  Swipe product to delete.",
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
                 _isLoading
