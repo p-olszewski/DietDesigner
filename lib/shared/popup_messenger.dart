@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class PopupMessenger {
   static void info(String message) {
-    Fluttertoast.showToast(msg: message, backgroundColor: const Color.fromARGB(220, 46, 125, 50));
+    Fluttertoast.showToast(msg: message);
   }
 
   static void error(String message) {
