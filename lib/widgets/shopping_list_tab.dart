@@ -34,9 +34,23 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 14.0),
-              child: Text(
-                "Your lists:",
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Your lists:",
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.touch_app, color: Colors.grey, size: 12),
+                      Text(
+                        "  Tap list to open",
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
             Expanded(
@@ -66,46 +80,44 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                     itemCount: snapshot.data!.docs.length,
                                     itemBuilder: (context, index) {
                                       var doc = snapshot.data!.docs[index];
-                                      return Card(
-                                        child: ListTile(
-                                          title: Text(doc['title']),
-                                          subtitle: Text('Items: ${doc['itemsCounter']}'),
-                                          trailing: const Icon(Icons.arrow_forward),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          onTap: () {
-                                            if (!mounted) return;
-                                            context.read<ShoppingListProvider>().setListId(doc.reference.id);
-                                            context.read<ShoppingListProvider>().setListTitle(doc['title']);
-                                            context.read<ShoppingListProvider>().countItems(doc.reference.id);
-                                            Navigator.pushNamed(context, '/shopping_list_details');
-                                          },
-                                          onLongPress: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                title: const Text('Are you sure?'),
-                                                content: const Text('Do you want to delete this shopping list?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('No'),
-                                                  ),
-                                                  FilledButton(
-                                                    onPressed: () {
-                                                      deleteShoppingList(doc.reference.id);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('Yes'),
-                                                  )
-                                                ],
-                                              ),
-                                            );
-                                          },
+                                      return ListTile(
+                                        title: Text(doc['title']),
+                                        subtitle: Text('Items: ${doc['itemsCounter']}'),
+                                        trailing: const Icon(Icons.arrow_forward),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
+                                        onTap: () {
+                                          if (!mounted) return;
+                                          context.read<ShoppingListProvider>().setListId(doc.reference.id);
+                                          context.read<ShoppingListProvider>().setListTitle(doc['title']);
+                                          context.read<ShoppingListProvider>().countItems(doc.reference.id);
+                                          Navigator.pushNamed(context, '/shopping_list_details');
+                                        },
+                                        onLongPress: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text('Are you sure?'),
+                                              content: const Text('Do you want to delete this shopping list?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('No'),
+                                                ),
+                                                FilledButton(
+                                                  onPressed: () {
+                                                    deleteShoppingList(doc.reference.id);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Yes'),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
                                   );
