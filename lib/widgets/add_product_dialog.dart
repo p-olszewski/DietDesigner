@@ -1,17 +1,18 @@
+import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ListNameDialog extends StatefulWidget {
-  const ListNameDialog({super.key});
+class AddProductDialog extends StatefulWidget {
+  const AddProductDialog({super.key});
 
   @override
-  State<ListNameDialog> createState() => _ListNameDialogState();
+  State<AddProductDialog> createState() => _AddProductDialogState();
 }
 
-class _ListNameDialogState extends State<ListNameDialog> {
+class _AddProductDialogState extends State<AddProductDialog> {
   final TextEditingController _titleController = TextEditingController();
   late String listId;
   String? _nameErrorText;
@@ -30,17 +31,15 @@ class _ListNameDialogState extends State<ListNameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = context.read<ShoppingListProvider>().listTitle;
-
     return AlertDialog(
-      title: const Text('Edit list name'),
+      title: const Text('Add product'),
       content: TextField(
         autofocus: true,
         controller: _titleController,
         textAlign: TextAlign.left,
         decoration: InputDecoration(
-          labelText: 'List name',
-          hintText: 'e.g. Lidl',
+          labelText: 'Product name',
+          hintText: 'e.g. bread',
           errorText: _nameErrorText,
         ),
       ),
@@ -51,23 +50,24 @@ class _ListNameDialogState extends State<ListNameDialog> {
         ),
         FilledButton(
           child: const Text('Save'),
-          onPressed: () => updateListName(),
+          onPressed: () => _addProduct(),
         ),
       ],
     );
   }
 
-  Future<void> updateListName() async {
+  Future<void> _addProduct() async {
     if (_titleController.text.isEmpty) {
-      setState(() => _nameErrorText = 'Please enter a list name.');
+      setState(() => _nameErrorText = 'Please enter a name.');
       return;
     }
     try {
-      await updateShoppingListName(listId, _titleController.text);
+      final name = _titleController.text;
+      final order = await getMaxOrder(listId);
+      await addProductToShoppingList(ListElement(name: name, order: order), listId);
       if (!mounted) return;
-      context.read<ShoppingListProvider>().setListTitle(_titleController.text);
       Navigator.of(context).pop();
-      PopupMessenger.info('List name updated.');
+      PopupMessenger.info('Product added.');
       _titleController.clear();
       setState(() => _nameErrorText = null);
     } catch (e) {

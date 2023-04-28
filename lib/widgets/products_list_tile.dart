@@ -39,7 +39,7 @@ class _ProductListTileState extends State<ProductListTile> {
       key: ValueKey(widget.doc.id),
       onDismissed: (direction) {
         deleteListElement(listId, widget.doc.id);
-        PopupMessenger.info('${widget.doc['name']} has been deleted.');
+        PopupMessenger.info('${widget.doc['name']} deleted.');
       },
       background: Container(
         decoration: BoxDecoration(
@@ -115,7 +115,7 @@ class _ProductListTileState extends State<ProductListTile> {
                         ),
                         listId,
                         widget.doc.id);
-                    PopupMessenger.info('Product name has been updated.');
+                    PopupMessenger.info('Product name updated.');
                     setState(() => _nameErrorText = null);
                   } catch (e) {
                     // error handling

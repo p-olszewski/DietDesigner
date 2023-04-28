@@ -208,6 +208,11 @@ deleteListElement(String listId, String productId) {
   }
 }
 
+Future<double> getMaxOrder(String listId) async {
+  var doc = await _database.collection('/shopping_lists/$listId/products').orderBy('order', descending: true).limit(1).get();
+  return doc.docs.isNotEmpty ? doc.docs.first['order'] + 1 : 0;
+}
+
 Future<dynamic> getShoppingListUserEmails(String listId) async {
   final shoppingListSnapshot = await _database.doc('shopping_lists/$listId').get();
   final userIds = List.from((shoppingListSnapshot.data())?['users']);

@@ -98,7 +98,7 @@ class _NewListDialogState extends State<NewListDialog> {
                 DateFormat('dd.MM.yyyy').format(startDate),
                 DateFormat('dd.MM.yyyy').format(endDate),
               );
-              PopupMessenger.info('List $title has been added!');
+              PopupMessenger.info('Added $title list.');
             } else {
               PopupMessenger.error('You have to be logged in to add a list!');
             }
