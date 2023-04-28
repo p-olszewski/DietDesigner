@@ -105,8 +105,8 @@ class ChipsList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         return SizedBox(
-          height: 150,
-          width: 200,
+          height: (50 * snapshot.data!.length.toDouble()).toDouble(),
+          width: 300,
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: snapshot.data!.length,
