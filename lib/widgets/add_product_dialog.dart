@@ -14,13 +14,13 @@ class AddProductDialog extends StatefulWidget {
 
 class _AddProductDialogState extends State<AddProductDialog> {
   final TextEditingController _titleController = TextEditingController();
-  late String listId;
+  late String _listId;
   String? _nameErrorText;
 
   @override
   void initState() {
     super.initState();
-    listId = context.read<ShoppingListProvider>().listId;
+    _listId = context.read<ShoppingListProvider>().listId;
   }
 
   @override
@@ -63,10 +63,12 @@ class _AddProductDialogState extends State<AddProductDialog> {
     }
     try {
       final name = _titleController.text;
-      final order = await getMaxOrder(listId);
-      await addProductToShoppingList(ListElement(name: name, order: order), listId);
+      final order = await getMaxOrder(_listId);
+      await addProductToShoppingList(ListElement(name: name, order: order), _listId);
+      countAndUpdateItemsCounter(_listId);
       if (!mounted) return;
       Navigator.of(context).pop();
+      context.read<ShoppingListProvider>().countItems(_listId);
       PopupMessenger.info('Product added.');
       _titleController.clear();
       setState(() => _nameErrorText = null);

@@ -21,7 +21,7 @@ class ShoppingListProvider with ChangeNotifier {
   }
 
   void countItems(String listId) async {
-    _itemsCounter = await getShoppingListElementsCount(listId);
+    _itemsCounter = await countAndUpdateItemsCounter(listId);
     notifyListeners();
   }
 }

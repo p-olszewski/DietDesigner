@@ -123,6 +123,10 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
     // remove duplicates
     ingredientsList = ingredientsList.toSet().toList();
 
+    // get the number of ingredients and set the itemsCounter field on newList
+    final int numIngredients = ingredientsList.length;
+    newList.itemsCounter = numIngredients;
+
     // add shopping list to database
     final DocumentReference shoppingListsRef = await _database.collection('shopping_lists').add(
           newList.toJson(),
@@ -174,14 +178,13 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingListElements(String listI
   }
 }
 
-Future<int> getShoppingListElementsCount(String listId) async {
-  try {
-    final shoppingListCollection = _database.collection('shopping_lists/$listId/products');
-    final snapshot = await shoppingListCollection.get();
-    return snapshot.docs.length;
-  } catch (e) {
-    throw Exception('Failed to get products count: $e');
-  }
+Future<int> countAndUpdateItemsCounter(String listId) async {
+  final listRef = _database.doc('shopping_lists/$listId');
+  final productsSnapshot = await listRef.collection('products').get();
+  int itemsCounter = productsSnapshot.docs.length;
+
+  await listRef.update({'itemsCounter': itemsCounter});
+  return itemsCounter;
 }
 
 addProductToShoppingList(ListElement newProduct, String listId) {

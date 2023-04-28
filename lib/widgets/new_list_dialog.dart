@@ -88,20 +88,22 @@ class _NewListDialogState extends State<NewListDialog> {
         ),
         FilledButton(
           child: const Text('Generate'),
-          onPressed: () {
+          onPressed: () async {
             var userId = context.read<AuthProvider>().uid;
             if (userId != null) {
               var title = _listTitleController.text;
-              generateNewShoppingList(
+              await generateNewShoppingList(
                 userId,
                 ShoppingList(title, users: [userId]),
                 DateFormat('dd.MM.yyyy').format(startDate),
                 DateFormat('dd.MM.yyyy').format(endDate),
               );
+              if (!mounted) return;
               PopupMessenger.info('Added $title list.');
             } else {
               PopupMessenger.error('You have to be logged in to add a list!');
             }
+            if (!mounted) return;
             Navigator.of(context).pop();
           },
         ),

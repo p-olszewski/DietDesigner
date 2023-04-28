@@ -38,6 +38,7 @@ class _ProductListTileState extends State<ProductListTile> {
     return Dismissible(
       key: ValueKey(widget.doc.id),
       onDismissed: (direction) {
+        countAndUpdateItemsCounter(listId);
         deleteListElement(listId, widget.doc.id);
         PopupMessenger.info('${widget.doc['name']} deleted.');
       },

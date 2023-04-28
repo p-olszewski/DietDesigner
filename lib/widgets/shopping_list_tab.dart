@@ -68,7 +68,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                       return Card(
                                         child: ListTile(
                                           title: Text(doc['title']),
-                                          subtitle: const Text('Items: 14'),
+                                          subtitle: Text('Items: ${doc['itemsCounter']}'),
                                           trailing: const Icon(Icons.arrow_forward),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(10),
@@ -77,6 +77,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                             if (!mounted) return;
                                             context.read<ShoppingListProvider>().setListId(doc.reference.id);
                                             context.read<ShoppingListProvider>().setListTitle(doc['title']);
+                                            context.read<ShoppingListProvider>().countItems(doc.reference.id);
                                             Navigator.pushNamed(context, '/shopping_list_details');
                                           },
                                           onLongPress: () {
