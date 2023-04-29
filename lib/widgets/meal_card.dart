@@ -104,13 +104,15 @@ class _MealCardContainerState extends State<MealCardContainer> {
           newMeal = await APIService.instance.getSimilarMealFromAPI(meal, mealType: meal.id == 'meal_1' ? 'breakfast' : '');
         } catch (e) {
           debugPrint('Error fetching similar meal from API: $e');
-          PopupMessenger.error("Please try again later.");
         }
         retryCount++;
         await Future.delayed(const Duration(seconds: 1));
-      } while (newMeal == null && retryCount < maxRetries);
+      } while ((newMeal == null || newMeal.spoonacularId == meal.spoonacularId) && retryCount < maxRetries);
 
-      if (newMeal == null) return;
+      if (newMeal == null) {
+        PopupMessenger.error("Please try again later.");
+        return;
+      }
       if (!mounted) return;
       final uid = context.read<AuthProvider>().uid!;
       final date = context.read<DateProvider>().dateFormattedWithDots;
