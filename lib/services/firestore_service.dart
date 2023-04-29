@@ -84,6 +84,15 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
   }
 }
 
+replaceMeal(String uid, String date, String mealId, Meal newMeal) async {
+  try {
+    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
+    await mealCollection.doc(mealId).set(newMeal.toJson());
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
 Stream<QuerySnapshot<Map<String, dynamic>>> getShoppingLists(String uid) {
   try {
     final shoppingListCollection =

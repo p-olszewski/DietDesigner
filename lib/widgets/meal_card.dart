@@ -1,4 +1,5 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 
 class MealCard extends StatelessWidget {
@@ -71,7 +72,7 @@ class MealCardContainer extends StatelessWidget {
               Icons.replay,
               size: 16,
             ),
-            onPressed: () {},
+            onPressed: () => PopupMessenger.info('Not implemented yet'),
           ),
         ),
       ],
