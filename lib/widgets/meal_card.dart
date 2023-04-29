@@ -45,7 +45,10 @@ class _MealCardContainerState extends State<MealCardContainer> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Padding(
+            padding: EdgeInsets.only(top: 20.0),
+            child: Center(child: CircularProgressIndicator()),
+          )
         : Stack(
             children: [
               Card(
