@@ -63,6 +63,7 @@ Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
       final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
     }
   } catch (e) {
@@ -84,10 +85,10 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
   }
 }
 
-replaceMeal(String uid, String date, String mealId, Meal newMeal) async {
+Future replaceMeal(String uid, String date, Meal newMeal) async {
   try {
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
-    await mealCollection.doc(mealId).set(newMeal.toJson());
+    await mealCollection.doc(newMeal.id).set(newMeal.toJson());
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
