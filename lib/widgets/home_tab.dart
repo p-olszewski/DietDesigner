@@ -113,7 +113,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
-        child: const Icon(Icons.sync),
+        child: const Icon(Icons.add),
       ),
     );
   }
