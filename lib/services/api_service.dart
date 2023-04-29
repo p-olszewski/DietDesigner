@@ -17,6 +17,28 @@ class APIService {
   List<Meal>? _breakfastResults;
   List<Meal>? _restOfMealsResults;
 
+  Future<Meal> getSimilarMealFromAPI(Meal meal, {String mealType = ''}) async {
+    try {
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
+      Map<String, String> parameters = _getParameterForOneMeal(meal, mealType: mealType);
+      Uri uri = Uri.https(_baseUrl, _path, parameters);
+
+      final response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        var responseResults = data['results'];
+        Meal similarMeal = Meal.fromJson(responseResults[0]);
+        similarMeal.id = meal.id;
+        return similarMeal;
+      } else {
+        throw Exception('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Failed to load data: $e');
+    }
+  }
+
   Future<List<Meal>?> getMealsFromAPI(User user) async {
     try {
       _breakfastResults = (await _fetchMeals(user, mealsNumber: 1, mealType: 'breakfast'))?.cast<Meal>();
@@ -37,7 +59,7 @@ class APIService {
 
   Future<List<dynamic>?> _fetchMeals(User user, {required int mealsNumber, String mealType = ''}) async {
     Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', 'x-api-key': apiKey};
-    Map<String, String> parameters = _getPersonalizedParameters(user, mealsNumber: mealsNumber, mealType: mealType);
+    Map<String, String> parameters = _getParametersForAllMeals(user, mealsNumber: mealsNumber, mealType: mealType);
     Uri uri = Uri.https(_baseUrl, _path, parameters);
 
     final response = await http.get(uri, headers: headers);
@@ -54,7 +76,7 @@ class APIService {
     }
   }
 
-  Map<String, String> _getPersonalizedParameters(User user, {required int mealsNumber, String mealType = ''}) {
+  Map<String, String> _getParametersForAllMeals(User user, {required int mealsNumber, String mealType = ''}) {
     int kcalPerMeal = (user.calories! / user.mealsNumber!).round();
     int proteinsPerMeal;
 
@@ -90,6 +112,37 @@ class APIService {
       'addRecipeNutrition': true.toString(),
       'sort': 'random',
       ...parameters
+    };
+  }
+
+  Map<String, String> _getParameterForOneMeal(Meal meal, {String mealType = ''}) {
+    Map<String, String> parameters;
+    switch (mealType) {
+      case 'breakfast':
+        parameters = {
+          'minProtein': '15',
+          'minCalories': (meal.calories - 150).toString(),
+          'maxCalories': (meal.calories + 150).toString(),
+          'offset': Random().nextInt(10).toString(),
+          'type': mealType,
+        };
+        break;
+      default:
+        parameters = {
+          'minCalories': (meal.calories - 50).toString(),
+          'maxCalories': (meal.calories + 50).toString(),
+          'minProtein': (meal.proteins - 10).toString(),
+          'maxProtein': (meal.proteins + 10).toString(),
+          'offset': Random().nextInt(30).toString(),
+        };
+        break;
+    }
+
+    return {
+      'number': '1',
+      'addRecipeInformation': true.toString(),
+      'addRecipeNutrition': true.toString(),
+      ...parameters,
     };
   }
 }

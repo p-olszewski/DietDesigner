@@ -63,6 +63,7 @@ Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
     for (int i = 0; i < meals.length; i++) {
       final meal = meals[i];
       final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
     }
   } catch (e) {
@@ -79,6 +80,15 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
       meals.add(Meal.fromFirestore(doc.data()));
     }
     return meals;
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+Future replaceMeal(Meal newMeal, String date, String uid) async {
+  try {
+    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
+    await mealCollection.doc(newMeal.id).set(newMeal.toJson());
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }

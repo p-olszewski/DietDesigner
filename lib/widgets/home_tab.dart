@@ -30,29 +30,29 @@ class _HomeTabState extends State<HomeTab> {
     final uid = context.watch<AuthProvider>().uid!;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: WeeklyDatePicker(
-              selectedDay: dateProvider.date, // DateTime
-              changeDay: (value) => setState(() {
-                context.read<DateProvider>().setDate(value);
-              }),
-              enableWeeknumberText: false,
-              selectedBackgroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-                    child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: WeeklyDatePicker(
+                    selectedDay: dateProvider.date,
+                    changeDay: (value) => setState(() {
+                      context.read<DateProvider>().setDate(value);
+                    }),
+                    enableWeeknumberText: false,
+                    selectedBackgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -90,9 +90,42 @@ class _HomeTabState extends State<HomeTab> {
                                         shrinkWrap: true,
                                         itemCount: snapshot.data!.length,
                                         itemBuilder: (context, index) {
-                                          return GestureDetector(
-                                            onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                                            child: MealCard(meal: snapshot.data![index]),
+                                          return Stack(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
+                                                child: MealCard(meal: snapshot.data![index]),
+                                              ),
+                                              Positioned(
+                                                top: 30,
+                                                right: 0,
+                                                child: Container(
+                                                  width: 34,
+                                                  height: 34,
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).colorScheme.secondaryContainer,
+                                                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                                        spreadRadius: 1,
+                                                        blurRadius: 2,
+                                                        offset: const Offset(0, 1),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: IconButton(
+                                                    onPressed: () => _replaceMealToSimilar(snapshot.data![index]),
+                                                    icon: const Icon(
+                                                      Icons.replay,
+                                                      size: 16,
+                                                    ),
+                                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           );
                                         },
                                       );
@@ -104,16 +137,16 @@ class _HomeTabState extends State<HomeTab> {
                               ),
                             ],
                           ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
-        child: const Icon(Icons.sync),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -132,14 +165,49 @@ class _HomeTabState extends State<HomeTab> {
           meals = await APIService.instance.getMealsFromAPI(user);
         } catch (e) {
           debugPrint('Error fetching meals: $e');
-          PopupMessenger.error("Please try again later.");
         }
         retryCount++;
         await Future.delayed(const Duration(seconds: 1));
       } while (meals == null && retryCount < maxRetries);
 
-      if (meals == null) return;
+      if (meals == null) {
+        PopupMessenger.error("Please try again later.");
+        return;
+      }
       await saveMealsToDatabase(uid, meals, date);
+    } catch (e) {
+      PopupMessenger.error(e.toString());
+    }
+    setState(() => _isLoading = false);
+  }
+
+  void _replaceMealToSimilar(Meal meal) async {
+    setState(() => _isLoading = true);
+    int retryCount = 0;
+    const maxRetries = 5;
+    Meal? newMeal;
+
+    try {
+      do {
+        try {
+          newMeal = await APIService.instance.getSimilarMealFromAPI(meal, mealType: meal.id == 'meal_1' ? 'breakfast' : '');
+        } catch (e) {
+          debugPrint('Error fetching similar meal from API: $e');
+        }
+        retryCount++;
+        await Future.delayed(const Duration(seconds: 1));
+      } while ((newMeal == null || newMeal.spoonacularId == meal.spoonacularId) && retryCount < maxRetries);
+
+      if (newMeal == null) {
+        PopupMessenger.error("Please try again later.");
+        return;
+      }
+      if (!mounted) return;
+      final uid = context.read<AuthProvider>().uid!;
+      final date = context.read<DateProvider>().dateFormattedWithDots;
+      await replaceMeal(newMeal, date, uid);
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
