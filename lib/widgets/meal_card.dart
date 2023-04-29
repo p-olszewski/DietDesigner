@@ -16,6 +16,24 @@ class MealCard extends StatelessWidget {
       children: [
         const SizedBox(height: 20),
         Text("${meal.calories.round()} kcal, ${meal.proteins.round()}g proteins, ${meal.fats.round()}g fats, ${meal.carbs.round()}g carbs"),
+        MealCardContainer(meal: meal),
+      ],
+    );
+  }
+}
+
+class MealCardContainer extends StatelessWidget {
+  const MealCardContainer({
+    super.key,
+    required this.meal,
+  });
+
+  final Meal meal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
         Card(
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -43,6 +61,17 @@ class MealCard extends StatelessWidget {
             subtitle: Text(
               '${meal.calories} kcal\n${meal.proteins} protein, ${meal.fats} fat, ${meal.carbs} carbs',
             ),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: const Icon(
+              Icons.replay,
+              size: 16,
+            ),
+            onPressed: () {},
           ),
         ),
       ],
