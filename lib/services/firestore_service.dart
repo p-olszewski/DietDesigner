@@ -85,7 +85,7 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
   }
 }
 
-Future replaceMeal(String uid, String date, Meal newMeal) async {
+Future replaceMeal(Meal newMeal, String date, String uid) async {
   try {
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
     await mealCollection.doc(newMeal.id).set(newMeal.toJson());

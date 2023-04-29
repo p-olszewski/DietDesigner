@@ -1,6 +1,11 @@
 import 'package:diet_designer/models/meal.dart';
-import 'package:diet_designer/shared/popup_messenger.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/date_provider.dart';
+import 'package:diet_designer/services/api_service.dart';
+import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MealCard extends StatelessWidget {
   const MealCard({
@@ -23,7 +28,7 @@ class MealCard extends StatelessWidget {
   }
 }
 
-class MealCardContainer extends StatelessWidget {
+class MealCardContainer extends StatefulWidget {
   const MealCardContainer({
     super.key,
     required this.meal,
@@ -32,50 +37,87 @@ class MealCardContainer extends StatelessWidget {
   final Meal meal;
 
   @override
+  State<MealCardContainer> createState() => _MealCardContainerState();
+}
+
+class _MealCardContainerState extends State<MealCardContainer> {
+  bool _isLoading = false;
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Card(
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            leading: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 6,
-                      offset: const Offset(1, 1),
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Stack(
+            children: [
+              Card(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  leading: AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 6,
+                            offset: const Offset(1, 1),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(15.0),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.meal.imageThumbnail),
+                        ),
+                      ),
                     ),
-                  ],
-                  borderRadius: BorderRadius.circular(15.0),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(meal.imageThumbnail),
+                  ),
+                  title: Text(widget.meal.title),
+                  subtitle: Text(
+                    '${widget.meal.calories} kcal\n${widget.meal.proteins} protein, ${widget.meal.fats} fat, ${widget.meal.carbs} carbs',
                   ),
                 ),
               ),
-            ),
-            title: Text(meal.title),
-            subtitle: Text(
-              '${meal.calories} kcal\n${meal.proteins} protein, ${meal.fats} fat, ${meal.carbs} carbs',
-            ),
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: const Icon(
-              Icons.replay,
-              size: 16,
-            ),
-            onPressed: () => PopupMessenger.info('Not implemented yet'),
-          ),
-        ),
-      ],
-    );
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.replay,
+                    size: 16,
+                  ),
+                  onPressed: () => _regenerateMeal(widget.meal),
+                ),
+              ),
+            ],
+          );
+  }
+
+  void _regenerateMeal(Meal meal) async {
+    setState(() => _isLoading = true);
+    int retryCount = 0;
+    const maxRetries = 5;
+    Meal? newMeal;
+
+    try {
+      do {
+        try {
+          newMeal = await APIService.instance.getSimilarMealFromAPI(meal, mealType: meal.id == 'meal_1' ? 'breakfast' : '');
+        } catch (e) {
+          debugPrint('Error fetching similar meal from API: $e');
+          PopupMessenger.error("Please try again later.");
+        }
+        retryCount++;
+        await Future.delayed(const Duration(seconds: 1));
+      } while (newMeal == null && retryCount < maxRetries);
+
+      if (newMeal == null) return;
+      if (!mounted) return;
+      final uid = context.read<AuthProvider>().uid!;
+      final date = context.read<DateProvider>().dateFormattedWithDots;
+      await replaceMeal(newMeal, date, uid);
+    } catch (e) {
+      PopupMessenger.error(e.toString());
+    }
+    setState(() => _isLoading = false);
   }
 }
