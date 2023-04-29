@@ -3,7 +3,7 @@ class Meal {
   final double carbs;
   final double fats;
   final double proteins;
-  final int id;
+  final int spoonacularId;
   final double? pricePerServing;
   final int? readyInMinutes;
   final int? servings;
@@ -15,13 +15,14 @@ class Meal {
   final String imageThumbnail;
   final String image;
   final String? sourceUrl;
+  String? id;
 
   Meal(
     this.calories,
     this.carbs,
     this.fats,
     this.proteins,
-    this.id,
+    this.spoonacularId,
     this.pricePerServing,
     this.readyInMinutes,
     this.servings,
@@ -40,7 +41,7 @@ class Meal {
         carbs = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Carbohydrates')['amount'],
         fats = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Fat')['amount'],
         proteins = json['nutrition']['nutrients'].firstWhere((nutrient) => nutrient['name'] == 'Protein')['amount'],
-        id = json['id'],
+        spoonacularId = json['id'],
         pricePerServing = double.parse((json['pricePerServing'] / 100).toStringAsFixed(2)),
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
@@ -65,7 +66,7 @@ class Meal {
         'carbs': carbs,
         'fat': fats,
         'protein': proteins,
-        'id': id,
+        'spoonacularId': spoonacularId,
         'pricePerServing': pricePerServing,
         'readyInMinutes': readyInMinutes,
         'servings': servings,
@@ -77,6 +78,7 @@ class Meal {
         'imageThumbnail': imageThumbnail,
         'image': image,
         'sourceUrl': sourceUrl,
+        'id': id ?? '',
       };
 
   Meal.fromFirestore(Map<String, dynamic> json)
@@ -84,7 +86,7 @@ class Meal {
         carbs = json['carbs'],
         fats = json['fat'],
         proteins = json['protein'],
-        id = json['id'],
+        spoonacularId = json['spoonacularId'],
         pricePerServing = json['pricePerServing'],
         readyInMinutes = json['readyInMinutes'],
         servings = json['servings'],
@@ -95,5 +97,6 @@ class Meal {
         diets = json['diets'].map((diet) => diet.toString()).toList().cast<String>(),
         imageThumbnail = json['imageThumbnail'],
         image = json['image'],
-        sourceUrl = json['sourceUrl'];
+        sourceUrl = json['sourceUrl'],
+        id = json['id'];
 }
