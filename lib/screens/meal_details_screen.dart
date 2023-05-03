@@ -90,7 +90,7 @@ class MealDetailsPhoto extends StatelessWidget {
             top: 40,
             left: 24,
             child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () => Navigator.pop(context, true),
               child: Stack(
                 children: const <Widget>[
                   Positioned(

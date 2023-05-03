@@ -78,7 +78,10 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
-                                      onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
+                                      onTap: () async {
+                                        await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
+                                        setState(() {});
+                                      },
                                       child: MealCard(meal: snapshot.data![index]),
                                     );
                                   },
