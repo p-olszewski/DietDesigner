@@ -21,7 +21,7 @@ class BottomNavbarMenu extends StatelessWidget {
         NavigationDestination(
           selectedIcon: Icon(Icons.favorite),
           icon: Icon(Icons.favorite_border),
-          label: 'Favourites',
+          label: 'Favorites',
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.shopping_cart),

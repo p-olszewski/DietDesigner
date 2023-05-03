@@ -273,9 +273,12 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
 Future addMealToFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    await mealRef.update({'isFavorite': true});
-    final favoritesCollection = _database.collection('users/$uid/favorites_meals');
-    await favoritesCollection.doc(meal.spoonacularId.toString()).set(meal.toJson());
+    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+
+    await Future.wait([
+      mealRef.set({...meal.toJson(), 'isFavorite': true}),
+      favoritesMealsCollection.doc(meal.spoonacularId.toString()).set({...meal.toJson(), 'isFavorite': true}),
+    ]);
   } catch (e) {
     throw Exception('Failed while adding to favorites: $e');
   }
@@ -284,10 +287,27 @@ Future addMealToFavorites(Meal meal, String uid, String date) async {
 Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    await mealRef.update({'isFavorite': false});
-    final favoritesCollection = _database.collection('users/$uid/favorites_meals');
-    await favoritesCollection.doc(meal.spoonacularId.toString()).delete();
+    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+
+    await Future.wait([
+      mealRef.update({'isFavorite': false}),
+      favoritesMealsCollection.doc(meal.spoonacularId.toString()).delete(),
+    ]);
   } catch (e) {
     throw Exception('Failed while adding/removing from favorites: $e');
+  }
+}
+
+Future<List<Meal>> getFavouritesMeals(String uid) async {
+  try {
+    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final mealSnapshot = await favoritesMealsCollection.get();
+    final List<Meal> meals = [];
+    for (var doc in mealSnapshot.docs) {
+      meals.add(Meal.fromFirestore(doc.data()));
+    }
+    return meals;
+  } catch (e) {
+    throw Exception('Failed to get favorites meals: $e');
   }
 }
