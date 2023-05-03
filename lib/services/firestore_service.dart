@@ -269,3 +269,19 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
     'users': FieldValue.arrayRemove([userId]),
   });
 }
+
+Future addOrRemoveFromFavoritesMeals(Meal meal, String uid, String date) async {
+  try {
+    final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
+    final favoriteMealRef = _database.doc('users/$uid/favorites/meals/${meal.spoonacularId}');
+    if (meal.isFavorite) {
+      await mealRef.update({'isFavorite': false});
+      await favoriteMealRef.delete();
+    } else {
+      await mealRef.update({'isFavorite': true});
+      await favoriteMealRef.set(meal.toJson());
+    }
+  } catch (e) {
+    throw Exception('Failed while adding/removing from favorites: $e');
+  }
+}
