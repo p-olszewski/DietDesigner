@@ -1,5 +1,9 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
+import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -14,10 +18,23 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
-  bool isFavourite = false;
-
-  void _addToFavourites() {
-    setState(() => isFavourite = !isFavourite);
+  void _toggleFavorite() async {
+    try {
+      final uid = context.read<AuthProvider>().uid!;
+      final date = context.read<DateProvider>().dateFormattedWithDots;
+      if (widget.meal.isFavorite) {
+        await removeMealFromFavorites(widget.meal, uid, date);
+        PopupMessenger.info('Removed from favorites');
+      } else {
+        await addMealToFavorites(widget.meal, uid, date);
+        PopupMessenger.info('Added to favorites');
+      }
+      setState(() {
+        widget.meal.isFavorite = !widget.meal.isFavorite;
+      });
+    } on Exception catch (e) {
+      PopupMessenger.error(e.toString());
+    }
   }
 
   @override
@@ -36,9 +53,9 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _addToFavourites(),
+        onPressed: () => _toggleFavorite(),
         child: Icon(
-          isFavourite ? Icons.favorite : Icons.favorite_border,
+          widget.meal.isFavorite ? Icons.favorite : Icons.favorite_border,
         ),
       ),
     );

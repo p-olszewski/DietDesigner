@@ -273,9 +273,9 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
 Future addMealToFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    final favoriteMealRef = _database.doc('users/$uid/favorites/meals/${meal.spoonacularId}');
     await mealRef.update({'isFavorite': true});
-    await favoriteMealRef.set(meal.toJson());
+    final favoritesCollection = _database.collection('users/$uid/favorites_meals');
+    await favoritesCollection.doc(meal.spoonacularId.toString()).set(meal.toJson());
   } catch (e) {
     throw Exception('Failed while adding to favorites: $e');
   }
@@ -284,9 +284,9 @@ Future addMealToFavorites(Meal meal, String uid, String date) async {
 Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    final favoriteMealRef = _database.doc('users/$uid/favorites/meals/${meal.spoonacularId}');
     await mealRef.update({'isFavorite': false});
-    await favoriteMealRef.delete();
+    final favoritesCollection = _database.collection('users/$uid/favorites_meals');
+    await favoritesCollection.doc(meal.spoonacularId.toString()).delete();
   } catch (e) {
     throw Exception('Failed while adding/removing from favorites: $e');
   }
