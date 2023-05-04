@@ -148,7 +148,7 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 32.0, top: 28.0, right: 32.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 32.0, top: 16.0, right: 32.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -180,7 +180,7 @@ class MealDetailsData extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 4.0),
+                      const SizedBox(height: 18.0),
                       Text(meal.title, style: titleStyle),
                       const SizedBox(height: 12),
                       _buildIconRow(context, style: labelStyle),
