@@ -294,7 +294,7 @@ Future removeMealFromFavorites(Meal meal, String uid, String date) async {
       favoritesMealsCollection.doc(meal.spoonacularId.toString()).delete(),
     ]);
   } catch (e) {
-    throw Exception('Failed while adding/removing from favorites: $e');
+    throw Exception('Failed while removing from favorites: $e');
   }
 }
 
