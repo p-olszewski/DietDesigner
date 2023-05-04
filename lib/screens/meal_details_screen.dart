@@ -169,7 +169,18 @@ class MealDetailsData extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          height: 4.0,
+                          width: 48.0,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
                       Text(meal.title, style: titleStyle),
                       const SizedBox(height: 12),
                       _buildIconRow(context, style: labelStyle),
