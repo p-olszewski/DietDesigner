@@ -1,6 +1,8 @@
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +45,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                   children: [
                     const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                     Text(
-                      "  Tap meal to open",
+                      "  Long press for more options",
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                     ),
                   ],
@@ -77,12 +79,52 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                   shrinkWrap: true,
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
-                                        setState(() {});
-                                      },
-                                      child: MealCard(meal: snapshot.data![index]),
+                                    return Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          child: Material(
+                                            child: InkWell(
+                                              highlightColor: Colors.green.withOpacity(0.1),
+                                              splashColor: Colors.grey.withOpacity(0.1),
+                                              onTap: () async {
+                                                await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
+                                                setState(() {});
+                                              },
+                                              onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
+                                              child: Ink(child: MealCard(meal: snapshot.data![index])),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 30,
+                                          right: 0,
+                                          child: Container(
+                                            width: 34,
+                                            height: 34,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).colorScheme.secondaryContainer,
+                                              borderRadius: const BorderRadius.all(Radius.circular(12)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 2,
+                                                  offset: const Offset(0, 1),
+                                                ),
+                                              ],
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
+                                              icon: const Icon(
+                                                Icons.more_vert,
+                                                size: 16,
+                                              ),
+                                              color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     );
                                   },
                                 );
@@ -99,5 +141,68 @@ class _FavoritesTabState extends State<FavoritesTab> {
         ],
       ),
     ));
+  }
+
+  Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
+    final uid = context.read<AuthProvider>().uid!;
+    final date = context.read<DateProvider>().dateFormattedWithDots;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.add),
+                  SizedBox(width: 20.0),
+                  Text('Add to existing meal plan'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: 20.0),
+                  Text('Share with a friend'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () async {
+                await removeMealFromFavorites(meal, uid, date);
+                if (!mounted) return;
+                Navigator.pop(context);
+                setState(() {});
+                PopupMessenger.info('Removed from favorites');
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.remove),
+                  SizedBox(width: 20.0),
+                  Text('Remove from favorites'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => Navigator.pop(context),
+              child: Row(
+                children: const [
+                  Icon(Icons.close),
+                  SizedBox(width: 20.0),
+                  Text('Cancel'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
