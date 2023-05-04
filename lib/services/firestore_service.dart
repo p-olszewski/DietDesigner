@@ -312,7 +312,7 @@ Future<List<Meal>> getFavouritesMeals(String uid) async {
   }
 }
 
-Future<bool> isMealInFavorites(Meal meal, String uid) async {
+Future<bool> isMealFavorite(Meal meal, String uid) async {
   try {
     final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
     final docSnapshot = await favoritesMealsCollection.doc(meal.spoonacularId.toString()).get();

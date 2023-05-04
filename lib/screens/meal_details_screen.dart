@@ -18,6 +18,13 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
+  void checkIsMealInFavorites() async {
+    final isFavorite = await isMealFavorite(widget.meal, context.read<AuthProvider>().uid!);
+    setState(() {
+      widget.meal.isFavorite = isFavorite;
+    });
+  }
+
   void _toggleFavorite() async {
     try {
       final uid = context.read<AuthProvider>().uid!;
@@ -40,6 +47,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    checkIsMealInFavorites();
   }
 
   @override
