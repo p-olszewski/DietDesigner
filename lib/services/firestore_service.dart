@@ -311,3 +311,13 @@ Future<List<Meal>> getFavouritesMeals(String uid) async {
     throw Exception('Failed to get favorites meals: $e');
   }
 }
+
+Future<bool> isMealInFavorites(Meal meal, String uid) async {
+  try {
+    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final docSnapshot = await favoritesMealsCollection.doc(meal.spoonacularId.toString()).get();
+    return docSnapshot.exists;
+  } catch (e) {
+    throw Exception('Failed to check if meal is in favorites: $e');
+  }
+}
