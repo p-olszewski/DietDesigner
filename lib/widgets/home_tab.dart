@@ -116,9 +116,9 @@ class _HomeTabState extends State<HomeTab> {
                                                     ],
                                                   ),
                                                   child: IconButton(
-                                                    onPressed: () => _replaceMealToSimilar(snapshot.data![index]),
+                                                    onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
                                                     icon: const Icon(
-                                                      Icons.replay,
+                                                      Icons.more_vert,
                                                       size: 16,
                                                     ),
                                                     color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -212,5 +212,95 @@ class _HomeTabState extends State<HomeTab> {
       PopupMessenger.error(e.toString());
     }
     setState(() => _isLoading = false);
+  }
+
+  Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
+    final uid = context.read<AuthProvider>().uid!;
+    final date = context.read<DateProvider>().dateFormattedWithDots;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: () => _replaceMealToSimilar(meal),
+              child: Row(
+                children: const [
+                  Icon(Icons.cloud_sync_outlined),
+                  SizedBox(width: 20.0),
+                  Text('Replace with a similar meal'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.restart_alt),
+                  SizedBox(width: 20.0),
+                  Text('Replace with a meal from favorites'),
+                ],
+              ),
+            ),
+            meal.isFavorite
+                ? MaterialButton(
+                    onPressed: () async {
+                      await removeMealFromFavorites(meal, uid, date);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {});
+                      PopupMessenger.info('Removed from favorites');
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.remove),
+                        SizedBox(width: 20.0),
+                        Text('Remove from favorites'),
+                      ],
+                    ),
+                  )
+                : MaterialButton(
+                    onPressed: () async {
+                      await addMealToFavorites(meal, uid, date);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {});
+                      PopupMessenger.info('Added to favorites');
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.favorite_outline),
+                        SizedBox(width: 20.0),
+                        Text('Add to favorites'),
+                      ],
+                    ),
+                  ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: 20.0),
+                  Text('Share with a friend'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => Navigator.pop(context),
+              child: Row(
+                children: const [
+                  Icon(Icons.close),
+                  SizedBox(width: 20.0),
+                  Text('Cancel'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
