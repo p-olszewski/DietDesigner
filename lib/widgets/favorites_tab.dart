@@ -16,6 +16,8 @@ class FavoritesTab extends StatefulWidget {
 
 class _FavoritesTabState extends State<FavoritesTab> {
   final bool _isLoading = false;
+  final List<String> _options = ['meals', 'plan'];
+  String _selectedOption = 'meals';
 
   @override
   void initState() {
@@ -37,19 +39,31 @@ class _FavoritesTabState extends State<FavoritesTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Favorite meals",
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                     Text(
-                      "  Long press for more options",
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                      "Favorites",
+                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    SegmentedButton(
+                      segments: const [
+                        ButtonSegment(
+                          value: 'meals',
+                          label: Text('meals'),
+                          icon: Icon(Icons.restaurant),
+                        ),
+                        ButtonSegment(
+                          value: 'plans',
+                          label: Text('plans'),
+                          icon: Icon(Icons.calendar_today),
+                        ),
+                      ],
+                      selected: {_selectedOption},
+                      onSelectionChanged: (value) => setState(() => _selectedOption = value.first),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
