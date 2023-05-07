@@ -1,4 +1,5 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
@@ -60,10 +61,10 @@ class _HomeTabState extends State<HomeTab> {
                                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                               ),
                               FutureBuilder(
-                                future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
-                                builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+                                future: getNutritionPlan(uid, dateProvider.dateFormattedWithDots),
+                                builder: (context, snapshot) {
                                   if (snapshot.hasData) {
-                                    if (snapshot.data!.isEmpty) {
+                                    if (snapshot.data!.meals.isEmpty) {
                                       return SizedBox(
                                         width: double.infinity,
                                         height: MediaQuery.of(context).size.height * 0.6,
@@ -84,18 +85,19 @@ class _HomeTabState extends State<HomeTab> {
                                         ),
                                       );
                                     } else {
+                                      final nutritionPlan = snapshot.data!;
                                       return ListView.builder(
                                         physics: const ScrollPhysics(),
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap: true,
-                                        itemCount: snapshot.data!.length,
+                                        itemCount: snapshot.data!.meals.length,
                                         itemBuilder: (context, index) {
                                           return Stack(
                                             children: [
                                               GestureDetector(
                                                 onTap: () =>
-                                                    Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                                                child: MealCard(meal: snapshot.data![index]),
+                                                    Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
+                                                child: MealCard(meal: nutritionPlan.meals[index]),
                                               ),
                                               Positioned(
                                                 top: 30,
@@ -116,7 +118,7 @@ class _HomeTabState extends State<HomeTab> {
                                                     ],
                                                   ),
                                                   child: IconButton(
-                                                    onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
+                                                    onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
                                                     icon: const Icon(
                                                       Icons.more_vert,
                                                       size: 16,
@@ -153,7 +155,7 @@ class _HomeTabState extends State<HomeTab> {
 
   void _generateNutritionPlan(String uid, String date) async {
     setState(() => _isLoading = true);
-    List<Meal>? meals = [];
+    NutritionPlan? nutritionPlan;
     int retryCount = 0;
     const maxRetries = 5;
 
@@ -162,19 +164,22 @@ class _HomeTabState extends State<HomeTab> {
       if (user == null) return;
       do {
         try {
-          meals = await APIService.instance.getMealsFromAPI(user);
+          final meals = await APIService.instance.getMealsFromAPI(user);
+          if (meals != null) {
+            nutritionPlan = NutritionPlan(meals, date, uid);
+          }
         } catch (e) {
           debugPrint('Error fetching meals: $e');
         }
         retryCount++;
         await Future.delayed(const Duration(seconds: 1));
-      } while (meals == null && retryCount < maxRetries);
+      } while (nutritionPlan == null && retryCount < maxRetries);
 
-      if (meals == null) {
+      if (nutritionPlan == null) {
         PopupMessenger.error("Please try again later.");
         return;
       }
-      await saveMealsToDatabase(uid, meals, date);
+      await saveNutritionPlan(nutritionPlan);
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
@@ -217,11 +222,12 @@ class _HomeTabState extends State<HomeTab> {
   Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
     final uid = context.read<AuthProvider>().uid!;
     final date = context.read<DateProvider>().dateFormattedWithDots;
+    const iconSpacing = 30.0;
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -230,8 +236,8 @@ class _HomeTabState extends State<HomeTab> {
               child: Row(
                 children: const [
                   Icon(Icons.cloud_sync_outlined),
-                  SizedBox(width: 20.0),
-                  Text('Replace with a similar meal'),
+                  SizedBox(width: iconSpacing),
+                  Text('Replace from cloud'),
                 ],
               ),
             ),
@@ -240,8 +246,8 @@ class _HomeTabState extends State<HomeTab> {
               child: Row(
                 children: const [
                   Icon(Icons.restart_alt),
-                  SizedBox(width: 20.0),
-                  Text('Replace with a meal from favorites'),
+                  SizedBox(width: iconSpacing),
+                  Text('Replace from favorites'),
                 ],
               ),
             ),
@@ -256,9 +262,9 @@ class _HomeTabState extends State<HomeTab> {
                     },
                     child: Row(
                       children: const [
-                        Icon(Icons.remove),
-                        SizedBox(width: 20.0),
-                        Text('Remove from favorites'),
+                        Icon(Icons.favorite),
+                        SizedBox(width: iconSpacing),
+                        Text('Unfavorite'),
                       ],
                     ),
                   )
@@ -273,8 +279,8 @@ class _HomeTabState extends State<HomeTab> {
                     child: Row(
                       children: const [
                         Icon(Icons.favorite_outline),
-                        SizedBox(width: 20.0),
-                        Text('Add to favorites'),
+                        SizedBox(width: iconSpacing),
+                        Text('Favorite'),
                       ],
                     ),
                   ),
@@ -283,18 +289,8 @@ class _HomeTabState extends State<HomeTab> {
               child: Row(
                 children: const [
                   Icon(Icons.share_outlined),
-                  SizedBox(width: 20.0),
-                  Text('Share with a friend'),
-                ],
-              ),
-            ),
-            MaterialButton(
-              onPressed: () => Navigator.pop(context),
-              child: Row(
-                children: const [
-                  Icon(Icons.close),
-                  SizedBox(width: 20.0),
-                  Text('Cancel'),
+                  SizedBox(width: iconSpacing),
+                  Text('Share'),
                 ],
               ),
             ),
@@ -320,7 +316,7 @@ class _HomeTabState extends State<HomeTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Favorite meals'),
+          title: const Text('Choose meal'),
           content: SizedBox(
             height: height,
             width: 300.0,
@@ -342,8 +338,7 @@ class _HomeTabState extends State<HomeTab> {
                       replaceMeal(meal, date, uid);
                       Navigator.pop(context);
                       setState(() {});
-                      PopupMessenger.info('Choosed ${meal.title}');
-                      // _replaceMealToSimilar(meal);
+                      PopupMessenger.info('Meal replaced');
                     },
                   ),
                 );

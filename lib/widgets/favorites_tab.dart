@@ -146,24 +146,15 @@ class _FavoritesTabState extends State<FavoritesTab> {
   Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
     final uid = context.read<AuthProvider>().uid!;
     final date = context.read<DateProvider>().dateFormattedWithDots;
+    const iconSpacing = 30.0;
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
-              child: Row(
-                children: const [
-                  Icon(Icons.share_outlined),
-                  SizedBox(width: 20.0),
-                  Text('Share with a friend'),
-                ],
-              ),
-            ),
             MaterialButton(
               onPressed: () async {
                 await removeMealFromFavorites(meal, uid, date);
@@ -174,19 +165,19 @@ class _FavoritesTabState extends State<FavoritesTab> {
               },
               child: Row(
                 children: const [
-                  Icon(Icons.remove),
-                  SizedBox(width: 20.0),
-                  Text('Remove from favorites'),
+                  Icon(Icons.favorite),
+                  SizedBox(width: iconSpacing),
+                  Text('Unfavorite'),
                 ],
               ),
             ),
             MaterialButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
               child: Row(
                 children: const [
-                  Icon(Icons.close),
-                  SizedBox(width: 20.0),
-                  Text('Cancel'),
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Share'),
                 ],
               ),
             ),

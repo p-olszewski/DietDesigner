@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/models/shopping_list.dart';
 import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/shared/shared.dart';
@@ -53,15 +54,13 @@ Future<user_model.User?> getUserData(String uid) async {
   }
 }
 
-Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
+Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
   try {
-    final nutritionPlanCollection = _database.collection('users/$uid/nutrition_plans');
-    await nutritionPlanCollection.doc(date).set({
-      'date': date,
-    });
-    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
-    for (int i = 0; i < meals.length; i++) {
-      final meal = meals[i];
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
+    await nutritionPlanCollection.doc(nutritionPlan.date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/${nutritionPlan.date}/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
       final mealId = 'meal_${i + 1}';
       meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
@@ -71,7 +70,7 @@ Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
   }
 }
 
-Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
+Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
   try {
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
     final mealSnapshot = await mealCollection.get();
@@ -79,7 +78,7 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
     }
-    return meals;
+    return NutritionPlan(meals, date, uid);
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
@@ -118,8 +117,8 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
       const Duration(days: 1),
     ),) {
       final String formattedDate = formatter.format(date);
-      final List<Meal> meals = await getMealsFromDatabase(uid, formattedDate);
-      mealsList.addAll(meals);
+      final NutritionPlan nutritionPlan = await getNutritionPlan(uid, formattedDate);
+      mealsList.addAll(nutritionPlan.meals);
     }
 
     // get all ingredients from the meals
