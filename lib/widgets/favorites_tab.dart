@@ -158,16 +158,6 @@ class _FavoritesTabState extends State<FavoritesTab> {
               onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
               child: Row(
                 children: const [
-                  Icon(Icons.add),
-                  SizedBox(width: 20.0),
-                  Text('Add to existing meal plan'),
-                ],
-              ),
-            ),
-            MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
-              child: Row(
-                children: const [
                   Icon(Icons.share_outlined),
                   SizedBox(width: 20.0),
                   Text('Share with a friend'),
