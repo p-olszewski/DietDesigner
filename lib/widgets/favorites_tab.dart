@@ -16,8 +16,7 @@ class FavoritesTab extends StatefulWidget {
 
 class _FavoritesTabState extends State<FavoritesTab> {
   final bool _isLoading = false;
-  final List<String> _options = ['meals', 'plan'];
-  String _selectedOption = 'meals';
+  String _selectedOption = 'Meals';
 
   @override
   void initState() {
@@ -42,25 +41,48 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Favorites",
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    SegmentedButton(
-                      segments: const [
-                        ButtonSegment(
-                          value: 'meals',
-                          label: Text('meals'),
-                          icon: Icon(Icons.restaurant),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Favorites",
+                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        ButtonSegment(
-                          value: 'plans',
-                          label: Text('plans'),
-                          icon: Icon(Icons.calendar_today),
+                        Row(
+                          children: [
+                            const Icon(Icons.touch_app, color: Colors.grey, size: 12),
+                            Text(
+                              "  Choose meals or plans",
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ],
-                      selected: {_selectedOption},
-                      onSelectionChanged: (value) => setState(() => _selectedOption = value.first),
+                    ),
+                    SizedBox(
+                      width: 160.0,
+                      height: 36.0,
+                      child: SegmentedButton(
+                        showSelectedIcon: false,
+                        segments: const [
+                          ButtonSegment(
+                            value: 'Meals',
+                            label: Padding(
+                              padding: EdgeInsets.only(bottom: 20.0),
+                              child: Text('Meals'),
+                            ),
+                          ),
+                          ButtonSegment(
+                            value: 'Plans',
+                            label: Padding(
+                              padding: EdgeInsets.only(bottom: 20.0),
+                              child: Text('Plans'),
+                            ),
+                          ),
+                        ],
+                        selected: {_selectedOption},
+                        onSelectionChanged: (value) => setState(() => _selectedOption = value.first),
+                      ),
                     ),
                   ],
                 ),
