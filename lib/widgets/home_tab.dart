@@ -341,6 +341,7 @@ class _HomeTabState extends State<HomeTab> {
                       meal.id = oldMeal.id;
                       replaceMeal(meal, date, uid);
                       Navigator.pop(context);
+                      setState(() {});
                       PopupMessenger.info('Choosed ${meal.title}');
                       // _replaceMealToSimilar(meal);
                     },
