@@ -319,12 +319,17 @@ class _HomeTabState extends State<HomeTab> {
           title: const Text('Choose meal'),
           content: SizedBox(
             height: height,
-            width: 300.0,
+            width: 400.0,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: meals.length,
               itemBuilder: (context, index) {
                 final meal = meals[index];
+                final kcalDiff = '${meal.calories - oldMeal.calories >= 0 ? '↑' : '↓'}${(meal.calories - oldMeal.calories).abs().round()}';
+                final proteinsDiff =
+                    '${meal.proteins - oldMeal.proteins >= 0 ? '↑' : '↓'}${(meal.proteins - oldMeal.proteins).abs().round()}';
+                final fatsDiff = '${meal.fats - oldMeal.fats >= 0 ? '↑' : '↓'}${(meal.fats - oldMeal.fats).abs().round()}';
+                final carbsDiff = '${meal.carbs - oldMeal.carbs >= 0 ? '↑' : '↓'}${(meal.carbs - oldMeal.carbs).abs().round()}';
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
                   child: ListTile(
@@ -332,6 +337,7 @@ class _HomeTabState extends State<HomeTab> {
                       backgroundImage: NetworkImage(meal.imageThumbnail),
                     ),
                     title: Text(meal.title),
+                    subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
                     onTap: () {
                       final date = context.read<DateProvider>().dateFormattedWithDots;
                       meal.id = oldMeal.id;
