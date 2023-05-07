@@ -236,7 +236,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () => _showFavoriteMealsPopup(context),
+              onPressed: () => _showFavoriteMealsPopup(context, meal),
               child: Row(
                 children: const [
                   Icon(Icons.restart_alt),
@@ -304,7 +304,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Future<void> _showFavoriteMealsPopup(BuildContext context) async {
+  Future<void> _showFavoriteMealsPopup(BuildContext context, Meal oldMeal) async {
     Navigator.pop(context);
     final uid = context.read<AuthProvider>().uid!;
     final meals = await getFavouritesMeals(uid);
@@ -337,6 +337,9 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     title: Text(meal.title),
                     onTap: () {
+                      final date = context.read<DateProvider>().dateFormattedWithDots;
+                      meal.id = oldMeal.id;
+                      replaceMeal(meal, date, uid);
                       Navigator.pop(context);
                       PopupMessenger.info('Choosed ${meal.title}');
                       // _replaceMealToSimilar(meal);
