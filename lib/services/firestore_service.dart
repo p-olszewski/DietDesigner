@@ -272,11 +272,11 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
 Future addMealToFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final favoriteMealsCollection = _database.collection('users/$uid/favorites_meals');
 
     await Future.wait([
       mealRef.set({...meal.toJson(), 'isFavorite': true}),
-      favoritesMealsCollection.doc(meal.spoonacularId.toString()).set({...meal.toJson(), 'isFavorite': true}),
+      favoriteMealsCollection.doc(meal.spoonacularId.toString()).set({...meal.toJson(), 'isFavorite': true}),
     ]);
   } catch (e) {
     throw Exception('Failed while adding to favorites: $e');
@@ -286,21 +286,21 @@ Future addMealToFavorites(Meal meal, String uid, String date) async {
 Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   try {
     final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
-    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final favoriteMealsCollection = _database.collection('users/$uid/favorites_meals');
 
     await Future.wait([
       mealRef.update({'isFavorite': false}),
-      favoritesMealsCollection.doc(meal.spoonacularId.toString()).delete(),
+      favoriteMealsCollection.doc(meal.spoonacularId.toString()).delete(),
     ]);
   } catch (e) {
     throw Exception('Failed while removing from favorites: $e');
   }
 }
 
-Future<List<Meal>> getFavouritesMeals(String uid) async {
+Future<List<Meal>> getFavoriteMeals(String uid) async {
   try {
-    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
-    final mealSnapshot = await favoritesMealsCollection.get();
+    final favoriteMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final mealSnapshot = await favoriteMealsCollection.get();
     final List<Meal> meals = [];
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
@@ -313,8 +313,8 @@ Future<List<Meal>> getFavouritesMeals(String uid) async {
 
 Future<bool> isMealFavorite(Meal meal, String uid) async {
   try {
-    final favoritesMealsCollection = _database.collection('users/$uid/favorites_meals');
-    final docSnapshot = await favoritesMealsCollection.doc(meal.spoonacularId.toString()).get();
+    final favoriteMealsCollection = _database.collection('users/$uid/favorites_meals');
+    final docSnapshot = await favoriteMealsCollection.doc(meal.spoonacularId.toString()).get();
     return docSnapshot.exists;
   } catch (e) {
     throw Exception('Failed to check if meal is in favorites: $e');

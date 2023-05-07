@@ -303,7 +303,7 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> _showFavoriteMealsPopup(BuildContext context, Meal oldMeal) async {
     Navigator.pop(context);
     final uid = context.read<AuthProvider>().uid!;
-    final meals = await getFavouritesMeals(uid);
+    final meals = await getFavoriteMeals(uid);
     if (meals.isEmpty) {
       PopupMessenger.info('You have no favorite meals');
       return;

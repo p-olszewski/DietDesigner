@@ -60,7 +60,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : FutureBuilder(
-                          future: getFavouritesMeals(uid),
+                          future: getFavoriteMeals(uid),
                           builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data!.isEmpty) {
