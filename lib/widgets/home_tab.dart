@@ -236,7 +236,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              onPressed: () => _showFavoriteMealsPopup(context),
               child: Row(
                 children: const [
                   Icon(Icons.restart_alt),
@@ -301,6 +301,59 @@ class _HomeTabState extends State<HomeTab> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showFavoriteMealsPopup(BuildContext context) async {
+    Navigator.pop(context);
+    final uid = context.read<AuthProvider>().uid!;
+    final meals = await getFavouritesMeals(uid);
+    if (meals.isEmpty) {
+      PopupMessenger.info('You have no favorite meals');
+      return;
+    }
+    if (!mounted) return;
+    final maxHeight = MediaQuery.of(context).size.height * 0.5;
+    const elementHeight = 70.0;
+    var height = meals.length * elementHeight > maxHeight ? maxHeight : meals.length * elementHeight;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Favorite meals'),
+          content: SizedBox(
+            height: height,
+            width: 300.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: meals.length,
+              itemBuilder: (context, index) {
+                final meal = meals[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(meal.imageThumbnail),
+                    ),
+                    title: Text(meal.title),
+                    onTap: () {
+                      Navigator.pop(context);
+                      PopupMessenger.info('Choosed ${meal.title}');
+                      // _replaceMealToSimilar(meal);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
