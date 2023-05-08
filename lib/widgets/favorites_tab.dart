@@ -7,6 +7,7 @@ import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesTab extends StatefulWidget {
@@ -48,7 +49,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
 
   Padding _buildNavigationRow(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+      padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,7 +67,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
-                        "  Toggle to change",
+                        "  Tap to unfold",
                         style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                       ),
                     ],
@@ -198,57 +199,76 @@ class _FavoritesTabState extends State<FavoritesTab> {
               shrinkWrap: true,
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                return Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Material(
-                        child: InkWell(
-                          highlightColor: Colors.green.withOpacity(0.1),
-                          splashColor: Colors.grey.withOpacity(0.1),
-                          // onTap: () async {
-                          //   await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
-                          //   setState(() {});
-                          // },
-                          // onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
-                          child: Ink(
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                              title: Text(snapshot.data![index].date),
-                            ),
+                return ExpansionTile(
+                  title: Text(
+                    _formatDate(snapshot.data![index].date),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  children: snapshot.data![index].meals
+                      .asMap()
+                      .map(
+                        (i, meal) => MapEntry(
+                          i,
+                          Column(
+                            children: [
+                              if (meal == snapshot.data![index].meals.first) const SizedBox(height: 5),
+                              ListTile(
+                                leading: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 4,
+                                        offset: const Offset(1, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 26.0,
+                                    backgroundImage: NetworkImage(meal.imageThumbnail),
+                                  ),
+                                ),
+                                title: Text(meal.title),
+                                subtitle: Text(
+                                    '${meal.calories.round()} kcal, ${meal.proteins.round()}g protein, ${meal.fats.round()}g fat, ${meal.carbs.round()}g carbs'),
+                                onTap: () async {
+                                  await Navigator.pushNamed(context, '/meal_details', arguments: meal);
+                                  setState(() {});
+                                },
+                              ),
+                              meal == snapshot.data![index].meals.last
+                                  ? Column(
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        FilledButton(
+                                          onPressed: () {},
+                                          child: const Text('Use this plan'),
+                                        ),
+                                        const SizedBox(height: 15),
+                                      ],
+                                    )
+                                  : Divider(
+                                      indent: 16,
+                                      endIndent: 16,
+                                      thickness: 1,
+                                      color: Colors.grey.shade200,
+                                    ),
+                            ],
                           ),
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      right: 0,
-                      child: Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: const BorderRadius.all(Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.more_vert,
-                            size: 16,
-                          ),
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
+                      )
+                      .values
+                      .toList(),
                 );
               },
             );
@@ -302,5 +322,12 @@ class _FavoritesTabState extends State<FavoritesTab> {
         ),
       ),
     );
+  }
+
+  String _formatDate(String dateString) {
+    final dateTime = DateFormat('dd.MM.yyyy').parse(dateString);
+    final weekday = DateFormat('EEEE').format(dateTime);
+    final formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
+    return '$weekday, $formattedDate';
   }
 }
