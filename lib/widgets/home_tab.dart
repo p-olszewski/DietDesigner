@@ -108,10 +108,14 @@ class _HomeTabState extends State<HomeTab> {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               const Text('No meals found.'),
-                                              const SizedBox(height: 10),
+                                              const SizedBox(height: 20),
                                               ElevatedButton(
                                                 onPressed: () => _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots),
                                                 child: const Text('Generate nutrition plan'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => _showFavoritePlansPopup(context),
+                                                child: const Text('Choose from favorites'),
                                               ),
                                             ],
                                           ),
@@ -387,6 +391,57 @@ class _HomeTabState extends State<HomeTab> {
                         _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
                       });
                       PopupMessenger.info('Meal replaced');
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showFavoritePlansPopup(BuildContext context) async {
+    final nutritionPlans = await getFavoriteNutritionPlans(_uid);
+    if (nutritionPlans.isEmpty) {
+      PopupMessenger.info('You have no favorite plans');
+      return;
+    }
+    if (!mounted) return;
+    final maxHeight = MediaQuery.of(context).size.height * 0.5;
+    const elementHeight = 70.0;
+    var height = nutritionPlans.length * elementHeight > maxHeight ? maxHeight : nutritionPlans.length * elementHeight;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose plan'),
+          content: SizedBox(
+            height: height,
+            width: 400.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: nutritionPlans.length,
+              itemBuilder: (context, index) {
+                final plan = nutritionPlans[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                  child: ListTile(
+                    title: Text(plan.date),
+                    onTap: () async {
+                      await saveNutritionPlanOnSpecificDate(plan, _dateProvider.dateFormattedWithDots);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
                     },
                   ),
                 );
