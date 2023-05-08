@@ -151,8 +151,16 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
-        child: const Icon(Icons.add),
+        onPressed: () async {
+          NutritionPlan nutritionPlan = await getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+          if (nutritionPlan.meals.isEmpty) {
+            PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
+            return;
+          }
+          await addNutritionPlanToFavorites(nutritionPlan);
+          PopupMessenger.info('Saved plan to favorites.');
+        },
+        child: const Icon(Icons.favorite_border_outlined),
       ),
     );
   }
