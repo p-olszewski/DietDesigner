@@ -27,34 +27,27 @@ class _FavoritesTabState extends State<FavoritesTab> {
   @override
   Widget build(BuildContext context) {
     final uid = context.watch<AuthProvider>().uid!;
-    return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildNavigationRow(context),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _selectedOption == 1
-                          ? _buildFavoriteMealsList(uid)
-                          : _buildFavoritePlansList(uid)
-                ],
-              ),
-            ),
-          ),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildNavigationRow(context),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _selectedOption == 0
+                    ? _buildFavoritePlansList(uid)
+                    : _buildFavoriteMealsList(uid)
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Padding _buildNavigationRow(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 14.0, bottom: 4.0),
+      padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -73,7 +66,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
                         "  Choose plans or meals",
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey),
                       ),
                     ],
                   ),

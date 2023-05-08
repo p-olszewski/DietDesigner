@@ -33,20 +33,20 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14.0),
+              padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Your lists:",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
                         "  Tap list to open",
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey),
                       ),
                     ],
                   )
