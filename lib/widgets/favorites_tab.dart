@@ -2,6 +2,7 @@ import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
+import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
@@ -250,9 +251,27 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                   ? Column(
                                       children: [
                                         const SizedBox(height: 20),
-                                        FilledButton(
-                                          onPressed: () {},
-                                          child: const Text('Use this plan'),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            DateTime? newDate = await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime.now(),
+                                              lastDate: DateTime(2100),
+                                            );
+                                            if (newDate == null) return;
+                                            final formattedDate = DateFormat('dd.MM.yyyy').format(newDate);
+                                            await saveNutritionPlanOnSpecificDate(snapshot.data![index], formattedDate);
+                                            if (!mounted) return;
+                                            context.read<NavBarProvider>().setCurrentIndex(0);
+                                            context.read<DateProvider>().setDate(newDate);
+                                            Navigator.pushNamed(context, "/home");
+                                            PopupMessenger.info('Plan successfully added to your calendar.');
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                                          ),
+                                          child: const Text('Use plan'),
                                         ),
                                         const SizedBox(height: 15),
                                       ],
