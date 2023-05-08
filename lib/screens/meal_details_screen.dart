@@ -1,5 +1,9 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
+import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -14,15 +18,36 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
-  bool isFavourite = false;
+  void checkIsMealInFavorites() async {
+    final isFavorite = await isMealFavorite(widget.meal, context.read<AuthProvider>().uid!);
+    setState(() {
+      widget.meal.isFavorite = isFavorite;
+    });
+  }
 
-  void _addToFavourites() {
-    setState(() => isFavourite = !isFavourite);
+  void _toggleFavorite() async {
+    try {
+      final uid = context.read<AuthProvider>().uid!;
+      final date = context.read<DateProvider>().dateFormattedWithDots;
+      if (widget.meal.isFavorite) {
+        await removeMealFromFavorites(widget.meal, uid, date);
+        PopupMessenger.info('Removed from favorites');
+      } else {
+        await addMealToFavorites(widget.meal, uid, date);
+        PopupMessenger.info('Added to favorites');
+      }
+      setState(() {
+        widget.meal.isFavorite = !widget.meal.isFavorite;
+      });
+    } on Exception catch (e) {
+      PopupMessenger.error(e.toString());
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    checkIsMealInFavorites();
   }
 
   @override
@@ -36,9 +61,9 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _addToFavourites(),
+        onPressed: () => _toggleFavorite(),
         child: Icon(
-          isFavourite ? Icons.favorite : Icons.favorite_border,
+          widget.meal.isFavorite ? Icons.favorite : Icons.favorite_border,
         ),
       ),
     );
@@ -73,7 +98,7 @@ class MealDetailsPhoto extends StatelessWidget {
             top: 40,
             left: 24,
             child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () => Navigator.pop(context, true),
               child: Stack(
                 children: const <Widget>[
                   Positioned(
@@ -123,7 +148,7 @@ class MealDetailsData extends StatelessWidget {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 32.0, top: 28.0, right: 32.0, bottom: 0),
+                padding: const EdgeInsets.only(left: 32.0, top: 16.0, right: 32.0, bottom: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: const BorderRadius.only(
@@ -144,7 +169,18 @@ class MealDetailsData extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          height: 4.0,
+                          width: 48.0,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18.0),
                       Text(meal.title, style: titleStyle),
                       const SizedBox(height: 12),
                       _buildIconRow(context, style: labelStyle),

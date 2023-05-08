@@ -1,4 +1,5 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
@@ -17,18 +18,49 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  late Future<NutritionPlan> _nutritionPlan;
+  late DateProvider _dateProvider;
+  late final String _uid;
   bool _isLoading = false;
+  bool _isFavorite = false;
+
+  void checkIsPlanInFavorites() async {
+    NutritionPlan nutritionPlan = await _nutritionPlan;
+    final isFavorite = await isNutritionPlanFavorite(nutritionPlan, _uid);
+    setState(() => _isFavorite = isFavorite);
+  }
+
+  void _toggleFavorite() async {
+    try {
+      NutritionPlan nutritionPlan = await _nutritionPlan;
+      if (nutritionPlan.meals.isEmpty) {
+        PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
+        return;
+      }
+      if (_isFavorite) {
+        await removeNutritionPlanFromFavorites(nutritionPlan, _uid);
+        PopupMessenger.info('Removed plan from favorites.');
+      } else {
+        await addNutritionPlanToFavorites(nutritionPlan);
+        PopupMessenger.info('Added plan to favorites.');
+      }
+      setState(() => _isFavorite = !_isFavorite);
+    } catch (e) {
+      PopupMessenger.error('Failed to toggle favorite.');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _uid = context.read<AuthProvider>().uid!;
+    _dateProvider = context.read<DateProvider>();
+    _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    checkIsPlanInFavorites();
   }
 
   @override
   Widget build(BuildContext context) {
-    final dateProvider = context.watch<DateProvider>();
-    final uid = context.watch<AuthProvider>().uid!;
-
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -37,9 +69,11 @@ class _HomeTabState extends State<HomeTab> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: WeeklyDatePicker(
-                    selectedDay: dateProvider.date,
+                    selectedDay: _dateProvider.date,
                     changeDay: (value) => setState(() {
                       context.read<DateProvider>().setDate(value);
+                      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      checkIsPlanInFavorites();
                     }),
                     enableWeeknumberText: false,
                     selectedBackgroundColor: Theme.of(context).colorScheme.primary,
@@ -56,14 +90,14 @@ class _HomeTabState extends State<HomeTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                dateProvider.dateFormattedWithWords,
+                                _dateProvider.dateFormattedWithWords,
                                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                               ),
                               FutureBuilder(
-                                future: getMealsFromDatabase(uid, dateProvider.dateFormattedWithDots),
-                                builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+                                future: _nutritionPlan,
+                                builder: (context, snapshot) {
                                   if (snapshot.hasData) {
-                                    if (snapshot.data!.isEmpty) {
+                                    if (snapshot.data!.meals.isEmpty) {
                                       return SizedBox(
                                         width: double.infinity,
                                         height: MediaQuery.of(context).size.height * 0.6,
@@ -74,28 +108,33 @@ class _HomeTabState extends State<HomeTab> {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               const Text('No meals found.'),
-                                              const SizedBox(height: 10),
+                                              const SizedBox(height: 20),
                                               ElevatedButton(
-                                                onPressed: () => _generateNutritionPlan(uid, dateProvider.dateFormattedWithDots),
+                                                onPressed: () => _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots),
                                                 child: const Text('Generate nutrition plan'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => _showFavoritePlansPopup(context),
+                                                child: const Text('Choose from favorites'),
                                               ),
                                             ],
                                           ),
                                         ),
                                       );
                                     } else {
+                                      final nutritionPlan = snapshot.data!;
                                       return ListView.builder(
                                         physics: const ScrollPhysics(),
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap: true,
-                                        itemCount: snapshot.data!.length,
+                                        itemCount: snapshot.data!.meals.length,
                                         itemBuilder: (context, index) {
                                           return Stack(
                                             children: [
                                               GestureDetector(
                                                 onTap: () =>
-                                                    Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                                                child: MealCard(meal: snapshot.data![index]),
+                                                    Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
+                                                child: MealCard(meal: nutritionPlan.meals[index]),
                                               ),
                                               Positioned(
                                                 top: 30,
@@ -116,9 +155,9 @@ class _HomeTabState extends State<HomeTab> {
                                                     ],
                                                   ),
                                                   child: IconButton(
-                                                    onPressed: () => _replaceMealToSimilar(snapshot.data![index]),
+                                                    onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
                                                     icon: const Icon(
-                                                      Icons.replay,
+                                                      Icons.more_vert,
                                                       size: 16,
                                                     ),
                                                     color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -145,15 +184,15 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => PopupMessenger.info('This feature is not yet implemented!'),
-        child: const Icon(Icons.add),
+        onPressed: () => _toggleFavorite(),
+        child: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
       ),
     );
   }
 
   void _generateNutritionPlan(String uid, String date) async {
     setState(() => _isLoading = true);
-    List<Meal>? meals = [];
+    NutritionPlan? nutritionPlan;
     int retryCount = 0;
     const maxRetries = 5;
 
@@ -162,29 +201,34 @@ class _HomeTabState extends State<HomeTab> {
       if (user == null) return;
       do {
         try {
-          meals = await APIService.instance.getMealsFromAPI(user);
+          final meals = await APIService.instance.getMealsFromAPI(user);
+          if (meals != null) {
+            nutritionPlan = NutritionPlan(meals, date, uid);
+          }
         } catch (e) {
           debugPrint('Error fetching meals: $e');
         }
         retryCount++;
-        await Future.delayed(const Duration(seconds: 1));
-      } while (meals == null && retryCount < maxRetries);
+      } while (nutritionPlan == null && retryCount < maxRetries);
 
-      if (meals == null) {
+      if (nutritionPlan == null) {
         PopupMessenger.error("Please try again later.");
         return;
       }
-      await saveMealsToDatabase(uid, meals, date);
+      await saveNutritionPlan(nutritionPlan);
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
-    setState(() => _isLoading = false);
+    setState(() {
+      _isLoading = false;
+      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    });
   }
 
-  void _replaceMealToSimilar(Meal meal) async {
+  void _replaceMealFromCloud(Meal meal) async {
     setState(() => _isLoading = true);
     int retryCount = 0;
-    const maxRetries = 5;
+    const maxRetries = 8;
     Meal? newMeal;
 
     try {
@@ -211,6 +255,207 @@ class _HomeTabState extends State<HomeTab> {
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
-    setState(() => _isLoading = false);
+    setState(() {
+      _isLoading = false;
+      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    });
+  }
+
+  Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
+    const iconSpacing = 30.0;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: () => _replaceMealFromCloud(meal),
+              child: Row(
+                children: const [
+                  Icon(Icons.cloud_sync_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Replace from cloud'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => _showFavoriteMealsPopup(context, meal),
+              child: Row(
+                children: const [
+                  Icon(Icons.restart_alt),
+                  SizedBox(width: iconSpacing),
+                  Text('Replace from favorites'),
+                ],
+              ),
+            ),
+            meal.isFavorite
+                ? MaterialButton(
+                    onPressed: () async {
+                      await removeMealFromFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
+                      PopupMessenger.info('Removed from favorites');
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.favorite),
+                        SizedBox(width: iconSpacing),
+                        Text('Unfavorite'),
+                      ],
+                    ),
+                  )
+                : MaterialButton(
+                    onPressed: () async {
+                      await addMealToFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
+                      PopupMessenger.info('Added to favorites');
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.favorite_outline),
+                        SizedBox(width: iconSpacing),
+                        Text('Favorite'),
+                      ],
+                    ),
+                  ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Share'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showFavoriteMealsPopup(BuildContext context, Meal oldMeal) async {
+    Navigator.pop(context);
+    final meals = await getFavoriteMeals(_uid);
+    if (meals.isEmpty) {
+      PopupMessenger.info('You have no favorite meals');
+      return;
+    }
+    if (!mounted) return;
+    final maxHeight = MediaQuery.of(context).size.height * 0.5;
+    const elementHeight = 70.0;
+    var height = meals.length * elementHeight > maxHeight ? maxHeight : meals.length * elementHeight;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose meal'),
+          content: SizedBox(
+            height: height,
+            width: 400.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: meals.length,
+              itemBuilder: (context, index) {
+                final meal = meals[index];
+                final kcalDiff = '${meal.calories - oldMeal.calories >= 0 ? '↑' : '↓'}${(meal.calories - oldMeal.calories).abs().round()}';
+                final proteinsDiff =
+                    '${meal.proteins - oldMeal.proteins >= 0 ? '↑' : '↓'}${(meal.proteins - oldMeal.proteins).abs().round()}';
+                final fatsDiff = '${meal.fats - oldMeal.fats >= 0 ? '↑' : '↓'}${(meal.fats - oldMeal.fats).abs().round()}';
+                final carbsDiff = '${meal.carbs - oldMeal.carbs >= 0 ? '↑' : '↓'}${(meal.carbs - oldMeal.carbs).abs().round()}';
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(meal.imageThumbnail),
+                    ),
+                    title: Text(meal.title),
+                    subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
+                    onTap: () async {
+                      meal.id = oldMeal.id;
+                      await replaceMeal(meal, _dateProvider.dateFormattedWithDots, _uid);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {
+                        _isLoading = false;
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
+                      PopupMessenger.info('Meal replaced');
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showFavoritePlansPopup(BuildContext context) async {
+    final nutritionPlans = await getFavoriteNutritionPlans(_uid);
+    if (nutritionPlans.isEmpty) {
+      PopupMessenger.info('You have no favorite plans');
+      return;
+    }
+    if (!mounted) return;
+    final maxHeight = MediaQuery.of(context).size.height * 0.5;
+    const elementHeight = 70.0;
+    var height = nutritionPlans.length * elementHeight > maxHeight ? maxHeight : nutritionPlans.length * elementHeight;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose plan'),
+          content: SizedBox(
+            height: height,
+            width: 400.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: nutritionPlans.length,
+              itemBuilder: (context, index) {
+                final plan = nutritionPlans[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                  child: ListTile(
+                    title: Text(plan.date),
+                    onTap: () async {
+                      await saveNutritionPlanOnSpecificDate(plan, _dateProvider.dateFormattedWithDots);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

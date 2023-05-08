@@ -6,18 +6,21 @@ class NutritionPlan {
   final double carbs;
   final double fats;
   final double proteins;
+  final String date;
+  final String uid;
 
-  NutritionPlan(this.meals)
+  NutritionPlan(this.meals, this.date, this.uid)
       : calories = meals.fold(0, (sum, meal) => sum + meal.calories),
         carbs = meals.fold(0, (sum, meal) => sum + meal.carbs),
         fats = meals.fold(0, (sum, meal) => sum + meal.fats),
         proteins = meals.fold(0, (sum, meal) => sum + meal.proteins);
 
   Map<String, dynamic> toJson() => {
-        // 'meals': meals.map((meal) => meal.toJson()).toList(),
-        'calories': calories,
-        'carbs': carbs,
-        'fats': fats,
-        'proteins': proteins,
+        'calories': double.parse(calories.toStringAsFixed(2)),
+        'carbs': double.parse(carbs.toStringAsFixed(2)),
+        'fats': double.parse(fats.toStringAsFixed(2)),
+        'proteins': double.parse(proteins.toStringAsFixed(2)),
+        'date': date,
+        'uid': uid,
       };
 }

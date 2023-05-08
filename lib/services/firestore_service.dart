@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/models/shopping_list.dart';
 import 'package:diet_designer/models/list_element.dart';
 import 'package:diet_designer/shared/shared.dart';
@@ -53,15 +54,13 @@ Future<user_model.User?> getUserData(String uid) async {
   }
 }
 
-Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
+Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
   try {
-    final nutritionPlanCollection = _database.collection('users/$uid/nutrition_plans');
-    await nutritionPlanCollection.doc(date).set({
-      'date': date,
-    });
-    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
-    for (int i = 0; i < meals.length; i++) {
-      final meal = meals[i];
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
+    await nutritionPlanCollection.doc(nutritionPlan.date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/${nutritionPlan.date}/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
       final mealId = 'meal_${i + 1}';
       meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
@@ -71,7 +70,23 @@ Future saveMealsToDatabase(String uid, List<Meal> meals, String date) async {
   }
 }
 
-Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
+Future saveNutritionPlanOnSpecificDate(NutritionPlan nutritionPlan, String date) async {
+  try {
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
+    await nutritionPlanCollection.doc(date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/$date/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
+      final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
+      await mealCollection.doc(mealId).set(meal.toJson());
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
   try {
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
     final mealSnapshot = await mealCollection.get();
@@ -79,7 +94,7 @@ Future<List<Meal>> getMealsFromDatabase(String uid, String date) async {
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
     }
-    return meals;
+    return NutritionPlan(meals, date, uid);
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
@@ -118,8 +133,8 @@ generateNewShoppingList(String uid, ShoppingList newList, String startDate, Stri
       const Duration(days: 1),
     ),) {
       final String formattedDate = formatter.format(date);
-      final List<Meal> meals = await getMealsFromDatabase(uid, formattedDate);
-      mealsList.addAll(meals);
+      final NutritionPlan nutritionPlan = await getNutritionPlan(uid, formattedDate);
+      mealsList.addAll(nutritionPlan.meals);
     }
 
     // get all ingredients from the meals
@@ -269,3 +284,111 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
     'users': FieldValue.arrayRemove([userId]),
   });
 }
+
+Future addMealToFavorites(Meal meal, String uid, String date) async {
+  try {
+    final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
+    final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
+
+    await Future.wait([
+      mealRef.set({...meal.toJson(), 'isFavorite': true}),
+      favoriteMealsCollection.doc(meal.spoonacularId.toString()).set({...meal.toJson(), 'isFavorite': true}),
+    ]);
+  } catch (e) {
+    throw Exception('Failed while adding to favorites: $e');
+  }
+}
+
+Future removeMealFromFavorites(Meal meal, String uid, String date) async {
+  try {
+    final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
+    final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
+
+    await Future.wait([
+      mealRef.update({'isFavorite': false}),
+      favoriteMealsCollection.doc(meal.spoonacularId.toString()).delete(),
+    ]);
+  } catch (e) {
+    throw Exception('Failed while removing from favorites: $e');
+  }
+}
+
+Future<List<Meal>> getFavoriteMeals(String uid) async {
+  try {
+    final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
+    final mealSnapshot = await favoriteMealsCollection.get();
+    final List<Meal> meals = [];
+    for (var doc in mealSnapshot.docs) {
+      meals.add(Meal.fromFirestore(doc.data()));
+    }
+    return meals;
+  } catch (e) {
+    throw Exception('Failed to get favorites meals: $e');
+  }
+}
+
+Future<bool> isMealFavorite(Meal meal, String uid) async {
+  try {
+    final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
+    final docSnapshot = await favoriteMealsCollection.doc(meal.spoonacularId.toString()).get();
+    return docSnapshot.exists;
+  } catch (e) {
+    throw Exception('Failed to check if meal is in favorites: $e');
+  }
+}
+
+Future addNutritionPlanToFavorites(NutritionPlan nutritionPlan) async {
+  try {
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/favorite_plans');
+    await nutritionPlanCollection.doc(nutritionPlan.date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/favorite_plans/${nutritionPlan.date}/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
+      final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
+      await mealCollection.doc(mealId).set(meal.toJson());
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+Future<List<NutritionPlan>> getFavoriteNutritionPlans(String uid) async {
+  try {
+    final favoritePlansCollection = _database.collection('users/$uid/favorite_plans');
+    final plansSnapshot = await favoritePlansCollection.get();
+    final List<NutritionPlan> favoritePlans = [];
+    for (var doc in plansSnapshot.docs) {
+      final List<Meal> meals = [];
+      final mealSnapshot = await favoritePlansCollection.doc(doc.id).collection('meals').get();
+      for (var mealDoc in mealSnapshot.docs) {
+        meals.add(Meal.fromFirestore(mealDoc.data()));
+      }
+      favoritePlans.add(NutritionPlan(meals, doc.id, uid));
+    }
+    return favoritePlans;
+  } catch (e) {
+    throw Exception('Failed to get favorites meals: $e');
+  }
+}
+
+Future<bool> isNutritionPlanFavorite(NutritionPlan nutritionPlan, String uid) async {
+  try {
+    final favoritePlansCollection = _database.collection('users/$uid/favorite_plans');
+    final docSnapshot = await favoritePlansCollection.doc(nutritionPlan.date).get();
+    return docSnapshot.exists;
+  } catch (e) {
+    throw Exception('Failed to check if meal is in favorites: $e');
+  }
+}
+
+Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid) async {
+  try {
+    final favoriteNutritionPlansCollection = _database.collection('users/$uid/favorite_plans');
+    await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
+  } catch (e) {
+    throw Exception('Failed while removing from favorites: $e');
+  }
+}
+
+// TODO - adding favorite plan to the new empty date (directly and from favorite list)

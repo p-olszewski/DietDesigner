@@ -16,6 +16,7 @@ class Meal {
   final String image;
   final String? sourceUrl;
   String? id;
+  bool isFavorite = false;
 
   Meal(
     this.calories,
@@ -79,6 +80,7 @@ class Meal {
         'image': image,
         'sourceUrl': sourceUrl,
         'id': id ?? '',
+        'isFavorite': isFavorite,
       };
 
   Meal.fromFirestore(Map<String, dynamic> json)
@@ -98,5 +100,6 @@ class Meal {
         imageThumbnail = json['imageThumbnail'],
         image = json['image'],
         sourceUrl = json['sourceUrl'],
-        id = json['id'];
+        id = json['id'],
+        isFavorite = json['isFavorite'];
 }
