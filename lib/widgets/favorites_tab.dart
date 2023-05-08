@@ -74,7 +74,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
               ),
               FlutterToggleTab(
                 width: 30,
-                height: 45,
+                height: 42,
                 borderRadius: 50,
                 marginSelected: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                 selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
