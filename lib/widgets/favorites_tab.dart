@@ -1,4 +1,5 @@
 import 'package:diet_designer/models/meal.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
@@ -59,14 +60,14 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 children: [
                   Text(
                     _selectedOption == 0 ? "Favorite plans" : "Favorite meals",
-                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
                         "  Choose plans or meals",
-                        style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey),
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                       ),
                     ],
                   ),
@@ -88,7 +89,6 @@ class _FavoritesTabState extends State<FavoritesTab> {
                   setState(() {
                     if (index == _selectedOption) return;
                     _selectedOption = index;
-                    PopupMessenger.info('Choosed option: $index');
                   });
                 },
               ),
@@ -177,14 +177,86 @@ class _FavoritesTabState extends State<FavoritesTab> {
     );
   }
 
-  _buildFavoritePlansList(String uid) {
-    return Center(
-      child: Column(
-        children: const [
-          SizedBox(height: 200),
-          Text('No favorite plans yet.'),
-        ],
-      ),
+  FutureBuilder<List<NutritionPlan>> _buildFavoritePlansList(String uid) {
+    return FutureBuilder(
+      future: getFavoriteNutritionPlans(uid),
+      builder: (context, AsyncSnapshot<List<NutritionPlan>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isEmpty) {
+            return SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: const Align(
+                alignment: Alignment.center,
+                child: Text('You have no favorite plans yet.'),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              physics: const ScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Material(
+                        child: InkWell(
+                          highlightColor: Colors.green.withOpacity(0.1),
+                          splashColor: Colors.grey.withOpacity(0.1),
+                          // onTap: () async {
+                          //   await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
+                          //   setState(() {});
+                          // },
+                          // onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
+                          child: Ink(
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              title: Text(snapshot.data![index].date),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 30,
+                      right: 0,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.more_vert,
+                            size: 16,
+                          ),
+                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
