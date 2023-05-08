@@ -70,6 +70,22 @@ Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
   }
 }
 
+Future saveNutritionPlanOnSpecificDate(NutritionPlan nutritionPlan, String date) async {
+  try {
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
+    await nutritionPlanCollection.doc(date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/$date/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
+      final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
+      await mealCollection.doc(mealId).set(meal.toJson());
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
 Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
   try {
     final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
@@ -297,15 +313,6 @@ Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   }
 }
 
-Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid) async {
-  try {
-    final favoriteNutritionPlansCollection = _database.collection('users/$uid/favorite_plans');
-    await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
-  } catch (e) {
-    throw Exception('Failed while removing from favorites: $e');
-  }
-}
-
 Future<List<Meal>> getFavoriteMeals(String uid) async {
   try {
     final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
@@ -374,3 +381,14 @@ Future<bool> isNutritionPlanFavorite(NutritionPlan nutritionPlan, String uid) as
     throw Exception('Failed to check if meal is in favorites: $e');
   }
 }
+
+Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid) async {
+  try {
+    final favoriteNutritionPlansCollection = _database.collection('users/$uid/favorite_plans');
+    await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
+  } catch (e) {
+    throw Exception('Failed while removing from favorites: $e');
+  }
+}
+
+// TODO - adding favorite plan to the new empty date (directly and from favorite list)
