@@ -22,6 +22,33 @@ class _HomeTabState extends State<HomeTab> {
   late DateProvider _dateProvider;
   late final String _uid;
   bool _isLoading = false;
+  bool _isFavorite = false;
+
+  void checkIsPlanInFavorites() async {
+    NutritionPlan nutritionPlan = await _nutritionPlan;
+    final isFavorite = await isNutritionPlanFavorite(nutritionPlan, _uid);
+    setState(() => _isFavorite = isFavorite);
+  }
+
+  void _toggleFavorite() async {
+    try {
+      NutritionPlan nutritionPlan = await _nutritionPlan;
+      if (nutritionPlan.meals.isEmpty) {
+        PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
+        return;
+      }
+      if (_isFavorite) {
+        await removeNutritionPlanFromFavorites(nutritionPlan, _uid);
+        PopupMessenger.info('Removed plan from favorites.');
+      } else {
+        await addNutritionPlanToFavorites(nutritionPlan);
+        PopupMessenger.info('Added plan to favorites.');
+      }
+      setState(() => _isFavorite = !_isFavorite);
+    } catch (e) {
+      PopupMessenger.error('Failed to toggle favorite.');
+    }
+  }
 
   @override
   void initState() {
@@ -29,6 +56,7 @@ class _HomeTabState extends State<HomeTab> {
     _uid = context.read<AuthProvider>().uid!;
     _dateProvider = context.read<DateProvider>();
     _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    checkIsPlanInFavorites();
   }
 
   @override
@@ -45,6 +73,7 @@ class _HomeTabState extends State<HomeTab> {
                     changeDay: (value) => setState(() {
                       context.read<DateProvider>().setDate(value);
                       _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      checkIsPlanInFavorites();
                     }),
                     enableWeeknumberText: false,
                     selectedBackgroundColor: Theme.of(context).colorScheme.primary,
@@ -151,16 +180,8 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          NutritionPlan nutritionPlan = await getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
-          if (nutritionPlan.meals.isEmpty) {
-            PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
-            return;
-          }
-          await addNutritionPlanToFavorites(nutritionPlan);
-          PopupMessenger.info('Saved plan to favorites.');
-        },
-        child: const Icon(Icons.favorite_border_outlined),
+        onPressed: () => _toggleFavorite(),
+        child: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
       ),
     );
   }
@@ -272,7 +293,9 @@ class _HomeTabState extends State<HomeTab> {
                       await removeMealFromFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
-                      meal.isFavorite = false;
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
                       PopupMessenger.info('Removed from favorites');
                     },
                     child: Row(
@@ -288,7 +311,9 @@ class _HomeTabState extends State<HomeTab> {
                       await addMealToFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
-                      meal.isFavorite = true;
+                      setState(() {
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
                       PopupMessenger.info('Added to favorites');
                     },
                     child: Row(
