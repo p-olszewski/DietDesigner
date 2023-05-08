@@ -297,6 +297,15 @@ Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   }
 }
 
+Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid) async {
+  try {
+    final favoriteNutritionPlansCollection = _database.collection('users/$uid/favorite_plans');
+    await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
+  } catch (e) {
+    throw Exception('Failed while removing from favorites: $e');
+  }
+}
+
 Future<List<Meal>> getFavoriteMeals(String uid) async {
   try {
     final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
@@ -353,5 +362,15 @@ Future<List<NutritionPlan>> getFavoriteNutritionPlans(String uid) async {
     return favoritePlans;
   } catch (e) {
     throw Exception('Failed to get favorites meals: $e');
+  }
+}
+
+Future<bool> isNutritionPlanFavorite(NutritionPlan nutritionPlan, String uid) async {
+  try {
+    final favoritePlansCollection = _database.collection('users/$uid/favorite_plans');
+    final docSnapshot = await favoritePlansCollection.doc(nutritionPlan.date).get();
+    return docSnapshot.exists;
+  } catch (e) {
+    throw Exception('Failed to check if meal is in favorites: $e');
   }
 }
