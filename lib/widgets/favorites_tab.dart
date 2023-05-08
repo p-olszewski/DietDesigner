@@ -27,145 +27,22 @@ class _FavoritesTabState extends State<FavoritesTab> {
   @override
   Widget build(BuildContext context) {
     final uid = context.watch<AuthProvider>().uid!;
-
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 14.0, bottom: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Favorites",
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.touch_app, color: Colors.grey, size: 12),
-                            Text(
-                              "  Choose meals or plans",
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    FlutterToggleTab(
-                      width: 34,
-                      height: 40,
-                      borderRadius: 50,
-                      marginSelected: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                      selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
-                      unSelectedTextStyle:
-                          TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w400),
-                      unSelectedBackgroundColors: [Theme.of(context).colorScheme.secondaryContainer],
-                      labels: const ["", ""],
-                      icons: const [Icons.event_note, Icons.fastfood],
-                      iconSize: 22,
-                      selectedIndex: _selectedOption,
-                      selectedLabelIndex: (index) {
-                        setState(() {
-                          _selectedOption = index;
-                          PopupMessenger.info('Choosed option: ${index + 1}');
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          _buildNavigationRow(context),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : FutureBuilder(
-                          future: getFavoriteMeals(uid),
-                          builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data!.isEmpty) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  height: MediaQuery.of(context).size.height * 0.6,
-                                  child: const Align(
-                                    alignment: Alignment.center,
-                                    child: Text('You have no favorite meals yet.'),
-                                  ),
-                                );
-                              } else {
-                                return ListView.builder(
-                                  physics: const ScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    return Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          child: Material(
-                                            child: InkWell(
-                                              highlightColor: Colors.green.withOpacity(0.1),
-                                              splashColor: Colors.grey.withOpacity(0.1),
-                                              onTap: () async {
-                                                await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
-                                                setState(() {});
-                                              },
-                                              onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
-                                              child: Ink(child: MealCard(meal: snapshot.data![index])),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 30,
-                                          right: 0,
-                                          child: Container(
-                                            width: 34,
-                                            height: 34,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.secondaryContainer,
-                                              borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                                                  spreadRadius: 1,
-                                                  blurRadius: 2,
-                                                  offset: const Offset(0, 1),
-                                                ),
-                                              ],
-                                            ),
-                                            child: IconButton(
-                                              onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
-                                              icon: const Icon(
-                                                Icons.more_vert,
-                                                size: 16,
-                                              ),
-                                              color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            } else {
-                              return const Center(child: CircularProgressIndicator());
-                            }
-                          },
-                        ),
+                      : _selectedOption == 1
+                          ? _buildFavoriteMealsList(uid)
+                          : _buildFavoritePlansList(uid)
                 ],
               ),
             ),
@@ -173,6 +50,149 @@ class _FavoritesTabState extends State<FavoritesTab> {
         ],
       ),
     ));
+  }
+
+  Padding _buildNavigationRow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14.0, bottom: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _selectedOption == 0 ? "Favorite plans" : "Favorite meals",
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.touch_app, color: Colors.grey, size: 12),
+                      Text(
+                        "  Choose plans or meals",
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              FlutterToggleTab(
+                width: 30,
+                height: 45,
+                borderRadius: 50,
+                marginSelected: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
+                unSelectedTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w400),
+                unSelectedBackgroundColors: [Theme.of(context).colorScheme.secondaryContainer],
+                labels: const ['', ''],
+                icons: const [Icons.event_note, Icons.fastfood],
+                iconSize: 22,
+                selectedIndex: _selectedOption,
+                selectedLabelIndex: (index) {
+                  setState(() {
+                    if (index == _selectedOption) return;
+                    _selectedOption = index;
+                    PopupMessenger.info('Choosed option: $index');
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  FutureBuilder<List<Meal>> _buildFavoriteMealsList(String uid) {
+    return FutureBuilder(
+      future: getFavoriteMeals(uid),
+      builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isEmpty) {
+            return SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: const Align(
+                alignment: Alignment.center,
+                child: Text('You have no favorite meals yet.'),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              physics: const ScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Material(
+                        child: InkWell(
+                          highlightColor: Colors.green.withOpacity(0.1),
+                          splashColor: Colors.grey.withOpacity(0.1),
+                          onTap: () async {
+                            await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
+                            setState(() {});
+                          },
+                          onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
+                          child: Ink(child: MealCard(meal: snapshot.data![index])),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 30,
+                      right: 0,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
+                          icon: const Icon(
+                            Icons.more_vert,
+                            size: 16,
+                          ),
+                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  _buildFavoritePlansList(String uid) {
+    return Center(
+      child: Column(
+        children: const [
+          SizedBox(height: 200),
+          Text('No favorite plans yet.'),
+        ],
+      ),
+    );
   }
 
   Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
