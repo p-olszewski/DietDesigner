@@ -321,6 +321,22 @@ Future<bool> isMealFavorite(Meal meal, String uid) async {
   }
 }
 
+Future addNutritionPlanToFavorites(NutritionPlan nutritionPlan) async {
+  try {
+    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/favorite_plans');
+    await nutritionPlanCollection.doc(nutritionPlan.date).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('users/${nutritionPlan.uid}/favorite_plans/${nutritionPlan.date}/meals');
+    for (int i = 0; i < nutritionPlan.meals.length; i++) {
+      final meal = nutritionPlan.meals[i];
+      final mealId = 'meal_${i + 1}';
+      meal.id = mealId;
+      await mealCollection.doc(mealId).set(meal.toJson());
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
 Future<List<NutritionPlan>> getFavoriteNutritionPlans(String uid) async {
   try {
     final favoritePlansCollection = _database.collection('users/$uid/favorite_plans');
