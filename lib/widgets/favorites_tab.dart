@@ -5,6 +5,7 @@ import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesTab extends StatefulWidget {
@@ -16,7 +17,7 @@ class FavoritesTab extends StatefulWidget {
 
 class _FavoritesTabState extends State<FavoritesTab> {
   final bool _isLoading = false;
-  String _selectedOption = 'Meals';
+  int _selectedOption = 1;
 
   @override
   void initState() {
@@ -59,30 +60,25 @@ class _FavoritesTabState extends State<FavoritesTab> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      width: 160.0,
-                      height: 36.0,
-                      child: SegmentedButton(
-                        showSelectedIcon: false,
-                        segments: const [
-                          ButtonSegment(
-                            value: 'Meals',
-                            label: Padding(
-                              padding: EdgeInsets.only(bottom: 20.0),
-                              child: Text('Meals'),
-                            ),
-                          ),
-                          ButtonSegment(
-                            value: 'Plans',
-                            label: Padding(
-                              padding: EdgeInsets.only(bottom: 20.0),
-                              child: Text('Plans'),
-                            ),
-                          ),
-                        ],
-                        selected: {_selectedOption},
-                        onSelectionChanged: (value) => setState(() => _selectedOption = value.first),
-                      ),
+                    FlutterToggleTab(
+                      width: 34,
+                      height: 40,
+                      borderRadius: 50,
+                      marginSelected: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
+                      unSelectedTextStyle:
+                          TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w400),
+                      unSelectedBackgroundColors: [Theme.of(context).colorScheme.secondaryContainer],
+                      labels: const ["", ""],
+                      icons: const [Icons.event_note, Icons.fastfood],
+                      iconSize: 22,
+                      selectedIndex: _selectedOption,
+                      selectedLabelIndex: (index) {
+                        setState(() {
+                          _selectedOption = index;
+                          PopupMessenger.info('Choosed option: ${index + 1}');
+                        });
+                      },
                     ),
                   ],
                 ),
