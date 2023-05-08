@@ -18,18 +18,21 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  late Future<NutritionPlan> _nutritionPlan;
+  late DateProvider _dateProvider;
+  late final String _uid;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _uid = context.read<AuthProvider>().uid!;
+    _dateProvider = context.read<DateProvider>();
+    _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
   }
 
   @override
   Widget build(BuildContext context) {
-    final dateProvider = context.watch<DateProvider>();
-    final uid = context.watch<AuthProvider>().uid!;
-
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -38,9 +41,10 @@ class _HomeTabState extends State<HomeTab> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: WeeklyDatePicker(
-                    selectedDay: dateProvider.date,
+                    selectedDay: _dateProvider.date,
                     changeDay: (value) => setState(() {
                       context.read<DateProvider>().setDate(value);
+                      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
                     }),
                     enableWeeknumberText: false,
                     selectedBackgroundColor: Theme.of(context).colorScheme.primary,
@@ -57,11 +61,11 @@ class _HomeTabState extends State<HomeTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                dateProvider.dateFormattedWithWords,
+                                _dateProvider.dateFormattedWithWords,
                                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                               ),
                               FutureBuilder(
-                                future: getNutritionPlan(uid, dateProvider.dateFormattedWithDots),
+                                future: _nutritionPlan,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     if (snapshot.data!.meals.isEmpty) {
@@ -77,7 +81,7 @@ class _HomeTabState extends State<HomeTab> {
                                               const Text('No meals found.'),
                                               const SizedBox(height: 10),
                                               ElevatedButton(
-                                                onPressed: () => _generateNutritionPlan(uid, dateProvider.dateFormattedWithDots),
+                                                onPressed: () => _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots),
                                                 child: const Text('Generate nutrition plan'),
                                               ),
                                             ],
@@ -172,7 +176,6 @@ class _HomeTabState extends State<HomeTab> {
           debugPrint('Error fetching meals: $e');
         }
         retryCount++;
-        await Future.delayed(const Duration(seconds: 1));
       } while (nutritionPlan == null && retryCount < maxRetries);
 
       if (nutritionPlan == null) {
@@ -183,13 +186,16 @@ class _HomeTabState extends State<HomeTab> {
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
-    setState(() => _isLoading = false);
+    setState(() {
+      _isLoading = false;
+      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    });
   }
 
-  void _replaceMealToSimilar(Meal meal) async {
+  void _replaceMealFromCloud(Meal meal) async {
     setState(() => _isLoading = true);
     int retryCount = 0;
-    const maxRetries = 5;
+    const maxRetries = 8;
     Meal? newMeal;
 
     try {
@@ -216,12 +222,13 @@ class _HomeTabState extends State<HomeTab> {
     } catch (e) {
       PopupMessenger.error(e.toString());
     }
-    setState(() => _isLoading = false);
+    setState(() {
+      _isLoading = false;
+      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    });
   }
 
   Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
-    final uid = context.read<AuthProvider>().uid!;
-    final date = context.read<DateProvider>().dateFormattedWithDots;
     const iconSpacing = 30.0;
     return showModalBottomSheet(
       context: context,
@@ -232,7 +239,7 @@ class _HomeTabState extends State<HomeTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             MaterialButton(
-              onPressed: () => _replaceMealToSimilar(meal),
+              onPressed: () => _replaceMealFromCloud(meal),
               child: Row(
                 children: const [
                   Icon(Icons.cloud_sync_outlined),
@@ -254,10 +261,10 @@ class _HomeTabState extends State<HomeTab> {
             meal.isFavorite
                 ? MaterialButton(
                     onPressed: () async {
-                      await removeMealFromFavorites(meal, uid, date);
+                      await removeMealFromFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
-                      setState(() {});
+                      meal.isFavorite = false;
                       PopupMessenger.info('Removed from favorites');
                     },
                     child: Row(
@@ -270,10 +277,10 @@ class _HomeTabState extends State<HomeTab> {
                   )
                 : MaterialButton(
                     onPressed: () async {
-                      await addMealToFavorites(meal, uid, date);
+                      await addMealToFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
-                      setState(() {});
+                      meal.isFavorite = true;
                       PopupMessenger.info('Added to favorites');
                     },
                     child: Row(
@@ -302,8 +309,7 @@ class _HomeTabState extends State<HomeTab> {
 
   Future<void> _showFavoriteMealsPopup(BuildContext context, Meal oldMeal) async {
     Navigator.pop(context);
-    final uid = context.read<AuthProvider>().uid!;
-    final meals = await getFavoriteMeals(uid);
+    final meals = await getFavoriteMeals(_uid);
     if (meals.isEmpty) {
       PopupMessenger.info('You have no favorite meals');
       return;
@@ -338,12 +344,15 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     title: Text(meal.title),
                     subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
-                    onTap: () {
-                      final date = context.read<DateProvider>().dateFormattedWithDots;
+                    onTap: () async {
                       meal.id = oldMeal.id;
-                      replaceMeal(meal, date, uid);
+                      await replaceMeal(meal, _dateProvider.dateFormattedWithDots, _uid);
+                      if (!mounted) return;
                       Navigator.pop(context);
-                      setState(() {});
+                      setState(() {
+                        _isLoading = false;
+                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      });
                       PopupMessenger.info('Meal replaced');
                     },
                   ),

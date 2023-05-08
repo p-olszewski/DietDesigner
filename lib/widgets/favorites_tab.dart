@@ -66,7 +66,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
-                        "  Choose plans or meals",
+                        "  Toggle to change",
                         style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                       ),
                     ],
