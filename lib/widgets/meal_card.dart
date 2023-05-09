@@ -71,11 +71,11 @@ class MealDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle titleStyle = Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18, fontWeight: FontWeight.bold);
-    TextStyle labelStyle = Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[600]);
-    const iconSize = 14.0;
+    TextStyle titleStyle = Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold);
+    TextStyle labelStyle = Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey[600]);
+    const iconSize = 16.0;
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 12.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,7 +83,7 @@ class MealDescription extends StatelessWidget {
             meal.title,
             style: titleStyle,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
