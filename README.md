@@ -1,16 +1,13 @@
-# diet_designer
+# DietDesigner
+A mobile app for generating personalized nutrition plans built with Flutter, Firebase and Spoonacular API.
+![image](https://drive.google.com/uc?export=view&id=1kqKOYVR2TyxkMFms59T1VqILTiAG9djj)
 
-A new Flutter project.
+## Project description
+This project is a mobile platform for generating personalized nutrition plans based on individual user data. With this data, the user's caloric requirements and macronutrient breakdown are calculated. The app allows, among other things, to authorize users, customize eating plans, save plans and meals to favorites or share them for friends. The platform also allows the user to generate a shopping list for a diet in a selected time range. Shopping lists have the ability to be shared with other friends.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Technologies
+Project is created with:
+* Flutter 3.7.10
+* Dart 2.19.6
+* Firebase
+* SpoonacularAPI (https://spoonacular.com/food-api)
