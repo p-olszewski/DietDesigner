@@ -12,8 +12,9 @@ class Meal {
   final List<String>? steps;
   final List<String>? dishTypes;
   final List<String>? diets;
-  final String imageThumbnail;
-  final String image;
+  final String imageSmall;
+  final String imageMedium;
+  final String imageLarge;
   final String? sourceUrl;
   String? id;
   bool isFavorite = false;
@@ -32,8 +33,9 @@ class Meal {
     this.steps,
     this.dishTypes,
     this.diets,
-    this.imageThumbnail,
-    this.image,
+    this.imageSmall,
+    this.imageMedium,
+    this.imageLarge,
     this.sourceUrl,
   );
 
@@ -58,8 +60,9 @@ class Meal {
         steps = json['analyzedInstructions'][0]['steps'].map((step) => step['step']).toList().cast<String>(),
         dishTypes = List<String>.from(json['dishTypes']),
         diets = List<String>.from(json['diets']),
-        imageThumbnail = 'https://spoonacular.com/recipeImages/${json['id']}-90x90.jpg',
-        image = 'https://spoonacular.com/recipeImages/${json['id']}-636x393.jpg',
+        imageSmall = 'https://spoonacular.com/recipeImages/${json['id']}-90x90.jpg',
+        imageMedium = 'https://spoonacular.com/recipeImages/${json['id']}-480x360.jpg',
+        imageLarge = 'https://spoonacular.com/recipeImages/${json['id']}-636x393.jpg',
         sourceUrl = json['sourceUrl'];
 
   Map<String, dynamic> toJson() => {
@@ -76,8 +79,9 @@ class Meal {
         'steps': steps,
         'dishTypes': dishTypes,
         'diets': diets,
-        'imageThumbnail': imageThumbnail,
-        'image': image,
+        'imageSmall': imageSmall,
+        'imageMedium': imageMedium,
+        'imageLarge': imageLarge,
         'sourceUrl': sourceUrl,
         'id': id ?? '',
         'isFavorite': isFavorite,
@@ -97,8 +101,9 @@ class Meal {
         steps = json['steps'].map((step) => step.toString()).toList().cast<String>(),
         dishTypes = json['dishTypes'].map((dishType) => dishType.toString()).toList().cast<String>(),
         diets = json['diets'].map((diet) => diet.toString()).toList().cast<String>(),
-        imageThumbnail = json['imageThumbnail'],
-        image = json['image'],
+        imageSmall = json['imageSmall'],
+        imageMedium = json['imageMedium'],
+        imageLarge = json['imageLarge'],
         sourceUrl = json['sourceUrl'],
         id = json['id'],
         isFavorite = json['isFavorite'];
