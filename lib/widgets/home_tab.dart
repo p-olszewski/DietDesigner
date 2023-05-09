@@ -85,7 +85,7 @@ class _HomeTabState extends State<HomeTab> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
