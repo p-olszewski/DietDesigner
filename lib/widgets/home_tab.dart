@@ -85,14 +85,24 @@ class _HomeTabState extends State<HomeTab> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                _dateProvider.dateFormattedWithWords,
-                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _dateProvider.dateFormattedWithWords,
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+                                    icon: const Icon(Icons.more_vert),
+                                  ),
+                                ],
                               ),
+                              const SizedBox(height: 4),
                               FutureBuilder(
                                 future: _nutritionPlan,
                                 builder: (context, snapshot) {
@@ -123,6 +133,7 @@ class _HomeTabState extends State<HomeTab> {
                                       );
                                     } else {
                                       final nutritionPlan = snapshot.data!;
+                                      List<String> mealTypes = _getListOfMealTypes(nutritionPlan);
                                       return ListView.builder(
                                         physics: const ScrollPhysics(),
                                         scrollDirection: Axis.vertical,
@@ -134,34 +145,40 @@ class _HomeTabState extends State<HomeTab> {
                                               GestureDetector(
                                                 onTap: () =>
                                                     Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
-                                                child: MealCard(meal: nutritionPlan.meals[index]),
+                                                onLongPress: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      mealTypes[index].toUpperCase(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(fontWeight: FontWeight.w100, color: Colors.grey.shade400),
+                                                    ),
+                                                    MealCard(meal: nutritionPlan.meals[index]),
+                                                  ],
+                                                ),
                                               ),
                                               Positioned(
-                                                top: 30,
+                                                top: 45,
                                                 right: 0,
-                                                child: Container(
-                                                  width: 34,
-                                                  height: 34,
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(context).colorScheme.secondaryContainer,
-                                                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                                                        spreadRadius: 1,
-                                                        blurRadius: 2,
-                                                        offset: const Offset(0, 1),
+                                                child: IconButton(
+                                                  onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    size: 26,
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: const Offset(0.5, 0.5),
+                                                        blurRadius: 2.0,
+                                                        color: Colors.grey.shade600,
                                                       ),
                                                     ],
                                                   ),
-                                                  child: IconButton(
-                                                    onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
-                                                    icon: const Icon(
-                                                      Icons.more_vert,
-                                                      size: 16,
-                                                    ),
-                                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                                  ),
+                                                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                                                 ),
                                               ),
                                             ],
@@ -377,7 +394,7 @@ class _HomeTabState extends State<HomeTab> {
                   padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(meal.imageThumbnail),
+                      backgroundImage: NetworkImage(meal.imageSmall),
                     ),
                     title: Text(meal.title),
                     subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
@@ -457,5 +474,27 @@ class _HomeTabState extends State<HomeTab> {
         );
       },
     );
+  }
+
+  List<String> _getListOfMealTypes(NutritionPlan nutritionPlan) {
+    List<String> mealTypes;
+    switch (nutritionPlan.meals.length) {
+      case 3:
+        mealTypes = ['Breakfast', 'Dinner', 'Supper'];
+        break;
+      case 4:
+        mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Supper'];
+        break;
+      case 5:
+        mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Supper'];
+        break;
+      case 6:
+        mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Afternoon meal', 'Supper'];
+        break;
+      default:
+        mealTypes = ['Meal 1', 'Meal 2', 'Meal 3', 'Meal 4', 'Meal 5', 'Meal 6'];
+        break;
+    }
+    return mealTypes;
   }
 }

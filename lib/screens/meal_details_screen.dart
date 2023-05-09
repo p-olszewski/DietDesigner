@@ -89,7 +89,7 @@ class MealDetailsPhoto extends StatelessWidget {
             height: 420,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(meal.image),
+                image: NetworkImage(meal.imageLarge),
                 fit: BoxFit.cover,
               ),
             ),
@@ -380,7 +380,7 @@ class MealPhotoDialog extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
-                    image: NetworkImage(meal.image),
+                    image: NetworkImage(meal.imageLarge),
                     fit: BoxFit.cover,
                   ),
                 ),
