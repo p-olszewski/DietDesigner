@@ -151,7 +151,6 @@ class _FavoritesTabState extends State<FavoritesTab> {
                     ),
                   ],
                 );
-                return null;
               },
             );
           }
