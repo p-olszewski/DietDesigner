@@ -124,51 +124,34 @@ class _FavoritesTabState extends State<FavoritesTab> {
               itemBuilder: (context, index) {
                 return Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Material(
-                        child: InkWell(
-                          highlightColor: Colors.green.withOpacity(0.1),
-                          splashColor: Colors.grey.withOpacity(0.1),
-                          onTap: () async {
-                            await Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]);
-                            setState(() {});
-                          },
-                          onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
-                          child: Ink(child: MealCard(meal: snapshot.data![index])),
-                        ),
-                      ),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
+                      onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
+                      child: MealCard(meal: snapshot.data![index]),
                     ),
                     Positioned(
-                      top: 30,
-                      right: 0,
-                      child: Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: const BorderRadius.all(Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
+                      top: 15,
+                      right: 5,
+                      child: IconButton(
+                        onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
+                        icon: Icon(
+                          Icons.more_vert,
+                          size: 26,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: const Offset(0.5, 0.5),
+                              blurRadius: 2.0,
+                              color: Colors.grey.shade600,
                             ),
                           ],
                         ),
-                        child: IconButton(
-                          onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
-                          icon: const Icon(
-                            Icons.more_vert,
-                            size: 16,
-                          ),
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
-                        ),
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                     ),
                   ],
                 );
+                return null;
               },
             );
           }
@@ -236,7 +219,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                   ),
                                   child: CircleAvatar(
                                     radius: 26.0,
-                                    backgroundImage: NetworkImage(meal.imageThumbnail),
+                                    backgroundImage: NetworkImage(meal.imageSmall),
                                   ),
                                 ),
                                 title: Text(meal.title),

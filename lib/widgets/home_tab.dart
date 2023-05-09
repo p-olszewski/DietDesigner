@@ -134,34 +134,27 @@ class _HomeTabState extends State<HomeTab> {
                                               GestureDetector(
                                                 onTap: () =>
                                                     Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
+                                                onLongPress: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
                                                 child: MealCard(meal: nutritionPlan.meals[index]),
                                               ),
                                               Positioned(
-                                                top: 30,
-                                                right: 0,
-                                                child: Container(
-                                                  width: 34,
-                                                  height: 34,
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(context).colorScheme.secondaryContainer,
-                                                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                                                        spreadRadius: 1,
-                                                        blurRadius: 2,
-                                                        offset: const Offset(0, 1),
+                                                top: 15,
+                                                right: 5,
+                                                child: IconButton(
+                                                  onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    size: 26,
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(
+                                                        offset: const Offset(0.5, 0.5),
+                                                        blurRadius: 2.0,
+                                                        color: Colors.grey.shade600,
                                                       ),
                                                     ],
                                                   ),
-                                                  child: IconButton(
-                                                    onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
-                                                    icon: const Icon(
-                                                      Icons.more_vert,
-                                                      size: 16,
-                                                    ),
-                                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                                  ),
+                                                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                                                 ),
                                               ),
                                             ],
@@ -377,7 +370,7 @@ class _HomeTabState extends State<HomeTab> {
                   padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(meal.imageThumbnail),
+                      backgroundImage: NetworkImage(meal.imageSmall),
                     ),
                     title: Text(meal.title),
                     subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
