@@ -12,12 +12,12 @@ class MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.4),
+            color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(1, 1),

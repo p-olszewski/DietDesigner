@@ -85,7 +85,7 @@ class _HomeTabState extends State<HomeTab> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+                          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -93,6 +93,7 @@ class _HomeTabState extends State<HomeTab> {
                                 _dateProvider.dateFormattedWithWords,
                                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                               ),
+                              const SizedBox(height: 4),
                               FutureBuilder(
                                 future: _nutritionPlan,
                                 builder: (context, snapshot) {
@@ -123,6 +124,7 @@ class _HomeTabState extends State<HomeTab> {
                                       );
                                     } else {
                                       final nutritionPlan = snapshot.data!;
+                                      List<String> mealTypes = _getListOfMealTypes(nutritionPlan);
                                       return ListView.builder(
                                         physics: const ScrollPhysics(),
                                         scrollDirection: Axis.vertical,
@@ -135,11 +137,24 @@ class _HomeTabState extends State<HomeTab> {
                                                 onTap: () =>
                                                     Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
                                                 onLongPress: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
-                                                child: MealCard(meal: nutritionPlan.meals[index]),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      mealTypes[index].toUpperCase(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(fontWeight: FontWeight.w100, color: Colors.grey.shade400),
+                                                    ),
+                                                    MealCard(meal: nutritionPlan.meals[index]),
+                                                  ],
+                                                ),
                                               ),
                                               Positioned(
-                                                top: 15,
-                                                right: 5,
+                                                top: 45,
+                                                right: 0,
                                                 child: IconButton(
                                                   onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
                                                   icon: Icon(
@@ -450,5 +465,27 @@ class _HomeTabState extends State<HomeTab> {
         );
       },
     );
+  }
+
+  List<String> _getListOfMealTypes(NutritionPlan nutritionPlan) {
+    List<String> mealTypes;
+    switch (nutritionPlan.meals.length) {
+      case 3:
+        mealTypes = ['Breakfast', 'Dinner', 'Supper'];
+        break;
+      case 4:
+        mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Supper'];
+        break;
+      case 5:
+        mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Supper'];
+        break;
+      case 6:
+        mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Afternoon meal', 'Supper'];
+        break;
+      default:
+        mealTypes = ['Meal 1', 'Meal 2', 'Meal 3', 'Meal 4', 'Meal 5', 'Meal 6'];
+        break;
+    }
+    return mealTypes;
   }
 }
