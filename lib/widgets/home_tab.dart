@@ -89,9 +89,18 @@ class _HomeTabState extends State<HomeTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                _dateProvider.dateFormattedWithWords,
-                                style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _dateProvider.dateFormattedWithWords,
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+                                    icon: const Icon(Icons.more_vert),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 4),
                               FutureBuilder(

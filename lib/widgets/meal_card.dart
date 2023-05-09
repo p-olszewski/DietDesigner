@@ -23,7 +23,7 @@ class MealCard extends StatelessWidget {
             offset: const Offset(1, 1),
           ),
         ],
-        borderRadius: BorderRadius.circular(18.0),
+        borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(
         children: [MealPhoto(meal: meal), MealDescription(meal: meal)],
@@ -45,8 +45,8 @@ class MealPhoto extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
         ),
         image: DecorationImage(
           fit: BoxFit.cover,
