@@ -59,7 +59,7 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
             return;
           }
           try {
-            await addUserToShoppingList(listId, _emailController.text);
+            await shareShoppingListToUser(listId, _emailController.text);
             if (!mounted) return;
             Navigator.of(context).pop();
             PopupMessenger.info('Added ${_emailController.text} to the list.');

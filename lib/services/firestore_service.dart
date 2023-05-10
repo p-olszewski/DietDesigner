@@ -251,7 +251,7 @@ Future<dynamic> getShoppingListUserEmails(String listId) async {
   return userEmails.where((email) => email != null).cast<String>().toList();
 }
 
-addUserToShoppingList(String listId, String userEmail) async {
+shareShoppingListToUser(String listId, String userEmail) async {
   final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
   if (userSnapshot.docs.isEmpty) {
     throw 'Cannot find user with email $userEmail.';
@@ -388,6 +388,42 @@ Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid)
     await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
   } catch (e) {
     throw Exception('Failed while removing from favorites: $e');
+  }
+}
+
+Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) async {
+  try {
+    final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
+    if (userSnapshot.docs.isEmpty) {
+      throw 'Cannot find user with email $userEmail.';
+    }
+    final nutritionPlanId = '${nutritionPlan.uid}_${nutritionPlan.date}';
+    final nutritionPlanCollection = _database.collection('shared_nutrition_plans');
+    final nutritionPlanSnapshot = await nutritionPlanCollection.doc(nutritionPlanId).get();
+
+    if (nutritionPlanSnapshot.exists) {
+      final userIds = List.from((nutritionPlanSnapshot.data())?['users']);
+      if (userIds.contains(userSnapshot.docs.first.id)) {
+        throw 'User $userEmail is already on the list.';
+      }
+      await nutritionPlanCollection.doc(nutritionPlanId).update({
+        'users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
+      });
+    } else {
+      await nutritionPlanCollection.doc(nutritionPlanId).set({
+        ...nutritionPlan.toJson(),
+        'users': [userSnapshot.docs.first.id],
+      });
+      final mealCollection = _database.collection('shared_nutrition_plans/$nutritionPlanId/meals');
+      for (int i = 0; i < nutritionPlan.meals.length; i++) {
+        final meal = nutritionPlan.meals[i];
+        final mealId = 'meal_${i + 1}';
+        meal.id = mealId;
+        await mealCollection.doc(mealId).set(meal.toJson());
+      }
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
   }
 }
 
