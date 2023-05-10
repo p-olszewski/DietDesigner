@@ -427,10 +427,10 @@ Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) a
   }
 }
 
-Future<List<NutritionPlan>> getSharedNutritionPlans(String uid) async {
+Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
   try {
     final sharedPlansCollection = _database.collection('shared_nutrition_plans');
-    final plansSnapshot = await sharedPlansCollection.get();
+    final plansSnapshot = await sharedPlansCollection.where('shared_users', arrayContains: uid).get();
     final List<NutritionPlan> sharedPlans = [];
     for (var doc in plansSnapshot.docs) {
       final List<Meal> meals = [];
