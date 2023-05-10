@@ -465,4 +465,21 @@ Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
   }
 }
 
-// TODO - adding favorite plan to the new empty date (directly and from favorite list)
+Future deleteUserFromSharedPlan(String planId, String userEmail) async {
+  try {
+    final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
+    if (userSnapshot.docs.isEmpty) {
+      throw 'Cannot find user with email $userEmail.';
+    }
+    final userId = userSnapshot.docs.first.id;
+    await _database.doc('shared_nutrition_plans/$planId').update({
+      'shared_users': FieldValue.arrayRemove([userId]),
+    });
+
+    if ((await _database.doc('shared_nutrition_plans/$planId').get()).data()!['shared_users'].isEmpty) {
+      await _database.doc('shared_nutrition_plans/$planId').delete();
+    }
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
