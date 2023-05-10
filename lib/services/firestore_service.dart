@@ -446,4 +446,23 @@ Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
   }
 }
 
+Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
+  try {
+    final sharedPlansCollection = _database.collection('shared_nutrition_plans');
+    final plansSnapshot = await sharedPlansCollection.where('uid', isEqualTo: uid).get();
+    final List<NutritionPlan> sharedPlans = [];
+    for (var doc in plansSnapshot.docs) {
+      final List<Meal> meals = [];
+      final mealSnapshot = await sharedPlansCollection.doc(doc.id).collection('meals').get();
+      for (var mealDoc in mealSnapshot.docs) {
+        meals.add(Meal.fromFirestore(mealDoc.data()));
+      }
+      sharedPlans.add(NutritionPlan(meals, doc.data()['date'], doc.data()['uid']));
+    }
+    return sharedPlans;
+  } catch (e) {
+    throw Exception('Failed to get favorites meals: $e');
+  }
+}
+
 // TODO - adding favorite plan to the new empty date (directly and from favorite list)
