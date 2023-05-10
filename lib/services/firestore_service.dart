@@ -402,17 +402,17 @@ Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) a
     final nutritionPlanSnapshot = await nutritionPlanCollection.doc(nutritionPlanId).get();
 
     if (nutritionPlanSnapshot.exists) {
-      final userIds = List.from((nutritionPlanSnapshot.data())?['users']);
+      final userIds = List.from((nutritionPlanSnapshot.data())?['shared_users']);
       if (userIds.contains(userSnapshot.docs.first.id)) {
         throw 'User $userEmail is already on the list.';
       }
       await nutritionPlanCollection.doc(nutritionPlanId).update({
-        'users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
+        'shared_users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
       });
     } else {
       await nutritionPlanCollection.doc(nutritionPlanId).set({
         ...nutritionPlan.toJson(),
-        'users': [userSnapshot.docs.first.id],
+        'shared_users': [userSnapshot.docs.first.id],
       });
       final mealCollection = _database.collection('shared_nutrition_plans/$nutritionPlanId/meals');
       for (int i = 0; i < nutritionPlan.meals.length; i++) {
@@ -424,6 +424,25 @@ Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) a
     }
   } catch (e) {
     throw Exception('Failed to load data: $e');
+  }
+}
+
+Future<List<NutritionPlan>> getSharedNutritionPlans(String uid) async {
+  try {
+    final sharedPlansCollection = _database.collection('shared_nutrition_plans');
+    final plansSnapshot = await sharedPlansCollection.get();
+    final List<NutritionPlan> sharedPlans = [];
+    for (var doc in plansSnapshot.docs) {
+      final List<Meal> meals = [];
+      final mealSnapshot = await sharedPlansCollection.doc(doc.id).collection('meals').get();
+      for (var mealDoc in mealSnapshot.docs) {
+        meals.add(Meal.fromFirestore(mealDoc.data()));
+      }
+      sharedPlans.add(NutritionPlan(meals, doc.data()['date'], doc.data()['uid']));
+    }
+    return sharedPlans;
+  } catch (e) {
+    throw Exception('Failed to get favorites meals: $e');
   }
 }
 
