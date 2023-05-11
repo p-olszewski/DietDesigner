@@ -1,17 +1,18 @@
+
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class UserManagementDialog extends StatefulWidget {
-  const UserManagementDialog({super.key});
+class ShoppingListUserManagementDialog extends StatefulWidget {
+  const ShoppingListUserManagementDialog({super.key});
 
   @override
-  State<UserManagementDialog> createState() => _UserManagementDialogState();
+  State<ShoppingListUserManagementDialog> createState() => _ShoppingListUserManagementDialogState();
 }
 
-class _UserManagementDialogState extends State<UserManagementDialog> {
+class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManagementDialog> {
   final TextEditingController _emailController = TextEditingController();
   late Future<dynamic> userEmails;
   late String listId;
@@ -94,7 +95,7 @@ class ChipsList extends StatelessWidget {
   });
 
   final Future userEmails;
-  final UserManagementDialog widget;
+  final ShoppingListUserManagementDialog widget;
 
   @override
   Widget build(BuildContext context) {

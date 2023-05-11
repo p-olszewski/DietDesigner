@@ -4,7 +4,7 @@ import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/widgets/add_product_dialog.dart';
 import 'package:diet_designer/widgets/list_name_dialog.dart';
 import 'package:diet_designer/widgets/products_list_tile.dart';
-import 'package:diet_designer/widgets/user_management_dialog.dart';
+import 'package:diet_designer/widgets/shopping_list_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +46,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
           IconButton(
             onPressed: () => showDialog(
               context: context,
-              builder: (context) => const UserManagementDialog(),
+              builder: (context) => const ShoppingListUserManagementDialog(),
             ),
             icon: const Icon(Icons.manage_accounts),
           ),

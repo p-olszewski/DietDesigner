@@ -6,6 +6,7 @@ import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
+import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weekly_date_picker/weekly_date_picker.dart';
@@ -317,7 +318,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              onPressed: () async => _showPlanSharingPopup(context, await _nutritionPlan),
               child: Row(
                 children: const [
                   Icon(Icons.share_outlined),
@@ -526,6 +527,17 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ],
         );
+      },
+    );
+  }
+
+  Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
+    Navigator.pop(context);
+    if (!mounted) return;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NutritionPlanUserManagementDialog(nutritionPlan: nutritionPlan);
       },
     );
   }
