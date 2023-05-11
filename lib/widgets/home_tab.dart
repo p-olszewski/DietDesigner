@@ -30,7 +30,7 @@ class _HomeTabState extends State<HomeTab> {
     setState(() => _isFavorite = isFavorite);
   }
 
-  void _toggleFavorite() async {
+  void _toggleFavoritePlan() async {
     try {
       NutritionPlan nutritionPlan = await _nutritionPlan;
       if (nutritionPlan.meals.isEmpty) {
@@ -97,7 +97,7 @@ class _HomeTabState extends State<HomeTab> {
                                     style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
-                                    onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+                                    onPressed: () => _buildPlanBottomSheet(context),
                                     icon: const Icon(Icons.more_vert),
                                   ),
                                 ],
@@ -145,7 +145,7 @@ class _HomeTabState extends State<HomeTab> {
                                               GestureDetector(
                                                 onTap: () =>
                                                     Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
-                                                onLongPress: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
+                                                onLongPress: () => _buildMealBottomSheet(context, nutritionPlan.meals[index]),
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
@@ -165,7 +165,7 @@ class _HomeTabState extends State<HomeTab> {
                                                 top: 45,
                                                 right: 0,
                                                 child: IconButton(
-                                                  onPressed: () => _buildBottomSheet(context, nutritionPlan.meals[index]),
+                                                  onPressed: () => _buildMealBottomSheet(context, nutritionPlan.meals[index]),
                                                   icon: Icon(
                                                     Icons.more_vert,
                                                     size: 26,
@@ -201,7 +201,7 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _toggleFavorite(),
+        onPressed: () => _toggleFavoritePlan(),
         child: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
       ),
     );
@@ -278,7 +278,61 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
-  Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
+  Future<dynamic> _buildPlanBottomSheet(BuildContext context) {
+    const iconSpacing = 30.0;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                await removeNutritionPlanFromFavorites(await _nutritionPlan, _uid);
+                setState(() => _isFavorite = !_isFavorite);
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.cloud_sync_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Generate another'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () async {
+                _toggleFavoritePlan();
+                Navigator.pop(context);
+              },
+              child: Row(
+                children: [
+                  Icon(_isFavorite ? Icons.favorite : Icons.favorite_outline),
+                  const SizedBox(width: iconSpacing),
+                  Text(_isFavorite ? 'Unfavorite' : 'Favorite'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
+              child: Row(
+                children: const [
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Share'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> _buildMealBottomSheet(BuildContext context, Meal meal) {
     const iconSpacing = 30.0;
     return showModalBottomSheet(
       context: context,
@@ -370,7 +424,7 @@ class _HomeTabState extends State<HomeTab> {
     }
     if (!mounted) return;
     final maxHeight = MediaQuery.of(context).size.height * 0.5;
-    const elementHeight = 70.0;
+    const elementHeight = 80.0;
     var height = meals.length * elementHeight > maxHeight ? maxHeight : meals.length * elementHeight;
     await showDialog(
       context: context,
