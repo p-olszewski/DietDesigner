@@ -85,56 +85,6 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
       ),
       actions: actionButtons,
     );
-    // return AlertDialog(
-    //   title: const Text('Share plan'),
-    //   content: SizedBox(
-    //     height: widget.height,
-    //     width: 400.0,
-    //     child: Column(
-    //       children: [
-    //         const Spacer(),
-    //         if (widget.userEmails != null)
-    //           ListView.builder(
-    //             shrinkWrap: true,
-    //             itemCount: widget.userEmails.length,
-    //             itemBuilder: (context, index) {
-    //               return Chip(
-    //                   label: Text(widget.userEmails.data![index]),
-    //                   shape: RoundedRectangleBorder(
-    //                     borderRadius: BorderRadius.circular(50),
-    //                   ),
-    //                   onDeleted: () {});
-    //             },
-    //           ),
-    //         TextField(
-    //           controller: widget.emailController,
-    //           decoration: const InputDecoration(
-    //             labelText: 'Email',
-    //             hintText: 'Enter email',
-    //           ),
-    //         ),
-    //         const Spacer(),
-    //       ],
-    //     ),
-    //   ),
-    //   actions: [
-    //     TextButton(
-    //       onPressed: () => Navigator.pop(context),
-    //       child: const Text('Cancel'),
-    //     ),
-    //     FilledButton(
-    //       onPressed: () async {
-    //         if (widget.emailController.text.isNotEmpty) {
-    //           // await shareNutritionPlan(nutritionPlan, emailController.text);
-    //           PopupMessenger.info('Plan shared');
-    //         }
-    //         Navigator.pop(context);
-    //         PopupMessenger.info('Plan shared');
-    //       },
-    //       child: const Text('Share'),
-    //     ),
-    //   ],
-    // );
   }
 }
 
