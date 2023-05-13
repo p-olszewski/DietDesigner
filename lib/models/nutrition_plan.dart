@@ -8,8 +8,9 @@ class NutritionPlan {
   final double proteins;
   final String date;
   final String uid;
+  final List<String>? sharedUsers;
 
-  NutritionPlan(this.meals, this.date, this.uid)
+  NutritionPlan(this.meals, this.date, this.uid, {this.sharedUsers})
       : calories = meals.fold(0, (sum, meal) => sum + meal.calories),
         carbs = meals.fold(0, (sum, meal) => sum + meal.carbs),
         fats = meals.fold(0, (sum, meal) => sum + meal.fats),
@@ -22,5 +23,6 @@ class NutritionPlan {
         'proteins': double.parse(proteins.toStringAsFixed(2)),
         'date': date,
         'uid': uid,
+        'shared_users': sharedUsers,
       };
 }

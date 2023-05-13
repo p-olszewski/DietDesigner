@@ -57,7 +57,9 @@ Future<user_model.User?> getUserData(String uid) async {
 Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
   try {
     final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
-    await nutritionPlanCollection.doc(nutritionPlan.date).set(nutritionPlan.toJson());
+    // update only non-null fields
+    final Map<String, dynamic> data = nutritionPlan.toJson()..removeWhere((key, value) => value == null);
+    await nutritionPlanCollection.doc(nutritionPlan.date).set(data);
     final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/${nutritionPlan.date}/meals');
     for (int i = 0; i < nutritionPlan.meals.length; i++) {
       final meal = nutritionPlan.meals[i];
