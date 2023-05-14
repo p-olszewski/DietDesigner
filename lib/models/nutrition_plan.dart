@@ -6,11 +6,12 @@ class NutritionPlan {
   final double carbs;
   final double fats;
   final double proteins;
-  final String date;
+  String date;
   final String uid;
-  final List<String>? sharedUsers;
+  List<String> sharedUsers;
+  bool isFavorite = false;
 
-  NutritionPlan(this.meals, this.date, this.uid, {this.sharedUsers})
+  NutritionPlan(this.meals, this.date, this.uid, {this.sharedUsers = const []})
       : calories = meals.fold(0, (sum, meal) => sum + meal.calories),
         carbs = meals.fold(0, (sum, meal) => sum + meal.carbs),
         fats = meals.fold(0, (sum, meal) => sum + meal.fats),
@@ -24,5 +25,6 @@ class NutritionPlan {
         'date': date,
         'uid': uid,
         'shared_users': sharedUsers,
+        'isFavorite': isFavorite,
       };
 }

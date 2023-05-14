@@ -198,7 +198,9 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                                             );
                                             if (newDate == null) return;
                                             final formattedDate = DateFormat('dd.MM.yyyy').format(newDate);
-                                            await saveNutritionPlanOnSpecificDate(snapshot.data![index], formattedDate);
+                                            NutritionPlan nutritionPlan = snapshot.data![index];
+                                            nutritionPlan.date = formattedDate;
+                                            await saveNutritionPlan(nutritionPlan);
                                             if (!mounted) return;
                                             context.read<NavBarProvider>().setCurrentIndex(0);
                                             context.read<DateProvider>().setDate(newDate);

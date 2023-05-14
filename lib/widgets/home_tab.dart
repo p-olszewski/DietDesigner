@@ -508,7 +508,9 @@ class _HomeTabState extends State<HomeTab> {
                   child: ListTile(
                     title: Text(plan.date),
                     onTap: () async {
-                      await saveNutritionPlanOnSpecificDate(plan, _dateProvider.dateFormattedWithDots);
+                      NutritionPlan nutritionPlan = plan;
+                      nutritionPlan.date = _dateProvider.dateFormattedWithDots;
+                      await saveNutritionPlan(nutritionPlan);
                       if (!mounted) return;
                       Navigator.pop(context);
                       setState(() {

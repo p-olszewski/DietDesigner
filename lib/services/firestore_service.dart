@@ -56,30 +56,13 @@ Future<user_model.User?> getUserData(String uid) async {
 
 Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
   try {
-    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
-    // update only non-null fields
-    final Map<String, dynamic> data = nutritionPlan.toJson()..removeWhere((key, value) => value == null);
-    await nutritionPlanCollection.doc(nutritionPlan.date).set(data);
-    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/${nutritionPlan.date}/meals');
+    final nutritionPlanCollection = _database.collection('nutrition_plans');
+    final planId = '${nutritionPlan.uid}_${nutritionPlan.date}';
+    await nutritionPlanCollection.doc(planId).set(nutritionPlan.toJson());
+    final mealCollection = _database.collection('nutrition_plans/$planId/meals');
     for (int i = 0; i < nutritionPlan.meals.length; i++) {
       final meal = nutritionPlan.meals[i];
-      final mealId = 'meal_${i + 1}';
-      meal.id = mealId;
-      await mealCollection.doc(mealId).set(meal.toJson());
-    }
-  } catch (e) {
-    throw Exception('Failed to load data: $e');
-  }
-}
-
-Future saveNutritionPlanOnSpecificDate(NutritionPlan nutritionPlan, String date) async {
-  try {
-    final nutritionPlanCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans');
-    await nutritionPlanCollection.doc(date).set(nutritionPlan.toJson());
-    final mealCollection = _database.collection('users/${nutritionPlan.uid}/nutrition_plans/$date/meals');
-    for (int i = 0; i < nutritionPlan.meals.length; i++) {
-      final meal = nutritionPlan.meals[i];
-      final mealId = 'meal_${i + 1}';
+      final mealId = 'meal${i + 1}';
       meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
     }
@@ -90,7 +73,11 @@ Future saveNutritionPlanOnSpecificDate(NutritionPlan nutritionPlan, String date)
 
 Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
   try {
-    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
+    final planSnapshot = await _database.collection('nutrition_plans').where('uid', isEqualTo: uid).where('date', isEqualTo: date).get();
+    if (planSnapshot.docs.isEmpty) {
+      return NutritionPlan([], date, uid);
+    }
+    final mealCollection = _database.collection('nutrition_plans/${planSnapshot.docs.first.id}/meals');
     final mealSnapshot = await mealCollection.get();
     final List<Meal> meals = [];
     for (var doc in mealSnapshot.docs) {
@@ -104,7 +91,11 @@ Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
 
 Future replaceMeal(Meal newMeal, String date, String uid) async {
   try {
-    final mealCollection = _database.collection('users/$uid/nutrition_plans/$date/meals');
+    final planSnapshot = await _database.collection('nutrition_plans').where('uid', isEqualTo: uid).where('date', isEqualTo: date).get();
+    if (planSnapshot.docs.isEmpty) {
+      throw Exception('Nutrition plan not found for given date and user id');
+    }
+    final mealCollection = _database.collection('nutrition_plans/${planSnapshot.docs.first.id}/meals');
     await mealCollection.doc(newMeal.id).set(newMeal.toJson());
   } catch (e) {
     throw Exception('Failed to load data: $e');
@@ -268,14 +259,6 @@ shareShoppingListToUser(String listId, String userEmail) async {
   });
 }
 
-archiveShoppingList(String listId) {
-  try {
-    _database.doc('/shopping_lists/$listId').update({'archived': true});
-  } catch (e) {
-    throw Exception('Failed to archive shopping list: $e');
-  }
-}
-
 deleteUserFromShoppingList(String listId, String userEmail) async {
   final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
   if (userSnapshot.docs.isEmpty) {
@@ -289,7 +272,7 @@ deleteUserFromShoppingList(String listId, String userEmail) async {
 
 Future addMealToFavorites(Meal meal, String uid, String date) async {
   try {
-    final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
+    final mealRef = _database.doc('nutrition_plans/${uid}_$date/meals/${meal.id}');
     final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
 
     await Future.wait([
@@ -303,7 +286,7 @@ Future addMealToFavorites(Meal meal, String uid, String date) async {
 
 Future removeMealFromFavorites(Meal meal, String uid, String date) async {
   try {
-    final mealRef = _database.doc('users/$uid/nutrition_plans/$date/meals/${meal.id}');
+    final mealRef = _database.doc('nutrition_plans/${uid}_$date/meals/${meal.id}');
     final favoriteMealsCollection = _database.collection('users/$uid/favorite_meals');
 
     await Future.wait([
@@ -386,8 +369,12 @@ Future<bool> isNutritionPlanFavorite(NutritionPlan nutritionPlan, String uid) as
 
 Future removeNutritionPlanFromFavorites(NutritionPlan nutritionPlan, String uid) async {
   try {
-    final favoriteNutritionPlansCollection = _database.collection('users/$uid/favorite_plans');
-    await favoriteNutritionPlansCollection.doc(nutritionPlan.date).delete();
+    final mealsCollection = await _database.collection('users/$uid/favorite_plans/${nutritionPlan.date}/meals').get();
+    // delete all meals in the plan first
+    for (var element in mealsCollection.docs) {
+      await _database.doc('users/$uid/favorite_plans/${nutritionPlan.date}/meals/${element.id}').delete();
+    }
+    await _database.doc('users/$uid/favorite_plans/${nutritionPlan.date}').delete();
   } catch (e) {
     throw Exception('Failed while removing from favorites: $e');
   }
@@ -398,41 +385,25 @@ Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) a
   if (userSnapshot.docs.isEmpty) {
     throw 'Cannot find user with email $userEmail.';
   }
-  final nutritionPlanId = '${nutritionPlan.uid}_${nutritionPlan.date}';
-  final nutritionPlanCollection = _database.collection('shared_nutrition_plans');
-  final nutritionPlanSnapshot = await nutritionPlanCollection.doc(nutritionPlanId).get();
-
-  if (nutritionPlanSnapshot.exists) {
-    final userIds = List.from((nutritionPlanSnapshot.data())?['shared_users']);
-    if (userIds.contains(userSnapshot.docs.first.id)) {
-      throw 'User $userEmail is already on the list.';
-    }
-    await nutritionPlanCollection.doc(nutritionPlanId).update({
-      'shared_users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
-    });
-  } else {
-    await nutritionPlanCollection.doc(nutritionPlanId).set({
-      ...nutritionPlan.toJson(),
-      'shared_users': [userSnapshot.docs.first.id],
-    });
-    final mealCollection = _database.collection('shared_nutrition_plans/$nutritionPlanId/meals');
-    for (int i = 0; i < nutritionPlan.meals.length; i++) {
-      final meal = nutritionPlan.meals[i];
-      final mealId = 'meal_${i + 1}';
-      meal.id = mealId;
-      await mealCollection.doc(mealId).set(meal.toJson());
-    }
+  final planId = '${nutritionPlan.uid}_${nutritionPlan.date}';
+  final planSnapshot = await _database.doc('nutrition_plans/$planId').get();
+  final userIds = List.from((planSnapshot.data())?['shared_users']);
+  if (userIds.contains(userSnapshot.docs.first.id)) {
+    throw 'User $userEmail is already on the list.';
   }
+  _database.doc('nutrition_plans/$planId').update({
+    'shared_users': FieldValue.arrayUnion([userSnapshot.docs.first.id]),
+  });
 }
 
-Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
+Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
   try {
-    final sharedPlansCollection = _database.collection('shared_nutrition_plans');
-    final plansSnapshot = await sharedPlansCollection.where('shared_users', arrayContains: uid).get();
+    final plansCollection = _database.collection('nutrition_plans');
+    final plansSnapshot = await plansCollection.where('uid', isEqualTo: uid).where('shared_users', isNotEqualTo: []).get();
     final List<NutritionPlan> sharedPlans = [];
     for (var doc in plansSnapshot.docs) {
       final List<Meal> meals = [];
-      final mealSnapshot = await sharedPlansCollection.doc(doc.id).collection('meals').get();
+      final mealSnapshot = await plansCollection.doc(doc.id).collection('meals').get();
       for (var mealDoc in mealSnapshot.docs) {
         meals.add(Meal.fromFirestore(mealDoc.data()));
       }
@@ -444,10 +415,10 @@ Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
   }
 }
 
-Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
+Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
   try {
-    final sharedPlansCollection = _database.collection('shared_nutrition_plans');
-    final plansSnapshot = await sharedPlansCollection.where('uid', isEqualTo: uid).get();
+    final sharedPlansCollection = _database.collection('nutrition_plans');
+    final plansSnapshot = await sharedPlansCollection.where('shared_users', arrayContains: uid).get();
     final List<NutritionPlan> sharedPlans = [];
     for (var doc in plansSnapshot.docs) {
       final List<Meal> meals = [];
@@ -470,13 +441,9 @@ Future deleteUserFromSharedPlan(String planId, String userEmail) async {
       throw 'Cannot find user with email $userEmail.';
     }
     final userId = userSnapshot.docs.first.id;
-    await _database.doc('shared_nutrition_plans/$planId').update({
+    await _database.doc('nutrition_plans/$planId').update({
       'shared_users': FieldValue.arrayRemove([userId]),
     });
-
-    if ((await _database.doc('shared_nutrition_plans/$planId').get()).data()!['shared_users'].isEmpty) {
-      await _database.doc('shared_nutrition_plans/$planId').delete();
-    }
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
@@ -485,7 +452,7 @@ Future deleteUserFromSharedPlan(String planId, String userEmail) async {
 Future<dynamic> getNutritionPlanUserEmails(NutritionPlan nutritionPlan) async {
   try {
     final nutritionPlanId = '${nutritionPlan.uid}_${nutritionPlan.date}';
-    final nutritionPlanSnapshot = await _database.doc('shared_nutrition_plans/$nutritionPlanId').get();
+    final nutritionPlanSnapshot = await _database.doc('nutrition_plans/$nutritionPlanId').get();
     if (!nutritionPlanSnapshot.exists) {
       return [];
     }
