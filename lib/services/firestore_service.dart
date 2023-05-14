@@ -83,7 +83,7 @@ Future<NutritionPlan> getNutritionPlan(String uid, String date) async {
     for (var doc in mealSnapshot.docs) {
       meals.add(Meal.fromFirestore(doc.data()));
     }
-    return NutritionPlan(meals, date, uid);
+    return NutritionPlan.fromJson(planSnapshot.docs.first.data(), meals);
   } catch (e) {
     throw Exception('Failed to load data: $e');
   }
@@ -407,7 +407,7 @@ Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
       for (var mealDoc in mealSnapshot.docs) {
         meals.add(Meal.fromFirestore(mealDoc.data()));
       }
-      sharedPlans.add(NutritionPlan(meals, doc.data()['date'], doc.data()['uid']));
+      sharedPlans.add(NutritionPlan.fromJson(doc.data(), meals));
     }
     return sharedPlans;
   } catch (e) {
@@ -426,7 +426,7 @@ Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
       for (var mealDoc in mealSnapshot.docs) {
         meals.add(Meal.fromFirestore(mealDoc.data()));
       }
-      sharedPlans.add(NutritionPlan(meals, doc.data()['date'], doc.data()['uid']));
+      sharedPlans.add(NutritionPlan.fromJson(doc.data(), meals));
     }
     return sharedPlans;
   } catch (e) {
