@@ -434,13 +434,14 @@ Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
   }
 }
 
-Future deleteUserFromSharedPlan(String planId, String userEmail) async {
+Future deleteUserFromSharedPlan(NutritionPlan nutritionPlan, String userEmail) async {
   try {
     final userSnapshot = await _database.collection('users').where('email', isEqualTo: userEmail).get();
     if (userSnapshot.docs.isEmpty) {
       throw 'Cannot find user with email $userEmail.';
     }
     final userId = userSnapshot.docs.first.id;
+    final planId = '${nutritionPlan.uid}_${nutritionPlan.date}';
     await _database.doc('nutrition_plans/$planId').update({
       'shared_users': FieldValue.arrayRemove([userId]),
     });

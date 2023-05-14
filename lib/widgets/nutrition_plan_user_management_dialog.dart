@@ -118,7 +118,11 @@ class ChipsList extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),
-                onDeleted: () {},
+                onDeleted: () {
+                  deleteUserFromSharedPlan(widget.nutritionPlan, snapshot.data![index]);
+                  Navigator.pop(context);
+                  PopupMessenger.info('Removed ${snapshot.data![index]} from the plan.');
+                },
               );
             },
           ),
