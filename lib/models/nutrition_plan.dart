@@ -27,4 +27,14 @@ class NutritionPlan {
         'shared_users': sharedUsers,
         'isFavorite': isFavorite,
       };
+
+  NutritionPlan.fromJson(Map<String, dynamic> json, this.meals)
+      : calories = json['calories'],
+        carbs = json['carbs'],
+        fats = json['fats'],
+        proteins = json['proteins'],
+        date = json['date'],
+        uid = json['uid'],
+        sharedUsers = List<String>.from(json['shared_users']),
+        isFavorite = json['isFavorite'];
 }
