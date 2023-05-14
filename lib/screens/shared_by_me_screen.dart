@@ -136,15 +136,13 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                     ),
                   ),
                   // TODO show list of shared_users
-                  // subtitle: Text(
-                  //   snapshot.data![index].['shared_users'].length == 1
-                  //       ? 'Shared with ${snapshot.data![index].sharedUsers.length} user'
-                  //       : 'Shared with ${snapshot.data![index].sharedUsers.length} users',
-                  //   style: const TextStyle(
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w400,
-                  //   ),
-                  // ),
+                  subtitle: Text(
+                    'Shared with ${snapshot.data![index].sharedUsers.length} users',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                   tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
