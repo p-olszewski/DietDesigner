@@ -1,49 +1,52 @@
-import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
-import 'package:diet_designer/providers/date_provider.dart';
-import 'package:diet_designer/providers/navbar_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
-import 'package:diet_designer/shared/popup_messenger.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/utils.dart';
-import 'package:diet_designer/widgets/meal_card.dart';
+import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class FavoritesTab extends StatefulWidget {
-  const FavoritesTab({super.key});
+class SharedPlansAndMealsScreen extends StatefulWidget {
+  const SharedPlansAndMealsScreen({super.key});
 
   @override
-  State<FavoritesTab> createState() => _FavoritesTabState();
+  State<SharedPlansAndMealsScreen> createState() => _SharedPlansAndMealsScreenState();
 }
 
-class _FavoritesTabState extends State<FavoritesTab> {
+class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
   final bool _isLoading = false;
-  int _selectedOption = 1;
-
+  late int _selectedOption;
   @override
   void initState() {
     super.initState();
+    _selectedOption = 1;
   }
 
   @override
   Widget build(BuildContext context) {
     final uid = context.watch<AuthProvider>().uid!;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildNavigationRow(context),
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _selectedOption == 0
-                    ? _buildFavoritePlansList(uid)
-                    : _buildFavoriteMealsList(uid)
-          ],
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shared'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildNavigationRow(context),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _selectedOption == 0
+                      ? _buildSharedPlansList(uid)
+                      : _buildSharedMealsList(uid)
+            ],
+          ),
         ),
       ),
     );
@@ -62,7 +65,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _selectedOption == 0 ? "Favorite plans" : "Favorite meals",
+                    _selectedOption == 0 ? "Plans" : "Meals",
                     style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Row(
@@ -102,69 +105,10 @@ class _FavoritesTabState extends State<FavoritesTab> {
     );
   }
 
-  FutureBuilder<List<Meal>> _buildFavoriteMealsList(String uid) {
+  FutureBuilder<List<NutritionPlan>> _buildSharedPlansList(String uid) {
     return FutureBuilder(
-      future: getFavoriteMeals(uid),
-      builder: (context, AsyncSnapshot<List<Meal>> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return SizedBox(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: const Align(
-                alignment: Alignment.center,
-                child: Text('You have no favorite meals yet.'),
-              ),
-            );
-          } else {
-            return ListView.builder(
-              physics: const ScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                      onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
-                      child: MealCard(meal: snapshot.data![index]),
-                    ),
-                    Positioned(
-                      top: 15,
-                      right: 5,
-                      child: IconButton(
-                        onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
-                        icon: Icon(
-                          Icons.more_vert,
-                          size: 26,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              offset: const Offset(0.5, 0.5),
-                              blurRadius: 2.0,
-                              color: Colors.grey.shade600,
-                            ),
-                          ],
-                        ),
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
-    );
-  }
-
-  FutureBuilder<List<NutritionPlan>> _buildFavoritePlansList(String uid) {
-    return FutureBuilder(
-      future: getFavoriteNutritionPlans(uid),
+      key: UniqueKey(),
+      future: getSharedNutritionPlans(),
       builder: (context, AsyncSnapshot<List<NutritionPlan>> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
@@ -173,7 +117,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
               height: MediaQuery.of(context).size.height * 0.6,
               child: const Align(
                 alignment: Alignment.center,
-                child: Text('You have no favorite plans yet.'),
+                child: Text('You have not shared any plans yet.'),
               ),
             );
           } else {
@@ -191,6 +135,22 @@ class _FavoritesTabState extends State<FavoritesTab> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  //
+                  subtitle: uid == snapshot.data![index].uid
+                      ? Text(
+                          'You shared this plan with ${snapshot.data![index].sharedUsers.length} people.',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        )
+                      : const Text(
+                          'Shared to you.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                   tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
@@ -236,27 +196,19 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                         const SizedBox(height: 20),
                                         ElevatedButton(
                                           onPressed: () async {
-                                            DateTime? newDate = await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime.now(),
-                                              lastDate: DateTime(2100),
-                                            );
-                                            if (newDate == null) return;
-                                            final formattedDate = DateFormat('dd.MM.yyyy').format(newDate);
-                                            NutritionPlan nutritionPlan = snapshot.data![index];
-                                            nutritionPlan.date = formattedDate;
-                                            await saveNutritionPlan(nutritionPlan);
-                                            if (!mounted) return;
-                                            context.read<NavBarProvider>().setCurrentIndex(0);
-                                            context.read<DateProvider>().setDate(newDate);
-                                            Navigator.pushNamed(context, "/home");
-                                            PopupMessenger.info('Plan successfully added to your calendar.');
+                                            if (uid == snapshot.data![index].uid) {
+                                              await _showPlanSharingPopup(context, snapshot.data![index]);
+                                            } else {
+                                              final email = context.read<UserDataProvider>().user.email;
+                                              await deleteUserFromSharedPlan(snapshot.data![index], email!);
+                                              PopupMessenger.info('You left this shared plan.');
+                                            }
+                                            setState(() => _selectedOption = 0);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                                           ),
-                                          child: const Text('Use plan'),
+                                          child: Text(uid == snapshot.data![index].uid ? 'Manage users' : 'Leave plan'),
                                         ),
                                         const SizedBox(height: 15),
                                       ],
@@ -284,47 +236,24 @@ class _FavoritesTabState extends State<FavoritesTab> {
     );
   }
 
-  Future<dynamic> _buildBottomSheet(BuildContext context, Meal meal) {
-    final uid = context.read<AuthProvider>().uid!;
-    final date = context.read<DateProvider>().dateFormattedWithDots;
-    const iconSpacing = 30.0;
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MaterialButton(
-              onPressed: () async {
-                await removeMealFromFavorites(meal, uid, date);
-                if (!mounted) return;
-                Navigator.pop(context);
-                setState(() {});
-                PopupMessenger.info('Removed from favorites');
-              },
-              child: Row(
-                children: const [
-                  Icon(Icons.favorite),
-                  SizedBox(width: iconSpacing),
-                  Text('Unfavorite'),
-                ],
-              ),
-            ),
-            MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
-              child: Row(
-                children: const [
-                  Icon(Icons.share_outlined),
-                  SizedBox(width: iconSpacing),
-                  Text('Share'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+  _buildSharedMealsList(String uid) {
+    return const Center(
+      child: Text('Shared meals'),
     );
+  }
+
+  Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NutritionPlanUserManagementDialog(nutritionPlan: nutritionPlan);
+      },
+    ).then((value) {
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          _selectedOption = 0;
+        });
+      });
+    });
   }
 }

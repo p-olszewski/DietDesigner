@@ -6,10 +6,12 @@ class NutritionPlan {
   final double carbs;
   final double fats;
   final double proteins;
-  final String date;
+  String date;
   final String uid;
+  List<String> sharedUsers;
+  bool isFavorite = false;
 
-  NutritionPlan(this.meals, this.date, this.uid)
+  NutritionPlan(this.meals, this.date, this.uid, {this.sharedUsers = const []})
       : calories = meals.fold(0, (sum, meal) => sum + meal.calories),
         carbs = meals.fold(0, (sum, meal) => sum + meal.carbs),
         fats = meals.fold(0, (sum, meal) => sum + meal.fats),
@@ -22,5 +24,17 @@ class NutritionPlan {
         'proteins': double.parse(proteins.toStringAsFixed(2)),
         'date': date,
         'uid': uid,
+        'shared_users': sharedUsers,
+        'isFavorite': isFavorite,
       };
+
+  NutritionPlan.fromJson(Map<String, dynamic> json, this.meals)
+      : calories = json['calories'],
+        carbs = json['carbs'],
+        fats = json['fats'],
+        proteins = json['proteins'],
+        date = json['date'],
+        uid = json['uid'],
+        sharedUsers = List<String>.from(json['shared_users']),
+        isFavorite = json['isFavorite'];
 }

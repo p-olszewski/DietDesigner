@@ -1,27 +1,29 @@
-import 'package:diet_designer/providers/shopping_list_provider.dart';
+import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/services/firestore_service.dart';
-import 'package:diet_designer/shared/popup_messenger.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class UserManagementDialog extends StatefulWidget {
-  const UserManagementDialog({super.key});
+class NutritionPlanUserManagementDialog extends StatefulWidget {
+  const NutritionPlanUserManagementDialog({
+    super.key,
+    required this.nutritionPlan,
+  });
+
+  final NutritionPlan nutritionPlan;
 
   @override
-  State<UserManagementDialog> createState() => _UserManagementDialogState();
+  State<NutritionPlanUserManagementDialog> createState() => _NutritionPlanUserManagementDialogState();
 }
 
-class _UserManagementDialogState extends State<UserManagementDialog> {
+class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserManagementDialog> {
   final TextEditingController _emailController = TextEditingController();
-  late Future<dynamic> userEmails;
-  late String listId;
+  late Future<dynamic>? userEmails;
   String? _nameErrorText;
 
   @override
   void initState() {
     super.initState();
-    listId = context.read<ShoppingListProvider>().listId;
-    userEmails = getShoppingListUserEmails(listId);
+    userEmails = getNutritionPlanUserEmails(widget.nutritionPlan);
   }
 
   @override
@@ -59,10 +61,10 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
             return;
           }
           try {
-            await addUserToShoppingList(listId, _emailController.text);
+            await shareNutritionPlanToUser(widget.nutritionPlan, _emailController.text);
             if (!mounted) return;
             Navigator.of(context).pop();
-            PopupMessenger.info('Added ${_emailController.text} to the list.');
+            PopupMessenger.info('Added ${_emailController.text} to the plan.');
             _emailController.clear();
             setState(() => _nameErrorText = null);
           } catch (e) {
@@ -77,7 +79,7 @@ class _UserManagementDialogState extends State<UserManagementDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ChipsList(userEmails: userEmails, widget: widget),
+          if (userEmails != null) ChipsList(userEmails: userEmails!, widget: widget),
           emailAddressInput,
         ],
       ),
@@ -94,7 +96,7 @@ class ChipsList extends StatelessWidget {
   });
 
   final Future userEmails;
-  final UserManagementDialog widget;
+  final NutritionPlanUserManagementDialog widget;
 
   @override
   Widget build(BuildContext context) {
@@ -117,10 +119,9 @@ class ChipsList extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 onDeleted: () {
-                  String listId = context.read<ShoppingListProvider>().listId;
-                  deleteUserFromShoppingList(listId, snapshot.data![index]);
-                  Navigator.of(context).pop();
-                  PopupMessenger.info('Removed ${snapshot.data![index]} from the list.');
+                  deleteUserFromSharedPlan(widget.nutritionPlan, snapshot.data![index]);
+                  Navigator.pop(context);
+                  PopupMessenger.info('Removed ${snapshot.data![index]} from the plan.');
                 },
               );
             },

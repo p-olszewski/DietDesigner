@@ -2,7 +2,7 @@ import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
-import 'package:diet_designer/utils/enums.dart';
+import 'package:diet_designer/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

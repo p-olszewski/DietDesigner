@@ -1,4 +1,4 @@
-import 'package:diet_designer/utils/enums.dart';
+import 'package:diet_designer/utils/utils.dart';
 
 class User {
   final String? firstname;

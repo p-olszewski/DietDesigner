@@ -25,7 +25,10 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
           const SizedBox(height: 30),
           TextButton(
-            onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pushNamed(context, "/account_details");
+            },
             child: const Text("Account details"),
           ),
           TextButton(
@@ -36,8 +39,25 @@ class _DrawerMenuState extends State<DrawerMenu> {
             child: const Text("Calculator"),
           ),
           TextButton(
-            onPressed: () => PopupMessenger.info("This feature is not yet implemented!"),
-            child: const Text("Settings"),
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pushNamed(context, "/shared");
+            },
+            child: const Text("Shared plans and meals"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pushNamed(context, "/friends");
+            },
+            child: const Text("Friends"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pushNamed(context, "/contact");
+            },
+            child: const Text("Contact"),
           ),
           TextButton(
             onPressed: () async {
