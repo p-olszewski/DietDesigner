@@ -327,6 +327,16 @@ class _HomeTabState extends State<HomeTab> {
                 ],
               ),
             ),
+            MaterialButton(
+              onPressed: () => PopupMessenger.info('This feature is not implemented yet.'),
+              child: Row(
+                children: const [
+                  Icon(Icons.download_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Download as PDF'),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -400,16 +410,6 @@ class _HomeTabState extends State<HomeTab> {
                       ],
                     ),
                   ),
-            MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
-              child: Row(
-                children: const [
-                  Icon(Icons.share_outlined),
-                  SizedBox(width: iconSpacing),
-                  Text('Share'),
-                ],
-              ),
-            ),
           ],
         ),
       ),

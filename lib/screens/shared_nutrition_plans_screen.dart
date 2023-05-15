@@ -6,23 +6,20 @@ import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/utils.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:provider/provider.dart';
 
-class SharedPlansAndMealsScreen extends StatefulWidget {
-  const SharedPlansAndMealsScreen({super.key});
+class SharedNutritionPlansScreen extends StatefulWidget {
+  const SharedNutritionPlansScreen({super.key});
 
   @override
-  State<SharedPlansAndMealsScreen> createState() => _SharedPlansAndMealsScreenState();
+  State<SharedNutritionPlansScreen> createState() => _SharedNutritionPlansScreenState();
 }
 
-class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
+class _SharedNutritionPlansScreenState extends State<SharedNutritionPlansScreen> {
   final bool _isLoading = false;
-  late int _selectedOption;
   @override
   void initState() {
     super.initState();
-    _selectedOption = 1;
   }
 
   @override
@@ -39,68 +36,41 @@ class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildNavigationRow(context),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _selectedOption == 0
-                      ? _buildSharedPlansList(uid)
-                      : _buildSharedMealsList(uid)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Nutrition plans",
+                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.touch_app, color: Colors.grey, size: 12),
+                                Text(
+                                  "  Tap to unfold",
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _isLoading ? const Center(child: CircularProgressIndicator()) : _buildSharedPlansList(uid)
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Padding _buildNavigationRow(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _selectedOption == 0 ? "Plans" : "Meals",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.touch_app, color: Colors.grey, size: 12),
-                      Text(
-                        _selectedOption == 0 ? "  Tap to unfold" : "  Tap for details",
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              FlutterToggleTab(
-                width: 30,
-                height: 42,
-                borderRadius: 50,
-                marginSelected: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
-                unSelectedTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w400),
-                unSelectedBackgroundColors: [Theme.of(context).colorScheme.secondaryContainer],
-                labels: const ['', ''],
-                icons: const [Icons.event_note, Icons.fastfood],
-                iconSize: 22,
-                selectedIndex: _selectedOption,
-                selectedLabelIndex: (index) {
-                  setState(() {
-                    if (index == _selectedOption) return;
-                    _selectedOption = index;
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -203,7 +173,7 @@ class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
                                               await deleteUserFromSharedPlan(snapshot.data![index], email!);
                                               PopupMessenger.info('You left this shared plan.');
                                             }
-                                            setState(() => _selectedOption = 0);
+                                            setState(() {});
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
@@ -236,12 +206,6 @@ class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
     );
   }
 
-  _buildSharedMealsList(String uid) {
-    return const Center(
-      child: Text('Shared meals'),
-    );
-  }
-
   Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
     await showDialog(
       context: context,
@@ -250,9 +214,7 @@ class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
       },
     ).then((value) {
       Future.delayed(const Duration(seconds: 1), () {
-        setState(() {
-          _selectedOption = 0;
-        });
+        setState(() {});
       });
     });
   }
