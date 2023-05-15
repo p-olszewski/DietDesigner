@@ -41,16 +41,9 @@ class _DrawerMenuState extends State<DrawerMenu> {
           TextButton(
             onPressed: () {
               if (!mounted) return;
-              Navigator.pushNamed(context, "/shared_by_me");
+              Navigator.pushNamed(context, "/shared");
             },
-            child: const Text("Shared by me"),
-          ),
-          TextButton(
-            onPressed: () {
-              if (!mounted) return;
-              Navigator.pushNamed(context, "/shared_to_me");
-            },
-            child: const Text("Shared to me"),
+            child: const Text("Shared plans and meals"),
           ),
           TextButton(
             onPressed: () {

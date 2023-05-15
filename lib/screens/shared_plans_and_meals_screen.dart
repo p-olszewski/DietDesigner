@@ -1,20 +1,22 @@
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/utils.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:provider/provider.dart';
 
-class SharedByMeScreen extends StatefulWidget {
-  const SharedByMeScreen({super.key});
+class SharedPlansAndMealsScreen extends StatefulWidget {
+  const SharedPlansAndMealsScreen({super.key});
 
   @override
-  State<SharedByMeScreen> createState() => _SharedByMeScreenState();
+  State<SharedPlansAndMealsScreen> createState() => _SharedPlansAndMealsScreenState();
 }
 
-class _SharedByMeScreenState extends State<SharedByMeScreen> {
+class _SharedPlansAndMealsScreenState extends State<SharedPlansAndMealsScreen> {
   final bool _isLoading = false;
   late int _selectedOption;
   @override
@@ -29,7 +31,7 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shared by me'),
+        title: const Text('Shared'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -106,7 +108,7 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
   FutureBuilder<List<NutritionPlan>> _buildSharedPlansList(String uid) {
     return FutureBuilder(
       key: UniqueKey(),
-      future: getNutritionPlansSharedByYou(uid),
+      future: getSharedNutritionPlans(),
       builder: (context, AsyncSnapshot<List<NutritionPlan>> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
@@ -133,13 +135,22 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  subtitle: Text(
-                    'Shared with ${snapshot.data![index].sharedUsers.length} users',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  //
+                  subtitle: uid == snapshot.data![index].uid
+                      ? Text(
+                          'You shared this plan with ${snapshot.data![index].sharedUsers.length} people.',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        )
+                      : const Text(
+                          'Shared to you.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                   tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
@@ -185,13 +196,19 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                                         const SizedBox(height: 20),
                                         ElevatedButton(
                                           onPressed: () async {
-                                            await _showPlanSharingPopup(context, snapshot.data![index]);
+                                            if (uid == snapshot.data![index].uid) {
+                                              await _showPlanSharingPopup(context, snapshot.data![index]);
+                                            } else {
+                                              final email = context.read<UserDataProvider>().user.email;
+                                              await deleteUserFromSharedPlan(snapshot.data![index], email!);
+                                              PopupMessenger.info('You left this shared plan.');
+                                            }
                                             setState(() => _selectedOption = 0);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                                           ),
-                                          child: const Text('Manage users'),
+                                          child: Text(uid == snapshot.data![index].uid ? 'Manage users' : 'Leave plan'),
                                         ),
                                         const SizedBox(height: 15),
                                       ],

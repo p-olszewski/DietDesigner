@@ -396,29 +396,10 @@ Future shareNutritionPlanToUser(NutritionPlan nutritionPlan, String userEmail) a
   });
 }
 
-Future<List<NutritionPlan>> getNutritionPlansSharedByYou(String uid) async {
-  try {
-    final plansCollection = _database.collection('nutrition_plans');
-    final plansSnapshot = await plansCollection.where('uid', isEqualTo: uid).where('shared_users', isNotEqualTo: []).get();
-    final List<NutritionPlan> sharedPlans = [];
-    for (var doc in plansSnapshot.docs) {
-      final List<Meal> meals = [];
-      final mealSnapshot = await plansCollection.doc(doc.id).collection('meals').get();
-      for (var mealDoc in mealSnapshot.docs) {
-        meals.add(Meal.fromFirestore(mealDoc.data()));
-      }
-      sharedPlans.add(NutritionPlan.fromJson(doc.data(), meals));
-    }
-    return sharedPlans;
-  } catch (e) {
-    throw Exception('Failed to get favorites meals: $e');
-  }
-}
-
-Future<List<NutritionPlan>> getNutritionPlansSharedForYou(String uid) async {
+Future<List<NutritionPlan>> getSharedNutritionPlans() async {
   try {
     final sharedPlansCollection = _database.collection('nutrition_plans');
-    final plansSnapshot = await sharedPlansCollection.where('shared_users', arrayContains: uid).get();
+    final plansSnapshot = await sharedPlansCollection.where('shared_users', isNotEqualTo: []).get();
     final List<NutritionPlan> sharedPlans = [];
     for (var doc in plansSnapshot.docs) {
       final List<Meal> meals = [];
