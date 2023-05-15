@@ -1,13 +1,10 @@
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
-import 'package:diet_designer/providers/date_provider.dart';
-import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
-import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/utils.dart';
+import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SharedByMeScreen extends StatefulWidget {
@@ -19,11 +16,11 @@ class SharedByMeScreen extends StatefulWidget {
 
 class _SharedByMeScreenState extends State<SharedByMeScreen> {
   final bool _isLoading = false;
-  int _selectedOption = 1;
-
+  late int _selectedOption;
   @override
   void initState() {
     super.initState();
+    _selectedOption = 1;
   }
 
   @override
@@ -108,6 +105,7 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
 
   FutureBuilder<List<NutritionPlan>> _buildSharedPlansList(String uid) {
     return FutureBuilder(
+      key: UniqueKey(),
       future: getNutritionPlansSharedByYou(uid),
       builder: (context, AsyncSnapshot<List<NutritionPlan>> snapshot) {
         if (snapshot.hasData) {
@@ -135,7 +133,6 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  // TODO show list of shared_users
                   subtitle: Text(
                     'Shared with ${snapshot.data![index].sharedUsers.length} users',
                     style: const TextStyle(
@@ -188,27 +185,13 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
                                         const SizedBox(height: 20),
                                         ElevatedButton(
                                           onPressed: () async {
-                                            DateTime? newDate = await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime.now(),
-                                              lastDate: DateTime(2100),
-                                            );
-                                            if (newDate == null) return;
-                                            final formattedDate = DateFormat('dd.MM.yyyy').format(newDate);
-                                            NutritionPlan nutritionPlan = snapshot.data![index];
-                                            nutritionPlan.date = formattedDate;
-                                            await saveNutritionPlan(nutritionPlan);
-                                            if (!mounted) return;
-                                            context.read<NavBarProvider>().setCurrentIndex(0);
-                                            context.read<DateProvider>().setDate(newDate);
-                                            Navigator.pushNamed(context, "/home");
-                                            PopupMessenger.info('Plan successfully added to your calendar.');
+                                            await _showPlanSharingPopup(context, snapshot.data![index]);
+                                            setState(() => _selectedOption = 0);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                                           ),
-                                          child: const Text('Use plan'),
+                                          child: const Text('Manage users'),
                                         ),
                                         const SizedBox(height: 15),
                                       ],
@@ -240,5 +223,20 @@ class _SharedByMeScreenState extends State<SharedByMeScreen> {
     return const Center(
       child: Text('Shared meals'),
     );
+  }
+
+  Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NutritionPlanUserManagementDialog(nutritionPlan: nutritionPlan);
+      },
+    ).then((value) {
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          _selectedOption = 0;
+        });
+      });
+    });
   }
 }
