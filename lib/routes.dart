@@ -6,7 +6,7 @@ import 'package:diet_designer/screens/friends_screen.dart';
 import 'package:diet_designer/screens/home_screen.dart';
 import 'package:diet_designer/screens/login_screen.dart';
 import 'package:diet_designer/screens/meal_details_screen.dart';
-import 'package:diet_designer/screens/shared_plans_and_meals_screen.dart';
+import 'package:diet_designer/screens/shared_nutrition_plans_screen.dart';
 import 'package:diet_designer/screens/shopping_list_details_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ var appRoutes = {
   '/shopping_list_details': (context) => const ShoppingListDetailsScreen(),
   '/account_details': (context) => const AccountDetailsScreen(),
   '/calculator': (context) => const CalculatorScreen(),
-  '/shared': (context) => const SharedPlansAndMealsScreen(),
+  '/shared_nutrition_plans': (context) => const SharedNutritionPlansScreen(),
   '/friends': (context) => const FriendsScreen(),
   '/contact': (context) => const ContactScreen(),
 };
