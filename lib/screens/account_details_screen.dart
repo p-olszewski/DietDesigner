@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class AccountDetailsScreen extends StatelessWidget {
@@ -132,7 +134,7 @@ class _UserHeader extends StatelessWidget {
                         ],
                       ),
                       child: IconButton(
-                        onPressed: () => PopupMessenger.info('This feature is not available yet.'),
+                        onPressed: () => getFromGallery(),
                         icon: Icon(
                           Icons.edit,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -380,5 +382,19 @@ class _Divider extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<void> getFromGallery() async {
+  ImagePicker picker = ImagePicker();
+  final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+  if (pickedImage != null) {
+    final file = File(pickedImage.path);
+    final bytes = await file.readAsBytes();
+    final base64Image = base64Encode(bytes);
+    PopupMessenger.info('Image selected correctly.');
+  } else {
+    PopupMessenger.info('No image selected.');
   }
 }
