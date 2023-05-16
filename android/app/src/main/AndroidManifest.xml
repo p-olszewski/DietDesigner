@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.diet_designer">
    <application
+        android:requestLegacyExternalStorage="true"
         android:label="DietDesigner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
