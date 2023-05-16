@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,14 +19,15 @@ class DrawerMenu extends StatefulWidget {
 class _DrawerMenuState extends State<DrawerMenu> {
   @override
   Widget build(BuildContext context) {
+    User user = context.read<UserDataProvider>().user;
     return Drawer(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 70),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage("https://i.pravatar.cc/300?img=24"),
+              backgroundImage: MemoryImage(base64Decode(user.avatarBase64!)),
             ),
             const SizedBox(height: 30),
             TextButton(
