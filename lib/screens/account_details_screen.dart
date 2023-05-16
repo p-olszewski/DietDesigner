@@ -2,14 +2,29 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:diet_designer/models/user.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AccountDetailsScreen extends StatelessWidget {
+class AccountDetailsScreen extends StatefulWidget {
   const AccountDetailsScreen({super.key});
+
+  @override
+  State<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
+}
+
+class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
+  late User user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = context.read<UserDataProvider>().user;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +75,7 @@ class AccountDetailsScreen extends StatelessWidget {
   }
 }
 
-class _UserHeader extends StatelessWidget {
+class _UserHeader extends StatefulWidget {
   const _UserHeader({
     required this.user,
     required this.labelStyle,
@@ -69,6 +84,11 @@ class _UserHeader extends StatelessWidget {
   final User user;
   final TextStyle labelStyle;
 
+  @override
+  State<_UserHeader> createState() => _UserHeaderState();
+}
+
+class _UserHeaderState extends State<_UserHeader> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -106,7 +126,7 @@ class _UserHeader extends StatelessWidget {
                       ),
                     ],
                     image: DecorationImage(
-                      image: MemoryImage(base64Decode(user.avatarBase64!)),
+                      image: MemoryImage(base64Decode(widget.user.avatarBase64!)),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -134,7 +154,7 @@ class _UserHeader extends StatelessWidget {
                         ],
                       ),
                       child: IconButton(
-                        onPressed: () => getFromGallery(),
+                        onPressed: () => changePhoto(context),
                         icon: Icon(
                           Icons.edit,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -147,7 +167,7 @@ class _UserHeader extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             Text(
-              "${user.firstname!} ${user.lastname!}",
+              "${widget.user.firstname!} ${widget.user.lastname!}",
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.w100,
@@ -162,7 +182,7 @@ class _UserHeader extends StatelessWidget {
               ),
             ),
             Text(
-              user.email!,
+              widget.user.email!,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.w100,
@@ -180,6 +200,30 @@ class _UserHeader extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> changePhoto(BuildContext context) async {
+    ImagePicker picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      final file = File(pickedImage.path);
+      final bytes = await file.readAsBytes();
+      final base64Image = base64Encode(bytes);
+
+      if (!mounted) return;
+      final uid = context.read<AuthProvider>().uid!;
+      final user = context.read<UserDataProvider>().user;
+      user.avatarBase64 = base64Image;
+      context.read<UserDataProvider>().setUser(user);
+      updateUserData(uid, user);
+      setState(() {
+        widget.user.avatarBase64 = base64Image;
+      });
+      PopupMessenger.info('Image updated.');
+    } else {
+      PopupMessenger.info('No image selected.');
+    }
   }
 }
 
@@ -382,19 +426,5 @@ class _Divider extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-Future<void> getFromGallery() async {
-  ImagePicker picker = ImagePicker();
-  final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-
-  if (pickedImage != null) {
-    final file = File(pickedImage.path);
-    final bytes = await file.readAsBytes();
-    final base64Image = base64Encode(bytes);
-    PopupMessenger.info('Image selected correctly.');
-  } else {
-    PopupMessenger.info('No image selected.');
   }
 }
