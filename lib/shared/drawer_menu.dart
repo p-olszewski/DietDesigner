@@ -33,6 +33,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             TextButton(
               onPressed: () {
                 if (!mounted) return;
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/account_details");
               },
               child: const Text("Account details"),
@@ -40,13 +41,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             TextButton(
               onPressed: () {
                 if (!mounted) return;
-                Navigator.pushNamed(context, "/calculator");
-              },
-              child: const Text("Calculator"),
-            ),
-            TextButton(
-              onPressed: () {
-                if (!mounted) return;
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/shared_nutrition_plans");
               },
               child: const Text("Shared nutrition plans"),
@@ -54,6 +49,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             TextButton(
               onPressed: () {
                 if (!mounted) return;
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/friends");
               },
               child: const Text("Friends"),
@@ -61,6 +57,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             TextButton(
               onPressed: () {
                 if (!mounted) return;
+                Navigator.pop(context);
                 Navigator.pushNamed(context, "/contact");
               },
               child: const Text("Contact"),
