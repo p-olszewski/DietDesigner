@@ -209,15 +209,15 @@ class _DailyRequirements extends StatelessWidget {
                     style: labelStyle,
                   ),
                   Text(
-                    'Protein:',
+                    'Proteins:',
                     style: labelStyle,
                   ),
                   Text(
-                    'Carbs:',
+                    'Carbohydrates:',
                     style: labelStyle,
                   ),
                   Text(
-                    'Fat:',
+                    'Fats:',
                     style: labelStyle,
                   ),
                 ],
