@@ -16,6 +16,7 @@ class User {
   int? carbs;
   int? proteins;
   int? fats;
+  String? avatarBase64;
 
   User({
     this.firstname,
@@ -33,6 +34,7 @@ class User {
     this.proteins,
     this.target,
     this.weight,
+    this.avatarBase64,
   });
 
   User.fromJson(Map<String, dynamic> json)
@@ -50,7 +52,8 @@ class User {
         mealsNumber = json['mealsNumber'],
         proteins = json['proteins'],
         target = json['target'],
-        weight = json['weight'];
+        weight = json['weight'],
+        avatarBase64 = json['avatarBase64'];
 
   Map<String, dynamic> toJson() => {
         'firstname': firstname,
@@ -68,6 +71,7 @@ class User {
         'proteins': proteins,
         'target': target,
         'weight': weight,
+        'avatarBase64': avatarBase64,
       };
 
   // Harris-Benedict equation

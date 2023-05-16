@@ -51,6 +51,7 @@ dependencies:
   font_awesome_flutter: ^10.4.0
   percent_indicator: ^4.2.3
   flutter_toggle_tab: ^1.3.0
+  image_picker: ^0.8.7+5
 
 dev_dependencies:
   flutter_lints: ^2.0.1
