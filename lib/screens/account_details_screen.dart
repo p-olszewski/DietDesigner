@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
+import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +12,6 @@ class AccountDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.read<UserDataProvider>().user;
-    TextStyle titleStyle = Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold);
     TextStyle valueStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold);
     TextStyle subTitleStyle = Theme.of(context).textTheme.titleLarge!.copyWith(
           fontWeight: FontWeight.w100,
@@ -19,47 +21,30 @@ class AccountDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account details'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        scrolledUnderElevation: 1,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-          child: Center(
-            child: Column(
-              children: [
-                Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 70,
-                      backgroundImage: NetworkImage("https://i.pravatar.cc/300?img=24"),
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      "${user.firstname!} ${user.lastname!}",
-                      style: titleStyle,
-                    ),
-                    Text(
-                      user.email!,
-                      style: labelStyle,
-                    ),
-                    const SizedBox(height: 50),
-                    _PersonalDetails(
-                      user: user,
-                      subTitleStyle: subTitleStyle,
-                      valueStyle: valueStyle,
-                      labelStyle: labelStyle,
-                    ),
-                    const SizedBox(height: 50),
-                    _DailyRequirements(
-                      user: user,
-                      subTitleStyle: subTitleStyle,
-                      valueStyle: valueStyle,
-                      labelStyle: labelStyle,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        child: Center(
+          child: Column(
+            children: [
+              _UserHeader(user: user, labelStyle: labelStyle),
+              const SizedBox(height: 40),
+              _PersonalDetails(
+                user: user,
+                subTitleStyle: subTitleStyle,
+                valueStyle: valueStyle,
+                labelStyle: labelStyle,
+              ),
+              const SizedBox(height: 40),
+              _DailyRequirements(
+                user: user,
+                subTitleStyle: subTitleStyle,
+                valueStyle: valueStyle,
+                labelStyle: labelStyle,
+              ),
+            ],
           ),
         ),
       ),
@@ -68,6 +53,129 @@ class AccountDetailsScreen extends StatelessWidget {
           Navigator.pushNamed(context, '/calculator');
         },
         child: const Icon(Icons.edit),
+      ),
+    );
+  }
+}
+
+class _UserHeader extends StatelessWidget {
+  const _UserHeader({
+    required this.user,
+    required this.labelStyle,
+  });
+
+  final User user;
+  final TextStyle labelStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 20,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 34.0),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: MemoryImage(base64Decode(user.avatarBase64!)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: () => PopupMessenger.info('This feature is not available yet.'),
+                        icon: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Text(
+              "${user.firstname!} ${user.lastname!}",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w100,
+                fontSize: 30,
+                shadows: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              user.email!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w100,
+                fontSize: 16,
+                shadows: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
