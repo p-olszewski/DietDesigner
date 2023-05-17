@@ -4,6 +4,7 @@ import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/services/api_service.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/services/pdf_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
@@ -328,7 +329,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not implemented yet.'),
+              onPressed: () async => await PDFService.generatePDFForNutritionPlan(await _nutritionPlan),
               child: Row(
                 children: const [
                   Icon(Icons.download_outlined),
