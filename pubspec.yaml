@@ -52,6 +52,9 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_toggle_tab: ^1.3.0
   image_picker: ^0.8.7+5
+  pdf: ^3.10.1
+  path_provider: ^2.0.15
+  open_document: ^1.0.6+2
 
 dev_dependencies:
   flutter_lints: ^2.0.1
