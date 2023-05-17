@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:diet_designer/models/nutrition_plan.dart';
+import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/utils/utils.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pdf/pdf.dart';
@@ -83,5 +84,56 @@ class PDFService {
     final outputFile = File('${outputDir.path}/nutrition_plan_${nutritionPlan.date}.pdf');
     await outputFile.writeAsBytes(await pdf.save());
     await OpenFile.open(outputFile.path);
+  }
+
+  static Future<void> generatePDFForShoppingList(String listName, String listId) async {
+    final pdf = pw.Document();
+    final products = await getShoppingListElements(listId);
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  'DietDesigner',
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  listName,
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 60),
+            pw.Text(
+              'Ingredients:',
+              style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 5),
+            pw.Text(
+              products.join(' '),
+              style: const pw.TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final outputDir = await getExternalStorageDirectory();
+    if (outputDir == null) return;
+    final outputFile = File('${outputDir.path}/shopping_list_$listName.pdf');
+    outputFile.writeAsBytes(await pdf.save());
+    OpenFile.open(outputFile.path);
   }
 }
