@@ -80,7 +80,7 @@ class PDFService {
 
     final outputDir = await getExternalStorageDirectory();
     if (outputDir == null) return;
-    final outputFile = File('${outputDir.path}/nutrition_plan.pdf');
+    final outputFile = File('${outputDir.path}/nutrition_plan_${nutritionPlan.date}.pdf');
     await outputFile.writeAsBytes(await pdf.save());
     await OpenFile.open(outputFile.path);
   }
