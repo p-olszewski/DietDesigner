@@ -2,7 +2,16 @@
     package="com.example.diet_designer">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.open_document_example.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
    <application
         android:requestLegacyExternalStorage="true"
         android:label="DietDesigner"
