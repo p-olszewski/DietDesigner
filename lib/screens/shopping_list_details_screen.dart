@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/services/pdf_service.dart';
 import 'package:diet_designer/widgets/add_product_dialog.dart';
 import 'package:diet_designer/widgets/list_name_dialog.dart';
 import 'package:diet_designer/widgets/products_list_tile.dart';
@@ -24,7 +25,7 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
   void initState() {
     super.initState();
     _listId = context.read<ShoppingListProvider>().listId;
-    _snapshot = getShoppingListElements(_listId);
+    _snapshot = getShoppingListElementsStream(_listId);
   }
 
   @override
@@ -36,6 +37,14 @@ class _ShoppingListDetailsScreenState extends State<ShoppingListDetailsScreen> {
       appBar: AppBar(
         title: Text(context.watch<ShoppingListProvider>().listTitle),
         actions: [
+          IconButton(
+            onPressed: () {
+              final listName = context.read<ShoppingListProvider>().listTitle;
+              final listId = context.read<ShoppingListProvider>().listId;
+              PDFService.generatePDFForShoppingList(listName, listId);
+            },
+            icon: const Icon(Icons.download),
+          ),
           IconButton(
             onPressed: () => showDialog(
               context: context,
