@@ -494,3 +494,20 @@ Future<List<User>> getFriends(String uid) async {
     throw Exception('Failed to load data: $e');
   }
 }
+
+Future removeFriend(String uid, String friendEmail) async {
+  // get friend uid
+  var friendSnapshot = await _database.collection('users').where('email', isEqualTo: friendEmail).get();
+  if (friendSnapshot.docs.isEmpty) {
+    throw 'Cannot find user with email $friendEmail.';
+  }
+  final friendId = friendSnapshot.docs.first.id;
+  // remove friend from user friends
+  await _database.doc('users/$uid').update({
+    'friends': FieldValue.arrayRemove([friendId]),
+  });
+  // remove user from friend friends
+  await _database.doc('users/$friendId').update({
+    'friends': FieldValue.arrayRemove([uid]),
+  });
+}
