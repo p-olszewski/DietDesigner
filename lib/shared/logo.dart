@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({super.key});
+  final double fontSize;
+
+  const Logo({Key? key, this.fontSize = 50}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,7 @@ class Logo extends StatelessWidget {
       "DietDesigner",
       style: TextStyle(
         color: Theme.of(context).colorScheme.onPrimaryContainer,
-        fontSize: 50,
+        fontSize: fontSize,
         fontWeight: FontWeight.w600,
         fontFamily: GoogleFonts.indieFlower().fontFamily,
       ),
