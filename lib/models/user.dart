@@ -17,7 +17,7 @@ class User {
   int? proteins;
   int? fats;
   String? avatarBase64;
-  List<String> friends;
+  List<dynamic> friends;
 
   User({
     this.firstname,

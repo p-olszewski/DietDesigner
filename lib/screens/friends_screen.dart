@@ -1,3 +1,4 @@
+import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
@@ -12,17 +13,43 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendsScreenState extends State<FriendsScreen> {
+  late Future<List<User>>? _friends;
+
+  @override
+  void initState() {
+    super.initState();
+    _friends = getFriends(context.read<AuthProvider>().uid!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Friends'),
-        ),
-        body: const Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Center(
-            child: Text('Friends'),
-          ),
+        appBar: AppBar(),
+        body: Column(
+          children: [
+            const Text('Your friends'),
+            FutureBuilder<List<User>>(
+              future: _friends,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text('${snapshot.data![index].firstname!} ${snapshot.data![index].lastname!}'),
+                          subtitle: Text(snapshot.data![index].email!),
+                        );
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => showDialog(
