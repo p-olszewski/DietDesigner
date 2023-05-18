@@ -3,6 +3,7 @@ import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/models/shopping_list.dart';
 import 'package:diet_designer/models/list_element.dart';
+import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/models/user.dart' as user_model;
 import 'package:intl/intl.dart';
@@ -477,4 +478,19 @@ Future addFriend(String uid, String friendEmail) async {
   await _database.doc('users/$friendId').update({
     'friends': FieldValue.arrayUnion([uid]),
   });
+}
+
+Future<List<User>> getFriends(String uid) async {
+  try {
+    final userSnapshot = await _database.doc('users/$uid').get();
+    final friendIds = List.from(userSnapshot.data()!['friends']);
+    final friends = await Future.wait(
+      friendIds.map(
+        (friendId) async => User.fromJson((await _database.doc('users/$friendId').get()).data()!),
+      ),
+    );
+    return friends;
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
 }
