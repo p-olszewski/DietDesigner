@@ -39,7 +39,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
           height: screenHeight,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -64,7 +64,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   FutureBuilder<List<User>>(
                     future: _friends,
                     builder: (context, snapshot) {
@@ -115,7 +115,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
       margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
