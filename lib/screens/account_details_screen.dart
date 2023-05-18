@@ -204,7 +204,11 @@ class _UserHeaderState extends State<_UserHeader> {
 
   Future<void> changePhoto(BuildContext context) async {
     ImagePicker picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    final pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 300.0,
+      maxWidth: 300.0,
+    );
 
     if (pickedImage != null) {
       final file = File(pickedImage.path);
