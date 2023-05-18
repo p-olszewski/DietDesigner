@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 44),
                       _isLoginPage
                           ? Column(
                               children: [
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
                         ),
                       ),
-                      SizedBox(height: containerHeight / 7),
+                      SizedBox(height: containerHeight / 9),
                       const Logo(fontSize: 16),
                       const Text(
                         "© 2023 Przemysław Olszewski",
