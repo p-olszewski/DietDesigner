@@ -461,3 +461,20 @@ Future<dynamic> getNutritionPlanUserEmails(NutritionPlan nutritionPlan) async {
     throw Exception('Failed to load data: $e');
   }
 }
+
+Future addFriend(String uid, String friendEmail) async {
+  // get friend uid
+  var friendSnapshot = await _database.collection('users').where('email', isEqualTo: friendEmail).get();
+  if (friendSnapshot.docs.isEmpty) {
+    throw 'Cannot find user with email $friendEmail.';
+  }
+  final friendId = friendSnapshot.docs.first.id;
+  // add friend to user friends
+  await _database.doc('users/$uid').update({
+    'friends': FieldValue.arrayUnion([friendId]),
+  });
+  // add user to friend friends
+  await _database.doc('users/$friendId').update({
+    'friends': FieldValue.arrayUnion([uid]),
+  });
+}
