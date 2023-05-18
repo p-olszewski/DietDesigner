@@ -111,7 +111,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             const Spacer(),
             const Logo(fontSize: 16),
             const Text(
-              "© 2021 Przemysław Olszewski",
+              "© 2023 Przemysław Olszewski",
               style: TextStyle(fontSize: 10, color: Colors.grey),
             ),
             const SizedBox(height: 40),

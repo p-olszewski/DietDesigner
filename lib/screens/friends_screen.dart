@@ -118,7 +118,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withOpacity(0.3),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
