@@ -24,7 +24,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,7 +55,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   children: [
                     Text(
                       user.firstname!,
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
                       user.lastname!,
