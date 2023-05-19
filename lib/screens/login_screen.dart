@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(
                 key: ValueKey<int>(_key),
                 width: containerWidth - 20,
-                height: containerHeight - 40,
+                height: containerHeight - 120,
                 color: innerBackgroundColor,
                 child: SingleChildScrollView(
                   child: Column(
