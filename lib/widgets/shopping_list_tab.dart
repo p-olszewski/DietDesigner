@@ -33,7 +33,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
