@@ -1,3 +1,4 @@
+
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
@@ -7,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class CalculatorScreen extends StatefulWidget {
-  const CalculatorScreen({super.key});
+class AccountEditScreen extends StatefulWidget {
+  const AccountEditScreen({super.key});
 
   @override
-  State<CalculatorScreen> createState() => _CalculatorScreenState();
+  State<AccountEditScreen> createState() => _AccountEditScreenState();
 }
 
-class _CalculatorScreenState extends State<CalculatorScreen> {
+class _AccountEditScreenState extends State<AccountEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _ageFieldController = TextEditingController();
   final TextEditingController _heightFieldController = TextEditingController();

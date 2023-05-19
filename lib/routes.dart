@@ -1,6 +1,6 @@
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/screens/account_details_screen.dart';
-import 'package:diet_designer/screens/calculator_screen.dart';
+import 'package:diet_designer/screens/account_edit_screen.dart';
 import 'package:diet_designer/screens/contact_screen.dart';
 import 'package:diet_designer/screens/friends_screen.dart';
 import 'package:diet_designer/screens/home_screen.dart';
@@ -19,7 +19,7 @@ var appRoutes = {
   },
   '/shopping_list_details': (context) => const ShoppingListDetailsScreen(),
   '/account_details': (context) => const AccountDetailsScreen(),
-  '/calculator': (context) => const CalculatorScreen(),
+  '/account_edit': (context) => const AccountEditScreen(),
   '/shared_nutrition_plans': (context) => const SharedNutritionPlansScreen(),
   '/friends': (context) => const FriendsScreen(),
   '/contact': (context) => const ContactScreen(),

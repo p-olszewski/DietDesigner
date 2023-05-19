@@ -154,8 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await setProviders(authProvider.uid!);
       if (!mounted) return;
       if (!hasCalculatedCalories) {
-        Navigator.pushReplacementNamed(context, '/calculator');
-        PopupMessenger.error('You have no calculated data, go to calculator!');
+        Navigator.pushReplacementNamed(context, '/account_edit');
+        PopupMessenger.error('You have no calculated data, please fill it in');
       } else {
         Navigator.pushReplacementNamed(context, '/home');
       }

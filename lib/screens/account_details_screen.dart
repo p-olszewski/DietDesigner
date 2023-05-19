@@ -67,7 +67,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/calculator');
+          Navigator.pushNamed(context, '/account_edit');
         },
         child: const Icon(Icons.edit),
       ),
