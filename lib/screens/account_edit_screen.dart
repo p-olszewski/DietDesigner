@@ -22,7 +22,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
   final TextEditingController _heightFieldController = TextEditingController();
   final TextEditingController _weightFieldController = TextEditingController();
   String _gender = Gender.male.name;
-  double _activity = 3;
+  int _activity = 3;
   String _target = Target.stay.name;
   double _mealsNumber = 5;
 
@@ -68,7 +68,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
         _heightFieldController.text = user.height.toString();
         _weightFieldController.text = user.weight.toString();
         _gender = user.gender!;
-        _activity = user.activity!.toDouble();
+        _activity = user.activity!;
         _target = user.target!;
         _mealsNumber = user.mealsNumber!.toDouble();
       });
@@ -107,12 +107,36 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                   label: 'Firstname:',
                   input: TextField(
                     controller: _firstnameController,
+                    decoration: inputDecoration(context),
                   ),
                 ),
                 _InputRow(
                   label: 'Lastname:',
                   input: TextField(
                     controller: _lastnameController,
+                    decoration: inputDecoration(context),
+                  ),
+                ),
+                const _Divider(),
+                _InputRow(
+                  label: 'Gender:',
+                  input: Row(
+                    children: [
+                      const SizedBox(width: 6),
+                      Radio(
+                        value: Gender.female.name,
+                        groupValue: _gender,
+                        onChanged: (value) => setState(() => _gender = value!),
+                      ),
+                      Text(Gender.female.name),
+                      const SizedBox(width: 10),
+                      Radio(
+                        value: Gender.male.name,
+                        groupValue: _gender,
+                        onChanged: (value) => setState(() => _gender = value!),
+                      ),
+                      Text(Gender.male.name),
+                    ],
                   ),
                 ),
                 _InputRow(
@@ -129,25 +153,6 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     type: NumberInputFieldType.height,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Gender:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Radio(
-                      value: Gender.female.name,
-                      groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value!),
-                    ),
-                    Text(Gender.female.name),
-                    Radio(
-                      value: Gender.male.name,
-                      groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value!),
-                    ),
-                    Text(Gender.male.name),
-                  ],
-                ),
                 _InputRow(
                   label: 'Weight (kg):',
                   input: _NumberInputField(
@@ -156,85 +161,125 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     isDecimal: true,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Activity:",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(
-                        width: 250,
-                        child: Slider(
-                          value: _activity,
-                          onChanged: (value) =>
-                              setState(() => _activity = value),
-                          divisions: 4,
-                          min: 1,
-                          max: 5,
-                          label: _activity.round().toString(),
+                const _Divider(),
+                _InputRow(
+                  label: 'Activity:',
+                  input: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    child: DropdownButton(
+                      value: _activity,
+                      onChanged: (value) =>
+                          setState(() => _activity = value!.round()),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 1,
+                          child: Text(
+                            '1 - Sedentary lifestyle',
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
+                        DropdownMenuItem(
+                          value: 2,
+                          child: Text(
+                            '2 - Lightly active',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 3,
+                          child: Text(
+                            '3 - Moderately active',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 4,
+                          child: Text(
+                            '4 - Very active',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 5,
+                          child: Text(
+                            '5 - Extra active',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                      underline: const SizedBox(height: 0),
+                      isExpanded: true,
+                    ),
+                  ),
+                ),
+                _InputRow(
+                  label: 'Target:',
+                  input: Row(
+                    children: [
+                      const SizedBox(width: 6),
+                      Radio(
+                        value: Target.cut.name,
+                        groupValue: _target,
+                        onChanged: (value) => setState(() => _target = value!),
                       ),
+                      Text(Target.cut.toString().split('.').last),
+                      const SizedBox(width: 10),
+                      Radio(
+                        value: Target.stay.name,
+                        groupValue: _target,
+                        onChanged: (value) => setState(() => _target = value!),
+                      ),
+                      Text(Target.stay.name),
+                      const SizedBox(width: 10),
+                      Radio(
+                        value: Target.gain.name,
+                        groupValue: _target,
+                        onChanged: (value) => setState(() => _target = value!),
+                      ),
+                      Text(Target.gain.name),
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Target:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Radio(
-                      value: Target.cut.name,
-                      groupValue: _target,
-                      onChanged: (value) => setState(() => _target = value!),
-                    ),
-                    Text(Target.cut.toString().split('.').last),
-                    Radio(
-                      value: Target.stay.name,
-                      groupValue: _target,
-                      onChanged: (value) => setState(() => _target = value!),
-                    ),
-                    Text(Target.stay.name),
-                    Radio(
-                      value: Target.gain.name,
-                      groupValue: _target,
-                      onChanged: (value) => setState(() => _target = value!),
-                    ),
-                    Text(Target.gain.name),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Meals number:",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(
-                        width: 250,
-                        child: Slider(
-                          value: _mealsNumber,
-                          onChanged: (value) =>
-                              setState(() => _mealsNumber = value),
-                          divisions: 3,
-                          min: 3,
-                          max: 6,
-                          label: _mealsNumber.round().toString(),
-                        ),
-                      ),
-                    ],
+                _InputRow(
+                  label: 'Meals number:',
+                  input: Slider(
+                    value: _mealsNumber,
+                    onChanged: (value) => setState(() => _mealsNumber = value),
+                    divisions: 3,
+                    min: 3,
+                    max: 6,
+                    label: _mealsNumber.round().toString(),
                   ),
                 ),
-                const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: () => _submitForm(),
-                  child: const Text("Save"),
+                const SizedBox(height: 60),
+                SizedBox(
+                  width: 70,
+                  height: 40,
+                  child: FilledButton(
+                    onPressed: () => _submitForm(),
+                    child: const Text("Save"),
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  const _Divider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      width: 100,
+      height: 1,
+      color: Colors.grey.shade200,
     );
   }
 }
@@ -249,25 +294,51 @@ class _InputRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        Flexible(
-          flex: 1,
-          fit: FlexFit.tight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(label),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    label,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .copyWith(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 20),
+            Flexible(
+              flex: 2,
+              fit: FlexFit.tight,
+              child: Container(
+                height: 54,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: input,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 20),
-        Flexible(
-          flex: 3,
-          fit: FlexFit.tight,
-          child: input,
-        ),
+        const SizedBox(height: 6),
       ],
     );
   }
@@ -302,11 +373,7 @@ class _NumberInputField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        border: const UnderlineInputBorder(),
-        hintStyle: TextStyle(
-            fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
-      ),
+      decoration: inputDecoration(context),
       keyboardType: isDecimal
           ? const TextInputType.numberWithOptions(decimal: true)
           : TextInputType.number,
@@ -350,3 +417,22 @@ class _NumberInputField extends StatelessWidget {
     return null;
   }
 }
+
+InputDecoration inputDecoration(BuildContext context) {
+  return InputDecoration(
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.transparent),
+    ),
+  );
+}
+
+Map<String, int> intensityMap = {
+  '1. Negligible - No exercise, sedentary work, school': 1,
+  '2. Very low - Exercise once a week, light work': 2,
+  '3. Moderate - Exercise twice a week (moderate intensity)': 3,
+  '4. High - Heavy training several times a week': 4,
+  '5. Very high - At least 4 intense workouts per week, physical work': 5,
+};
