@@ -1,5 +1,6 @@
 import 'package:diet_designer/models/user.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
+import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:diet_designer/utils/utils.dart';
@@ -257,7 +258,14 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                   width: 70,
                   height: 40,
                   child: FilledButton(
-                    onPressed: () => _submitForm(),
+                    onPressed: () async {
+                      _submitForm();
+                      final updatedUser =
+                          await getUserData(context.read<AuthProvider>().uid!);
+                      if (updatedUser == null) return;
+                      if (!mounted) return;
+                      context.read<UserDataProvider>().setUser(updatedUser);
+                    },
                     child: const Text("Save"),
                   ),
                 ),
