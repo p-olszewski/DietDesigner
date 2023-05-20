@@ -103,104 +103,31 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text('Firstname:'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Flexible(
-                      flex: 3,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          TextField(
-                            controller: _firstnameController,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                _InputRow(
+                  label: 'Firstname:',
+                  input: TextField(
+                    controller: _firstnameController,
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text('Lastname:'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Flexible(
-                      flex: 3,
-                      fit: FlexFit.tight,
-                      child: TextField(
-                        controller: _lastnameController,
-                      ),
-                    ),
-                  ],
+                _InputRow(
+                  label: 'Lastname:',
+                  input: TextField(
+                    controller: _lastnameController,
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text('Age (y):'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Flexible(
-                      flex: 3,
-                      fit: FlexFit.tight,
-                      child: _NumberInputField(
-                        controller: _ageFieldController,
-                        type: NumberInputFieldType.age,
-                      ),
-                    ),
-                  ],
+                _InputRow(
+                  label: 'Age (y):',
+                  input: _NumberInputField(
+                    controller: _ageFieldController,
+                    type: NumberInputFieldType.age,
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text('Height (cm):'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Flexible(
-                      flex: 3,
-                      fit: FlexFit.tight,
-                      child: _NumberInputField(
-                        controller: _heightFieldController,
-                        type: NumberInputFieldType.height,
-                      ),
-                    ),
-                  ],
+                _InputRow(
+                  label: 'Height (cm):',
+                  input: _NumberInputField(
+                    controller: _heightFieldController,
+                    type: NumberInputFieldType.height,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -221,30 +148,13 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     Text(Gender.male.name),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text('Weight (kg):'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Flexible(
-                      flex: 3,
-                      fit: FlexFit.tight,
-                      child: _NumberInputField(
-                        controller: _weightFieldController,
-                        type: NumberInputFieldType.weight,
-                        isDecimal: true,
-                      ),
-                    ),
-                  ],
+                _InputRow(
+                  label: 'Weight (kg):',
+                  input: _NumberInputField(
+                    controller: _weightFieldController,
+                    type: NumberInputFieldType.weight,
+                    isDecimal: true,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -325,6 +235,40 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _InputRow extends StatelessWidget {
+  const _InputRow({
+    required this.label,
+    required this.input,
+  });
+  final String label;
+  final Widget input;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Flexible(
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(label),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: input,
+        ),
+      ],
     );
   }
 }
