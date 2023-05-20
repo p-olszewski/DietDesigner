@@ -99,34 +99,114 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                // text fields for first name, last name
-                TextField(
-                  autofocus: true,
-                  controller: _firstnameController,
-                  textAlign: TextAlign.left,
-                  decoration: const InputDecoration(
-                    labelText: 'Firstname',
-                    hintText: 'e.g. John',
-                  ),
-                ),
-                TextField(
-                  autofocus: true,
-                  controller: _lastnameController,
-                  textAlign: TextAlign.left,
-                  decoration: const InputDecoration(
-                    labelText: 'Lastname',
-                    hintText: 'e.g. Smith',
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Gender:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Firstname:'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          TextField(
+                            controller: _firstnameController,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Lastname:'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: TextField(
+                        controller: _lastnameController,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Age (y):'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: _NumberInputField(
+                        controller: _ageFieldController,
+                        type: NumberInputFieldType.age,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Height (cm):'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: _NumberInputField(
+                        controller: _heightFieldController,
+                        type: NumberInputFieldType.height,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Gender:",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     Radio(
                       value: Gender.female.name,
                       groupValue: _gender,
@@ -141,30 +221,44 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     Text(Gender.male.name),
                   ],
                 ),
-                _NumberInputField(
-                  controller: _ageFieldController,
-                  type: NumberInputFieldType.age,
-                ),
-                _NumberInputField(
-                  controller: _heightFieldController,
-                  type: NumberInputFieldType.height,
-                ),
-                _NumberInputField(
-                  controller: _weightFieldController,
-                  type: NumberInputFieldType.weight,
-                  isDecimal: true,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('Weight (kg):'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: _NumberInputField(
+                        controller: _weightFieldController,
+                        type: NumberInputFieldType.weight,
+                        isDecimal: true,
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Activity:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text("Activity:",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       SizedBox(
                         width: 250,
                         child: Slider(
                           value: _activity,
-                          onChanged: (value) => setState(() => _activity = value),
+                          onChanged: (value) =>
+                              setState(() => _activity = value),
                           divisions: 4,
                           min: 1,
                           max: 5,
@@ -177,7 +271,8 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Target:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text("Target:",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     Radio(
                       value: Target.cut.name,
                       groupValue: _target,
@@ -203,12 +298,14 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Meals number:", style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text("Meals number:",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       SizedBox(
                         width: 250,
                         child: Slider(
                           value: _mealsNumber,
-                          onChanged: (value) => setState(() => _mealsNumber = value),
+                          onChanged: (value) =>
+                              setState(() => _mealsNumber = value),
                           divisions: 3,
                           min: 3,
                           max: 6,
@@ -245,55 +342,34 @@ class _NumberInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String labelText = '';
-    String hintText = '';
     String? Function(String?) validator = (value) => null;
 
     switch (type) {
       case NumberInputFieldType.age:
-        labelText = 'Age:';
-        hintText = 'years';
         validator = _ageValidator;
         break;
       case NumberInputFieldType.weight:
-        labelText = 'Weight:';
-        hintText = 'kg';
         validator = _weightValidator;
         break;
       case NumberInputFieldType.height:
-        labelText = 'Height:';
-        hintText = 'cm';
         validator = _heightValidator;
         break;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            labelText,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(width: 20),
-          SizedBox(
-            width: 200,
-            child: TextFormField(
-              controller: controller,
-              decoration: InputDecoration(
-                border: const UnderlineInputBorder(),
-                hintText: hintText,
-                hintStyle: TextStyle(fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
-              ),
-              keyboardType: isDecimal ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
-              inputFormatters:
-                  isDecimal ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))] : [FilteringTextInputFormatter.digitsOnly],
-              validator: validator,
-            ),
-          ),
-        ],
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        border: const UnderlineInputBorder(),
+        hintStyle: TextStyle(
+            fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
       ),
+      keyboardType: isDecimal
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.number,
+      inputFormatters: isDecimal
+          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
+          : [FilteringTextInputFormatter.digitsOnly],
+      validator: validator,
     );
   }
 
