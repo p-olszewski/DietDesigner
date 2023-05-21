@@ -14,7 +14,7 @@ class Logo extends StatelessWidget {
         color: Theme.of(context).colorScheme.onPrimaryContainer,
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
-        fontFamily: GoogleFonts.indieFlower().fontFamily,
+        fontFamily: GoogleFonts.balooPaaji2().fontFamily,
       ),
     );
   }
