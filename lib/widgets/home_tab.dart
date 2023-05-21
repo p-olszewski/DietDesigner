@@ -80,22 +80,6 @@ class _HomeTabState extends State<HomeTab> {
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              // show statistics
-                              FutureBuilder(
-                                future: _nutritionPlan,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data!.meals.isNotEmpty) {
-                                      final nutritionPlan = snapshot.data!;
-                                      return NutritionPlanStatistics(nutritionPlan: nutritionPlan);
-                                    } else {
-                                      return const SizedBox.shrink();
-                                    }
-                                  } else {
-                                    return const SizedBox.shrink();
-                                  }
-                                },
-                              ),
                               // show meals
                               FutureBuilder(
                                 future: _nutritionPlan,
@@ -185,6 +169,22 @@ class _HomeTabState extends State<HomeTab> {
                                   }
                                 },
                               ),
+                              // show statistics
+                              FutureBuilder(
+                                future: _nutritionPlan,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data!.meals.isNotEmpty) {
+                                      final nutritionPlan = snapshot.data!;
+                                      return NutritionPlanStatistics(nutritionPlan: nutritionPlan);
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -263,6 +263,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void _replaceMealFromCloud(Meal meal) async {
+    Navigator.pop(context);
     setState(() => _isLoading = true);
     int retryCount = 0;
     const maxRetries = 8;
