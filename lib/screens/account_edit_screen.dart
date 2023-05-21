@@ -308,7 +308,6 @@ class _InputRow extends StatelessWidget {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
               flex: 1,
@@ -316,9 +315,12 @@ class _InputRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      label.toUpperCase(),
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                    ),
                   ),
                 ],
               ),
@@ -328,7 +330,7 @@ class _InputRow extends StatelessWidget {
               flex: 2,
               fit: FlexFit.tight,
               child: Container(
-                height: 56,
+                height: 54,
                 decoration: input is Row
                     ? null
                     : BoxDecoration(
