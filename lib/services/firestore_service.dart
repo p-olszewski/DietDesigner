@@ -67,7 +67,7 @@ Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
     final mealCollection = _database.collection('nutrition_plans/$planId/meals');
     for (int i = 0; i < nutritionPlan.meals.length; i++) {
       final meal = nutritionPlan.meals[i];
-      final mealId = 'meal${i + 1}';
+      final mealId = 'meal_${i + 1}';
       meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
     }
