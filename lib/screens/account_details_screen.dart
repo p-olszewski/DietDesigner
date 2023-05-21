@@ -283,6 +283,10 @@ class _PersonalDetails extends StatelessWidget {
                     'Target:',
                     style: labelStyle,
                   ),
+                  Text(
+                    'Meals number:',
+                    style: labelStyle,
+                  ),
                 ],
               ),
             ),
@@ -319,6 +323,10 @@ class _PersonalDetails extends StatelessWidget {
                   ),
                   Text(
                     user.target!,
+                    style: valueStyle,
+                  ),
+                  Text(
+                    '${user.mealsNumber!}',
                     style: valueStyle,
                   ),
                 ],
