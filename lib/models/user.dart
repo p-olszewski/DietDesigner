@@ -11,7 +11,7 @@ class User {
   final int? height;
   final int? mealsNumber;
   final String? target;
-  final double? weight;
+  final num? weight;
   int? calories;
   int? carbs;
   int? proteins;
