@@ -320,7 +320,7 @@ class _HomeTabState extends State<HomeTab> {
                 children: const [
                   Icon(Icons.cloud_sync_outlined),
                   SizedBox(width: iconSpacing),
-                  Text('Generate another'),
+                  Text('Generate new plan'),
                 ],
               ),
             ),
@@ -379,7 +379,7 @@ class _HomeTabState extends State<HomeTab> {
                 children: const [
                   Icon(Icons.cloud_sync_outlined),
                   SizedBox(width: iconSpacing),
-                  Text('Replace from cloud'),
+                  Text('Generate new meal'),
                 ],
               ),
             ),
