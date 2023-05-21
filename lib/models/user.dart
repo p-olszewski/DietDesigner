@@ -111,8 +111,8 @@ class User {
     Target userTarget = Target.values.firstWhere((e) => e.toString().split('.').last == target);
     switch (userTarget) {
       case Target.cut:
-        calories = (0.85 * bmr).round();
-        proteins = (2.2 * weight!).round();
+        calories = (0.9 * bmr).round();
+        proteins = (2.0 * weight!).round();
         fats = (gender == Gender.male.name ? 0.7 * weight! : weight!).round();
         break;
       case Target.stay:
@@ -122,7 +122,7 @@ class User {
         break;
       case Target.gain:
         calories = (1.1 * bmr).round();
-        proteins = (1.8 * weight!).round();
+        proteins = (1.6 * weight!).round();
         fats = (gender == Gender.male.name ? 0.9 * weight! : 1.1 * weight!).round();
         break;
       default:
