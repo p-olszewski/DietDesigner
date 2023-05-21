@@ -169,6 +169,7 @@ class _HomeTabState extends State<HomeTab> {
                                   }
                                 },
                               ),
+                              const SizedBox(height: 20),
                               // show statistics
                               FutureBuilder(
                                 future: _nutritionPlan,
