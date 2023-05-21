@@ -24,7 +24,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
   final TextEditingController _weightFieldController = TextEditingController();
   String _gender = Gender.male.name;
   int _activity = 3;
-  String _target = Target.stay.name;
+  String _target = targetList[1];
   double _mealsNumber = 5;
 
   void _submitForm() {
@@ -123,7 +123,6 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                   label: 'Gender:',
                   input: Row(
                     children: [
-                      const SizedBox(width: 6),
                       Radio(
                         value: Gender.female.name,
                         groupValue: _gender,
@@ -166,12 +165,10 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                 _InputRow(
                   label: 'Activity:',
                   input: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     child: DropdownButton(
                       value: _activity,
-                      onChanged: (value) =>
-                          setState(() => _activity = value!.round()),
+                      onChanged: (value) => setState(() => _activity = value!.round()),
                       items: const [
                         DropdownMenuItem(
                           value: 1,
@@ -216,30 +213,37 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                 ),
                 _InputRow(
                   label: 'Target:',
-                  input: Row(
-                    children: [
-                      const SizedBox(width: 6),
-                      Radio(
-                        value: Target.cut.name,
-                        groupValue: _target,
-                        onChanged: (value) => setState(() => _target = value!),
-                      ),
-                      Text(Target.cut.toString().split('.').last),
-                      const SizedBox(width: 10),
-                      Radio(
-                        value: Target.stay.name,
-                        groupValue: _target,
-                        onChanged: (value) => setState(() => _target = value!),
-                      ),
-                      Text(Target.stay.name),
-                      const SizedBox(width: 10),
-                      Radio(
-                        value: Target.gain.name,
-                        groupValue: _target,
-                        onChanged: (value) => setState(() => _target = value!),
-                      ),
-                      Text(Target.gain.name),
-                    ],
+                  input: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    child: DropdownButton(
+                      value: _target,
+                      onChanged: (value) => setState(() => _target = value!),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'cut',
+                          child: Text(
+                            'cut - lose weight',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'stay',
+                          child: Text(
+                            'stay - maintain weight',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'gain',
+                          child: Text(
+                            'gain - gain weight',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                      underline: const SizedBox(height: 0),
+                      isExpanded: true,
+                    ),
                   ),
                 ),
                 _InputRow(
@@ -253,15 +257,14 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     label: _mealsNumber.round().toString(),
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
                 SizedBox(
                   width: 70,
                   height: 40,
                   child: FilledButton(
                     onPressed: () async {
                       _submitForm();
-                      final updatedUser =
-                          await getUserData(context.read<AuthProvider>().uid!);
+                      final updatedUser = await getUserData(context.read<AuthProvider>().uid!);
                       if (updatedUser == null) return;
                       if (!mounted) return;
                       context.read<UserDataProvider>().setUser(updatedUser);
@@ -315,10 +318,7 @@ class _InputRow extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium!
-                        .copyWith(color: Colors.grey),
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                   ),
                 ],
               ),
@@ -328,19 +328,21 @@ class _InputRow extends StatelessWidget {
               flex: 2,
               fit: FlexFit.tight,
               child: Container(
-                height: 54,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(4),
-                ),
+                height: 56,
+                decoration: input is Row
+                    ? null
+                    : BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                 child: input,
               ),
             ),
@@ -382,12 +384,9 @@ class _NumberInputField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: inputDecoration(context),
-      keyboardType: isDecimal
-          ? const TextInputType.numberWithOptions(decimal: true)
-          : TextInputType.number,
-      inputFormatters: isDecimal
-          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
-          : [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: isDecimal ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.number,
+      inputFormatters:
+          isDecimal ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))] : [FilteringTextInputFormatter.digitsOnly],
       validator: validator,
     );
   }
@@ -437,10 +436,16 @@ InputDecoration inputDecoration(BuildContext context) {
   );
 }
 
-Map<String, int> intensityMap = {
+Map<String, int> activityMap = {
   '1. Negligible - No exercise, sedentary work, school': 1,
   '2. Very low - Exercise once a week, light work': 2,
   '3. Moderate - Exercise twice a week (moderate intensity)': 3,
   '4. High - Heavy training several times a week': 4,
   '5. Very high - At least 4 intense workouts per week, physical work': 5,
 };
+
+List<String> targetList = [
+  Target.cut.name,
+  Target.stay.name,
+  Target.gain.name,
+];
