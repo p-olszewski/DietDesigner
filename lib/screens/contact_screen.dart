@@ -38,7 +38,7 @@ class _ContactScreenState extends State<ContactScreen> {
               const SizedBox(height: 20),
               const Text('We value your input and strive to continuously improve DietDesigner to meet your dietary needs and goals.'),
               const SizedBox(height: 60),
-              const Text('© 2023 DietDesigner. All rights reserved.'),
+              const Text('© 2023 DietDesigner®. All rights reserved.'),
             ],
           ),
         ),
