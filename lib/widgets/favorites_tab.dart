@@ -312,16 +312,6 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 ],
               ),
             ),
-            MaterialButton(
-              onPressed: () => PopupMessenger.info('This feature is not yet implemented'),
-              child: Row(
-                children: const [
-                  Icon(Icons.share_outlined),
-                  SizedBox(width: iconSpacing),
-                  Text('Share'),
-                ],
-              ),
-            ),
           ],
         ),
       ),
