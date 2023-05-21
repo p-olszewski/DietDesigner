@@ -7,6 +7,7 @@ import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/services/pdf_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
+import 'package:diet_designer/widgets/nutrition_plan_statistics.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,39 +27,13 @@ class _HomeTabState extends State<HomeTab> {
   bool _isLoading = false;
   bool _isFavorite = false;
 
-  void checkIsPlanInFavorites() async {
-    NutritionPlan nutritionPlan = await _nutritionPlan;
-    final isFavorite = await isNutritionPlanFavorite(nutritionPlan, _uid);
-    setState(() => _isFavorite = isFavorite);
-  }
-
-  void _toggleFavoritePlan() async {
-    try {
-      NutritionPlan nutritionPlan = await _nutritionPlan;
-      if (nutritionPlan.meals.isEmpty) {
-        PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
-        return;
-      }
-      if (_isFavorite) {
-        await removeNutritionPlanFromFavorites(nutritionPlan, _uid);
-        PopupMessenger.info('Removed plan from favorites.');
-      } else {
-        await addNutritionPlanToFavorites(nutritionPlan);
-        PopupMessenger.info('Added plan to favorites.');
-      }
-      setState(() => _isFavorite = !_isFavorite);
-    } catch (e) {
-      PopupMessenger.error('Failed to toggle favorite.');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     _uid = context.read<AuthProvider>().uid!;
     _dateProvider = context.read<DateProvider>();
     _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
-    checkIsPlanInFavorites();
+    _checkIsPlanInFavorites();
   }
 
   @override
@@ -75,7 +50,7 @@ class _HomeTabState extends State<HomeTab> {
                     changeDay: (value) => setState(() {
                       context.read<DateProvider>().setDate(value);
                       _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
-                      checkIsPlanInFavorites();
+                      _checkIsPlanInFavorites();
                     }),
                     enableWeeknumberText: false,
                     selectedBackgroundColor: Theme.of(context).colorScheme.primary,
@@ -105,6 +80,23 @@ class _HomeTabState extends State<HomeTab> {
                                 ],
                               ),
                               const SizedBox(height: 4),
+                              // show statistics
+                              FutureBuilder(
+                                future: _nutritionPlan,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data!.meals.isNotEmpty) {
+                                      final nutritionPlan = snapshot.data!;
+                                      return NutritionPlanStatistics(nutritionPlan: nutritionPlan);
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
+                              // show meals
                               FutureBuilder(
                                 future: _nutritionPlan,
                                 builder: (context, snapshot) {
@@ -207,6 +199,32 @@ class _HomeTabState extends State<HomeTab> {
         child: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
       ),
     );
+  }
+
+  void _checkIsPlanInFavorites() async {
+    NutritionPlan nutritionPlan = await _nutritionPlan;
+    final isFavorite = await isNutritionPlanFavorite(nutritionPlan, _uid);
+    setState(() => _isFavorite = isFavorite);
+  }
+
+  void _toggleFavoritePlan() async {
+    try {
+      NutritionPlan nutritionPlan = await _nutritionPlan;
+      if (nutritionPlan.meals.isEmpty) {
+        PopupMessenger.info('Cannot add empty nutrition plan to favorites.');
+        return;
+      }
+      if (_isFavorite) {
+        await removeNutritionPlanFromFavorites(nutritionPlan, _uid);
+        PopupMessenger.info('Removed plan from favorites.');
+      } else {
+        await addNutritionPlanToFavorites(nutritionPlan);
+        PopupMessenger.info('Added plan to favorites.');
+      }
+      setState(() => _isFavorite = !_isFavorite);
+    } catch (e) {
+      PopupMessenger.error('Failed to toggle favorite.');
+    }
   }
 
   void _generateNutritionPlan(String uid, String date) async {
