@@ -26,20 +26,20 @@ class NutritionPlanStatistics extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildStatisticBox(context, 'Calories', '${nutritionPlan.calories.toStringAsFixed(0)} kcal'),
+              child: _buildStatisticBox('Calories', '${nutritionPlan.calories.toStringAsFixed(0)} kcal'),
             ),
             Expanded(
-              child: _buildStatisticBox(context, 'Proteins', '${nutritionPlan.proteins.toStringAsFixed(0)} g'),
+              child: _buildStatisticBox('Proteins', '${nutritionPlan.proteins.toStringAsFixed(0)} g'),
             ),
           ],
         ),
         Row(
           children: [
             Expanded(
-              child: _buildStatisticBox(context, 'Carbs', '${nutritionPlan.carbs.toStringAsFixed(0)} g'),
+              child: _buildStatisticBox('Carbs', '${nutritionPlan.carbs.toStringAsFixed(0)} g'),
             ),
             Expanded(
-              child: _buildStatisticBox(context, 'Fats', '${nutritionPlan.fats.toStringAsFixed(0)} g'),
+              child: _buildStatisticBox('Fats', '${nutritionPlan.fats.toStringAsFixed(0)} g'),
             ),
           ],
         ),
@@ -47,7 +47,7 @@ class NutritionPlanStatistics extends StatelessWidget {
           children: [
             Expanded(
               child: _buildStatisticBox(
-                  context, 'Price', '${nutritionPlan.meals.fold(0.0, (sum, meal) => sum + meal.pricePerServing!).toStringAsFixed(2)} \$'),
+                  'Price', '${nutritionPlan.meals.fold(0.0, (sum, meal) => sum + meal.pricePerServing!).toStringAsFixed(2)} \$'),
             ),
           ],
         ),
@@ -55,13 +55,13 @@ class NutritionPlanStatistics extends StatelessWidget {
     );
   }
 
-  Widget _buildStatisticBox(BuildContext context, String label, String value) {
+  Widget _buildStatisticBox(String label, String value) {
     return Column(
       children: [
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+            color: Colors.grey.withOpacity(0.1),
           ),
           padding: const EdgeInsets.all(4.0),
           child: Text(
