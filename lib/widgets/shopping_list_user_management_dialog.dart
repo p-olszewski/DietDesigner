@@ -43,7 +43,7 @@ class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManag
         textAlign: TextAlign.left,
         decoration: InputDecoration(
           labelText: 'Email',
-          hintText: 'e.g. test@test.com',
+          hintText: 'e.g. some@email.com',
           errorText: _nameErrorText,
         ),
       ),

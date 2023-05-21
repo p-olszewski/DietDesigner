@@ -231,7 +231,7 @@ class _AddFriendDialogState extends State<_AddFriendDialog> {
           textAlign: TextAlign.left,
           decoration: InputDecoration(
             labelText: 'Email',
-            hintText: 'e.g. test@test.com',
+            hintText: 'e.g. some@email.com',
             errorText: _nameErrorText,
           ),
         ),

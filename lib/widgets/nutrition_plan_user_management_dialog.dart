@@ -46,7 +46,7 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
         textAlign: TextAlign.left,
         decoration: InputDecoration(
           labelText: 'Email',
-          hintText: 'e.g. test@test.com',
+          hintText: 'e.g. some@email.com',
           errorText: _nameErrorText,
         ),
       ),
@@ -68,7 +68,7 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
             await shareNutritionPlanToUser(widget.nutritionPlan, _emailController.text);
             if (!mounted) return;
             Navigator.of(context).pop();
-            PopupMessenger.info('Added ${_emailController.text} to the plan.');
+            PopupMessenger.info('Shared nutrition plan to ${_emailController.text}');
             _emailController.clear();
             setState(() => _nameErrorText = null);
           } catch (e) {
@@ -155,7 +155,7 @@ class ChipsList extends StatelessWidget {
                 onDeleted: () {
                   deleteUserFromSharedPlan(widget.nutritionPlan, snapshot.data![index]);
                   Navigator.pop(context);
-                  PopupMessenger.info('Removed ${snapshot.data![index]} from the plan.');
+                  PopupMessenger.info('Stopped sharing with ${snapshot.data![index]}');
                 },
               );
             },
