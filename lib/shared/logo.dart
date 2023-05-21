@@ -8,14 +8,30 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "DietDesigner",
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        fontSize: fontSize,
-        fontWeight: FontWeight.w600,
-        fontFamily: GoogleFonts.balooPaaji2().fontFamily,
-      ),
+    var textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      fontFamily: GoogleFonts.balooPaaji2().fontFamily,
+    );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "DietDesigner",
+          style: textStyle,
+        ),
+        Text(
+          "®",
+          style: textStyle.copyWith(
+            fontSize: fontSize * 0.6,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
     );
   }
 }
