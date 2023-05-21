@@ -180,6 +180,22 @@ updateShoppingListName(String listId, String title) async {
   }
 }
 
+updateNutritionPlanName(String planId, String name) async {
+  try {
+    _database.doc('nutrition_plans/$planId').update({'name': name});
+  } catch (e) {
+    throw Exception('Failed to update nutrition plan name: $e');
+  }
+}
+
+updateFavoriteNutritionPlanName(String uid, String planId, String name) async {
+  try {
+    _database.doc('users/$uid/favorite_plans/$planId').update({'name': name});
+  } catch (e) {
+    throw Exception('Failed to update favorite nutrition plan name: $e');
+  }
+}
+
 deleteShoppingList(String listId) {
   // delete all products in the list first
   _database.collection('shopping_lists').doc(listId).collection('products').get().then(
@@ -367,7 +383,7 @@ Future<List<NutritionPlan>> getFavoriteNutritionPlans(String uid) async {
       for (var mealDoc in mealSnapshot.docs) {
         meals.add(Meal.fromFirestore(mealDoc.data()));
       }
-      favoritePlans.add(NutritionPlan(meals, doc.id, uid));
+      favoritePlans.add(NutritionPlan.fromJson(doc.data(), meals));
     }
     return favoritePlans;
   } catch (e) {
