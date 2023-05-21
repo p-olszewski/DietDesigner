@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
+import 'package:diet_designer/services/pdf_service.dart';
+import 'package:diet_designer/widgets/list_name_dialog.dart';
 import 'package:diet_designer/widgets/new_list_dialog.dart';
+import 'package:diet_designer/widgets/shopping_list_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +48,7 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
-                        "  Tap list to open",
+                        "  Hold to see options",
                         style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                       ),
                     ],
@@ -112,28 +115,9 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
                                             Navigator.pushNamed(context, '/shopping_list_details');
                                           },
                                           onLongPress: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                title: const Text('Are you sure?'),
-                                                content: const Text('Do you want to delete this shopping list?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('No'),
-                                                  ),
-                                                  FilledButton(
-                                                    onPressed: () {
-                                                      deleteShoppingList(doc.reference.id);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('Yes'),
-                                                  )
-                                                ],
-                                              ),
-                                            );
+                                            context.read<ShoppingListProvider>().setListId(doc.reference.id);
+                                            context.read<ShoppingListProvider>().setListTitle(doc['title']);
+                                            _buildBottomSheet(context);
                                           },
                                         ),
                                       );
@@ -159,6 +143,99 @@ class _ShoppingListTabState extends State<ShoppingListTab> {
           builder: (context) => const NewListDialog(),
         ),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Future<dynamic> _buildBottomSheet(BuildContext context) {
+    const iconSpacing = 30.0;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => const ListNameDialog(),
+                );
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.edit_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Edit name'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => const ShoppingListUserManagementDialog(),
+                );
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.share_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Share'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () => PDFService.generatePDFForShoppingList(
+                  context.read<ShoppingListProvider>().listTitle, context.read<ShoppingListProvider>().listId),
+              child: Row(
+                children: const [
+                  Icon(Icons.download_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Download as PDF'),
+                ],
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text('Do you want to delete this shopping list?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('No'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          deleteShoppingList(context.read<ShoppingListProvider>().listId);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes'),
+                      )
+                    ],
+                  ),
+                );
+              },
+              child: Row(
+                children: const [
+                  Icon(Icons.delete_outlined),
+                  SizedBox(width: iconSpacing),
+                  Text('Delete'),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
