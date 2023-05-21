@@ -46,6 +46,10 @@ bool updateUserData(String uid, user_model.User user) {
   }
 }
 
+Future<String> getUserEmail(String uid) {
+  return _database.doc('users/$uid').get().then((value) => value.data()!['email']);
+}
+
 Future<user_model.User?> getUserData(String uid) async {
   final userSnapshot = await _database.doc('users/$uid').get();
   if (userSnapshot.data() == null || userSnapshot.data()!['hasCalculatedData'] != true) {
