@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class NutritionPlanStatistics extends StatelessWidget {
   const NutritionPlanStatistics({
-    super.key,
+    Key? key,
     required this.nutritionPlan,
-  });
+  }) : super(key: key);
 
   final NutritionPlan nutritionPlan;
 
@@ -14,37 +14,67 @@ class NutritionPlanStatistics extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 20),
-        const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Calories'),
-            Text('${nutritionPlan.calories.toStringAsFixed(0)} kcal'),
+            Text(
+              'Nutrition plan summary',
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
-        const SizedBox(height: 10),
+        const Divider(),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Proteins'),
-            Text('${nutritionPlan.proteins.toStringAsFixed(0)} g'),
+            Expanded(
+              child: _buildStatisticBox(context, 'Calories', '${nutritionPlan.calories.toStringAsFixed(0)} kcal'),
+            ),
+            Expanded(
+              child: _buildStatisticBox(context, 'Proteins', '${nutritionPlan.proteins.toStringAsFixed(0)} g'),
+            ),
           ],
         ),
-        const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Carbs'),
-            Text('${nutritionPlan.carbs.toStringAsFixed(0)} g'),
+            Expanded(
+              child: _buildStatisticBox(context, 'Carbs', '${nutritionPlan.carbs.toStringAsFixed(0)} g'),
+            ),
+            Expanded(
+              child: _buildStatisticBox(context, 'Fats', '${nutritionPlan.fats.toStringAsFixed(0)} g'),
+            ),
           ],
         ),
-        const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Fats'),
-            Text('${nutritionPlan.fats.toStringAsFixed(0)} g'),
+            Expanded(
+              child: _buildStatisticBox(
+                  context, 'Price', '${nutritionPlan.meals.fold(0.0, (sum, meal) => sum + meal.pricePerServing!).toStringAsFixed(2)} \$'),
+            ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatisticBox(BuildContext context, String label, String value) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+          ),
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            value,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ),
       ],
     );
