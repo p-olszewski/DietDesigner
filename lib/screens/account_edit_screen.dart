@@ -236,7 +236,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                         DropdownMenuItem(
                           value: Target.gain.name,
                           child: const Text(
-                            'gain - gain weight',
+                            'gain - increase in weight',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
