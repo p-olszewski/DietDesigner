@@ -6,6 +6,7 @@ import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
+import 'package:diet_designer/widgets/nutrition_plan_name_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:intl/intl.dart';
@@ -183,12 +184,25 @@ class _FavoritesTabState extends State<FavoritesTab> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 return ExpansionTile(
-                  title: Text(
-                    snapshot.data![index].name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  title: Row(
+                    children: [
+                      Text(
+                        snapshot.data![index].name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => NutritionPlanNameDialog(nutritionPlan: snapshot.data![index]),
+                          );
+                        },
+                        icon: const Icon(Icons.edit, size: 18),
+                      ),
+                    ],
                   ),
                   tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                   backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),

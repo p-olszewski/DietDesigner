@@ -50,8 +50,8 @@ class _ListNameDialogState extends State<ListNameDialog> {
           child: const Text('Cancel'),
         ),
         FilledButton(
-          child: const Text('Save'),
           onPressed: () => updateListName(),
+          child: const Text('Save'),
         ),
       ],
     );
