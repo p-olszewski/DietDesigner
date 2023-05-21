@@ -76,12 +76,16 @@ class _SharedNutritionPlansScreenState extends State<SharedNutritionPlansScreen>
   }
 
   FutureBuilder<List<NutritionPlan>> _buildSharedPlansList(String uid) {
-    return FutureBuilder(
+    return FutureBuilder<List<NutritionPlan>>(
       key: UniqueKey(),
       future: getSharedNutritionPlans(),
-      builder: (context, AsyncSnapshot<List<NutritionPlan>> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData) {
+          final plans = snapshot.data!;
+
+          if (plans.isEmpty) {
             return SizedBox(
               width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.6,
@@ -95,112 +99,131 @@ class _SharedNutritionPlansScreenState extends State<SharedNutritionPlansScreen>
               physics: const ScrollPhysics(),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: snapshot.data!.length,
+              itemCount: plans.length,
               itemBuilder: (context, index) {
-                return ExpansionTile(
-                  title: Text(
-                    formatDate(snapshot.data![index].date),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  //
-                  subtitle: uid == snapshot.data![index].uid
-                      ? Text(
-                          'You shared this plan with ${snapshot.data![index].sharedUsers.length} people.',
+                final plan = plans[index];
+
+                return FutureBuilder<String>(
+                  future: getUserEmail(plan.uid),
+                  builder: (context, emailSnapshot) {
+                    if (emailSnapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 50,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    } else if (emailSnapshot.hasData) {
+                      final ownerEmail = emailSnapshot.data!;
+
+                      return ExpansionTile(
+                        title: Text(
+                          formatDate(plan.date),
                           style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
-                      : const Text(
-                          'Shared to you.',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                  tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  children: snapshot.data![index].meals
-                      .asMap()
-                      .map(
-                        (i, meal) => MapEntry(
-                          i,
-                          Column(
-                            children: [
-                              if (meal == snapshot.data![index].meals.first) const SizedBox(height: 5),
-                              ListTile(
-                                leading: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        spreadRadius: 1,
-                                        blurRadius: 4,
-                                        offset: const Offset(1, 1),
-                                      ),
-                                    ],
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 26.0,
-                                    backgroundImage: NetworkImage(meal.imageSmall),
-                                  ),
+                        subtitle: uid == plan.uid
+                            ? Text(
+                                'You shared this plan with ${plan.sharedUsers.length} people.',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                                title: Text(meal.title),
-                                subtitle: Text(
-                                    '${meal.calories.round()} kcal, ${meal.proteins.round()}g protein, ${meal.fats.round()}g fat, ${meal.carbs.round()}g carbs'),
-                                onTap: () async {
-                                  await Navigator.pushNamed(context, '/meal_details', arguments: meal);
-                                  setState(() {});
-                                },
+                              )
+                            : Text(
+                                'Shared by $ownerEmail',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                              meal == snapshot.data![index].meals.last
-                                  ? Column(
-                                      children: [
-                                        const SizedBox(height: 20),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            if (uid == snapshot.data![index].uid) {
-                                              await _showPlanSharingPopup(context, snapshot.data![index]);
-                                            } else {
-                                              final email = context.read<UserDataProvider>().user.email;
-                                              await deleteUserFromSharedPlan(snapshot.data![index], email!);
-                                              PopupMessenger.info('You left this shared plan.');
-                                            }
-                                            setState(() {});
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                                          ),
-                                          child: Text(uid == snapshot.data![index].uid ? 'Manage users' : 'Leave plan'),
-                                        ),
-                                        const SizedBox(height: 15),
-                                      ],
-                                    )
-                                  : Divider(
-                                      indent: 16,
-                                      endIndent: 16,
-                                      thickness: 1,
-                                      color: Colors.grey.shade200,
-                                    ),
-                            ],
-                          ),
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
-                      )
-                      .values
-                      .toList(),
+                        children: plan.meals
+                            .asMap()
+                            .map(
+                              (i, meal) => MapEntry(
+                                i,
+                                Column(
+                                  children: [
+                                    if (meal == plan.meals.first) const SizedBox(height: 5),
+                                    ListTile(
+                                      leading: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(50.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              spreadRadius: 1,
+                                              blurRadius: 4,
+                                              offset: const Offset(1, 1),
+                                            ),
+                                          ],
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 26.0,
+                                          backgroundImage: NetworkImage(meal.imageSmall),
+                                        ),
+                                      ),
+                                      title: Text(meal.title),
+                                      subtitle: Text(
+                                          '${meal.calories.round()} kcal, ${meal.proteins.round()}g protein, ${meal.fats.round()}g fat, ${meal.carbs.round()}g carbs'),
+                                      onTap: () async {
+                                        await Navigator.pushNamed(context, '/meal_details', arguments: meal);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    meal == plan.meals.last
+                                        ? Column(
+                                            children: [
+                                              const SizedBox(height: 20),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  if (uid == plan.uid) {
+                                                    await _showPlanSharingPopup(context, plan);
+                                                  } else {
+                                                    final email = context.read<UserDataProvider>().user.email;
+                                                    await deleteUserFromSharedPlan(plan, email!);
+                                                    PopupMessenger.info('You left this shared plan.');
+                                                  }
+                                                  setState(() {});
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                                                ),
+                                                child: Text(uid == plan.uid ? 'Manage users' : 'Leave plan'),
+                                              ),
+                                              const SizedBox(height: 15),
+                                            ],
+                                          )
+                                        : Divider(
+                                            indent: 16,
+                                            endIndent: 16,
+                                            thickness: 1,
+                                            color: Colors.grey.shade200,
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            )
+                            .values
+                            .toList(),
+                      );
+                    } else {
+                      return const Text('Error retrieving email');
+                    }
+                  },
                 );
               },
             );
           }
+        } else if (snapshot.hasError) {
+          return const Text('Error fetching plans');
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return const SizedBox(); // Placeholder widget when there's no data or error
         }
       },
     );
