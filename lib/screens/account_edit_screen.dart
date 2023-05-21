@@ -248,13 +248,17 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                 ),
                 _InputRow(
                   label: 'Meals number:',
-                  input: Slider(
-                    value: _mealsNumber,
-                    onChanged: (value) => setState(() => _mealsNumber = value),
-                    divisions: 3,
-                    min: 3,
-                    max: 6,
-                    label: _mealsNumber.round().toString(),
+                  input: Row(
+                    children: [
+                      Slider(
+                        value: _mealsNumber,
+                        onChanged: (value) => setState(() => _mealsNumber = value),
+                        divisions: 3,
+                        min: 3,
+                        max: 6,
+                      ),
+                      Text(_mealsNumber.round().toString()),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 40),
