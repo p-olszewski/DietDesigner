@@ -5,7 +5,6 @@ import 'package:diet_designer/providers/date_provider.dart';
 import 'package:diet_designer/providers/navbar_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
-import 'package:diet_designer/utils/utils.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
@@ -185,7 +184,7 @@ class _FavoritesTabState extends State<FavoritesTab> {
               itemBuilder: (context, index) {
                 return ExpansionTile(
                   title: Text(
-                    formatDate(snapshot.data![index].date),
+                    snapshot.data![index].name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

@@ -3,7 +3,6 @@ import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/user_data_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
-import 'package:diet_designer/utils/utils.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -116,7 +115,7 @@ class _SharedNutritionPlansScreenState extends State<SharedNutritionPlansScreen>
 
                       return ExpansionTile(
                         title: Text(
-                          formatDate(plan.date),
+                          plan.name,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
