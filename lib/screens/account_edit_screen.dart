@@ -218,24 +218,24 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                     child: DropdownButton(
                       value: _target,
                       onChanged: (value) => setState(() => _target = value!),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
-                          value: 'cut',
-                          child: Text(
+                          value: Target.cut.name,
+                          child: const Text(
                             'cut - lose weight',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
                         DropdownMenuItem(
-                          value: 'stay',
-                          child: Text(
+                          value: Target.stay.name,
+                          child: const Text(
                             'stay - maintain weight',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
                         DropdownMenuItem(
-                          value: 'gain',
-                          child: Text(
+                          value: Target.gain.name,
+                          child: const Text(
                             'gain - gain weight',
                             style: TextStyle(fontSize: 14),
                           ),
