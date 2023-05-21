@@ -62,8 +62,8 @@ class _NutritionPlanNameDialogState extends State<NutritionPlanNameDialog> {
       return;
     }
     // for only favorite plans yet
-    // TODO fix rename - now it creates new field 'title', not updates 'name' field
     // TODO update plans after rename
+    // TODO implement for shared plans too
     try {
       final uid = context.read<AuthProvider>().uid!;
       final planId = widget.nutritionPlan.date;
