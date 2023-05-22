@@ -219,7 +219,8 @@ class _FavoritesTabState extends State<FavoritesTab> {
                           await showDialog(
                             context: context,
                             builder: (context) => NutritionPlanNameDialog(
-                                nutritionPlan: snapshot.data![index]),
+                                nutritionPlan: snapshot.data![index],
+                                isShared: false),
                           ).then((value) => setState(() {}));
                         },
                         icon: const Icon(Icons.edit, size: 18),

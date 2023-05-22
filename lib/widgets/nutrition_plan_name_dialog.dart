@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class NutritionPlanNameDialog extends StatefulWidget {
-  const NutritionPlanNameDialog({super.key, required this.nutritionPlan});
+  const NutritionPlanNameDialog(
+      {super.key, required this.nutritionPlan, required this.isShared});
 
   final NutritionPlan nutritionPlan;
+  final bool isShared;
 
   @override
-  State<NutritionPlanNameDialog> createState() => _NutritionPlanNameDialogState();
+  State<NutritionPlanNameDialog> createState() =>
+      _NutritionPlanNameDialogState();
 }
 
 class _NutritionPlanNameDialogState extends State<NutritionPlanNameDialog> {
@@ -61,14 +64,17 @@ class _NutritionPlanNameDialogState extends State<NutritionPlanNameDialog> {
       setState(() => _nameErrorText = 'Please enter a name');
       return;
     }
-    // for only favorite plans yet
-    // TODO update plans after rename
-    // TODO implement for shared plans too
     try {
       final uid = context.read<AuthProvider>().uid!;
-      final planId = widget.nutritionPlan.date;
       final title = _titleController.text;
-      await updateFavoriteNutritionPlanName(uid, planId, title);
+      if (widget.isShared) {
+        final planId =
+            '${widget.nutritionPlan.uid}_${widget.nutritionPlan.date}';
+        await updateNutritionPlanName(planId, title);
+      } else {
+        final planId = widget.nutritionPlan.date;
+        await updateFavoriteNutritionPlanName(uid, planId, title);
+      }
       if (!mounted) return;
       Navigator.pop(context);
       PopupMessenger.info('Plan name updated.');
