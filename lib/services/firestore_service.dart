@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diet_designer/models/comment.dart';
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/models/shopping_list.dart';
@@ -530,4 +531,22 @@ Future removeFriend(String uid, String friendEmail) async {
   await _database.doc('users/$friendId').update({
     'friends': FieldValue.arrayRemove([uid]),
   });
+}
+
+Future addCommentToCollection(String planId, Comment comment) {
+  try {
+    final commentCollection = _database.collection('comments');
+    return commentCollection.add(comment.toJson()..addAll({'planId': planId}));
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getComments(String planId) {
+  try {
+    final commentsCollection = _database.collection('comments').where('planId', isEqualTo: planId).orderBy('date');
+    return commentsCollection.snapshots();
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
 }
