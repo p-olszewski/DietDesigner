@@ -18,8 +18,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailFieldController = TextEditingController();
-  final TextEditingController _passwordFieldController = TextEditingController();
-  final TextEditingController _repeatedPasswordFieldController = TextEditingController();
+  final TextEditingController _passwordFieldController =
+      TextEditingController();
+  final TextEditingController _repeatedPasswordFieldController =
+      TextEditingController();
   bool _isLoginPage = true;
   int _key = 1;
 
@@ -55,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, animation) => FadeThroughTransition(
                 animation: animation,
-                secondaryAnimation: Tween<double>(begin: 0, end: 0).animate(animation),
+                secondaryAnimation:
+                    Tween<double>(begin: 0, end: 0).animate(animation),
                 child: child,
               ),
               child: Container(
@@ -66,27 +69,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(height: 44),
+                      const SizedBox(height: 14),
                       _isLoginPage
                           ? Column(
                               children: [
                                 Text(
                                   "Sign in to",
-                                  style: TextStyle(fontSize: 24, color: fontColor),
+                                  style:
+                                      TextStyle(fontSize: 24, color: fontColor),
                                 ),
                                 const Logo(),
                               ],
                             )
                           : Text(
                               "Create Account",
-                              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: fontColor),
+                              style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w600,
+                                  color: fontColor),
                             ),
                       SizedBox(height: containerHeight / 16),
                       LoginTextFormField(
-                          controller: _emailFieldController, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
+                          controller: _emailFieldController,
+                          labelText: "Email",
+                          hintText: "youremail@email.com",
+                          obscureText: false),
                       SizedBox(height: containerHeight / 100),
                       LoginTextFormField(
-                          controller: _passwordFieldController, labelText: "Password", hintText: "password", obscureText: true),
+                          controller: _passwordFieldController,
+                          labelText: "Password",
+                          hintText: "password",
+                          obscureText: true),
                       SizedBox(height: containerHeight / 100),
                       Visibility(
                         visible: !_isLoginPage,
@@ -102,7 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 40,
                         child: FilledButton(
                           onPressed: loginOrRegisterUser,
-                          child: Text(_isLoginPage ? "Login" : "Register and login"),
+                          child: Text(
+                              _isLoginPage ? "Login" : "Register and login"),
                         ),
                       ),
                       SizedBox(height: containerHeight / 100),
@@ -116,8 +130,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           _key = _isLoginPage ? 1 : 2;
                         }),
                         child: Text(
-                          _isLoginPage ? "or go to registration page" : "or go back to the login page",
-                          style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
+                          _isLoginPage
+                              ? "or go to registration page"
+                              : "or go back to the login page",
+                          style: TextStyle(
+                              color: fontColor, fontWeight: FontWeight.w400),
                         ),
                       ),
                       SizedBox(height: containerHeight / 9),
@@ -150,7 +167,8 @@ class _LoginScreenState extends State<LoginScreen> {
             _repeatedPasswordFieldController.text,
           );
     if (shouldRedirect) {
-      bool hasCalculatedCalories = await checkUserHasCalculatedData(authProvider.uid!);
+      bool hasCalculatedCalories =
+          await checkUserHasCalculatedData(authProvider.uid!);
       await setProviders(authProvider.uid!);
       if (!mounted) return;
       if (!hasCalculatedCalories) {
