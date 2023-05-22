@@ -7,6 +7,7 @@ import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/services/pdf_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
 import 'package:diet_designer/widgets/meal_card.dart';
+import 'package:diet_designer/widgets/new_plan_date_range_dialog.dart';
 import 'package:diet_designer/widgets/nutrition_plan_statistics.dart';
 import 'package:diet_designer/widgets/nutrition_plan_user_management_dialog.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +119,26 @@ class _HomeTabState extends State<HomeTab> {
                                                             .dateFormattedWithDots),
                                                 child: const Text(
                                                     'Generate nutrition plan'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async =>
+                                                    await showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      const NewPlanDateRangeDialog(),
+                                                ).then(
+                                                  (value) => setState(() {
+                                                    _nutritionPlan =
+                                                        getNutritionPlan(
+                                                            _uid,
+                                                            _dateProvider
+                                                                .dateFormattedWithDots);
+                                                  }),
+                                                ),
+                                                child: const Text(
+                                                    'Generate for date range'),
                                               ),
                                               TextButton(
                                                 onPressed: () =>
