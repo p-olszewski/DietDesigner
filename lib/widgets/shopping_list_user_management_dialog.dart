@@ -1,4 +1,4 @@
-
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/providers/shopping_list_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/popup_messenger.dart';
@@ -15,6 +15,7 @@ class ShoppingListUserManagementDialog extends StatefulWidget {
 class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManagementDialog> {
   final TextEditingController _emailController = TextEditingController();
   late Future<dynamic> userEmails;
+  late Future<dynamic> friendsList;
   late String listId;
   String? _nameErrorText;
 
@@ -23,6 +24,7 @@ class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManag
     super.initState();
     listId = context.read<ShoppingListProvider>().listId;
     userEmails = getShoppingListUserEmails(listId);
+    friendsList = getFriends(context.read<AuthProvider>().uid!);
   }
 
   @override
@@ -41,7 +43,7 @@ class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManag
         textAlign: TextAlign.left,
         decoration: InputDecoration(
           labelText: 'Email',
-          hintText: 'e.g. test@test.com',
+          hintText: 'e.g. some@email.com',
           errorText: _nameErrorText,
         ),
       ),
@@ -80,6 +82,36 @@ class _ShoppingListUserManagementDialogState extends State<ShoppingListUserManag
         children: [
           ChipsList(userEmails: userEmails, widget: widget),
           emailAddressInput,
+          Row(
+            children: [
+              FutureBuilder(
+                future: friendsList,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 0, top: 14, right: 6, bottom: 4),
+                        child: Text(
+                          'Friends:',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      ...snapshot.data.map((friend) => TextButton(
+                            child: Text(friend.email),
+                            onPressed: () async {
+                              _emailController.text = friend.email;
+                            },
+                          )),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
       actions: actionButtons,

@@ -67,7 +67,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/calculator');
+          Navigator.pushNamed(context, '/account_edit');
         },
         child: const Icon(Icons.edit),
       ),
@@ -204,7 +204,11 @@ class _UserHeaderState extends State<_UserHeader> {
 
   Future<void> changePhoto(BuildContext context) async {
     ImagePicker picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    final pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 300.0,
+      maxWidth: 300.0,
+    );
 
     if (pickedImage != null) {
       final file = File(pickedImage.path);
@@ -279,6 +283,10 @@ class _PersonalDetails extends StatelessWidget {
                     'Target:',
                     style: labelStyle,
                   ),
+                  Text(
+                    'Meals number:',
+                    style: labelStyle,
+                  ),
                 ],
               ),
             ),
@@ -315,6 +323,10 @@ class _PersonalDetails extends StatelessWidget {
                   ),
                   Text(
                     user.target!,
+                    style: valueStyle,
+                  ),
+                  Text(
+                    '${user.mealsNumber!}',
                     style: valueStyle,
                   ),
                 ],

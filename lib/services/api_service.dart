@@ -79,6 +79,7 @@ class APIService {
   Map<String, String> _getParametersForAllMeals(User user, {required int mealsNumber, String mealType = ''}) {
     int kcalPerMeal = (user.calories! / user.mealsNumber!).round();
     int proteinsPerMeal;
+    int fatsPerMeal;
 
     Map<String, String> parameters;
     switch (mealType) {
@@ -96,11 +97,13 @@ class APIService {
         int remainingProteins = (user.proteins! - _breakfastResults![0].proteins).round();
         kcalPerMeal = (remainingKcal / mealsNumber).round();
         proteinsPerMeal = (remainingProteins / mealsNumber).round();
+        fatsPerMeal = (user.fats! / mealsNumber).round();
         parameters = {
           'minCalories': (kcalPerMeal - 50).toString(),
           'maxCalories': (kcalPerMeal + 50).toString(),
           'minProtein': (proteinsPerMeal - 10).toString(),
           'maxProtein': (proteinsPerMeal + 10).toString(),
+          'maxFat': (fatsPerMeal + 10).toString(),
           'offset': Random().nextInt(50).toString(),
         };
         break;

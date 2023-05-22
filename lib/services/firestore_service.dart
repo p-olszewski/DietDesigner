@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diet_designer/models/comment.dart';
 import 'package:diet_designer/models/meal.dart';
 import 'package:diet_designer/models/nutrition_plan.dart';
 import 'package:diet_designer/models/shopping_list.dart';
@@ -46,6 +47,10 @@ bool updateUserData(String uid, user_model.User user) {
   }
 }
 
+Future<String> getUserEmail(String uid) {
+  return _database.doc('users/$uid').get().then((value) => value.data()!['email']);
+}
+
 Future<user_model.User?> getUserData(String uid) async {
   final userSnapshot = await _database.doc('users/$uid').get();
   if (userSnapshot.data() == null || userSnapshot.data()!['hasCalculatedData'] != true) {
@@ -63,7 +68,7 @@ Future saveNutritionPlan(NutritionPlan nutritionPlan) async {
     final mealCollection = _database.collection('nutrition_plans/$planId/meals');
     for (int i = 0; i < nutritionPlan.meals.length; i++) {
       final meal = nutritionPlan.meals[i];
-      final mealId = 'meal${i + 1}';
+      final mealId = 'meal_${i + 1}';
       meal.id = mealId;
       await mealCollection.doc(mealId).set(meal.toJson());
     }
@@ -173,6 +178,22 @@ updateShoppingListName(String listId, String title) async {
     _database.doc('shopping_lists/$listId').update({'title': title});
   } catch (e) {
     throw Exception('Failed to update shopping list name: $e');
+  }
+}
+
+updateNutritionPlanName(String planId, String name) async {
+  try {
+    _database.doc('nutrition_plans/$planId').update({'name': name});
+  } catch (e) {
+    throw Exception('Failed to update nutrition plan name: $e');
+  }
+}
+
+updateFavoriteNutritionPlanName(String uid, String planId, String name) async {
+  try {
+    _database.doc('users/$uid/favorite_plans/$planId').update({'name': name});
+  } catch (e) {
+    throw Exception('Failed to update favorite nutrition plan name: $e');
   }
 }
 
@@ -363,7 +384,7 @@ Future<List<NutritionPlan>> getFavoriteNutritionPlans(String uid) async {
       for (var mealDoc in mealSnapshot.docs) {
         meals.add(Meal.fromFirestore(mealDoc.data()));
       }
-      favoritePlans.add(NutritionPlan(meals, doc.id, uid));
+      favoritePlans.add(NutritionPlan.fromJson(doc.data(), meals));
     }
     return favoritePlans;
   } catch (e) {
@@ -510,4 +531,22 @@ Future removeFriend(String uid, String friendEmail) async {
   await _database.doc('users/$friendId').update({
     'friends': FieldValue.arrayRemove([uid]),
   });
+}
+
+Future addCommentToCollection(String planId, Comment comment) {
+  try {
+    final commentCollection = _database.collection('comments');
+    return commentCollection.add(comment.toJson()..addAll({'planId': planId}));
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getComments(String planId) {
+  try {
+    final commentsCollection = _database.collection('comments').where('planId', isEqualTo: planId).orderBy('date');
+    return commentsCollection.snapshots();
+  } catch (e) {
+    throw Exception('Failed to load data: $e');
+  }
 }

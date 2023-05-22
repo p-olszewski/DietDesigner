@@ -1,7 +1,9 @@
 import 'package:diet_designer/models/nutrition_plan.dart';
+import 'package:diet_designer/providers/auth_provider.dart';
 import 'package:diet_designer/services/firestore_service.dart';
 import 'package:diet_designer/shared/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NutritionPlanUserManagementDialog extends StatefulWidget {
   const NutritionPlanUserManagementDialog({
@@ -18,12 +20,14 @@ class NutritionPlanUserManagementDialog extends StatefulWidget {
 class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserManagementDialog> {
   final TextEditingController _emailController = TextEditingController();
   late Future<dynamic>? userEmails;
+  late Future<dynamic> friendsList;
   String? _nameErrorText;
 
   @override
   void initState() {
     super.initState();
     userEmails = getNutritionPlanUserEmails(widget.nutritionPlan);
+    friendsList = getFriends(context.read<AuthProvider>().uid!);
   }
 
   @override
@@ -42,7 +46,7 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
         textAlign: TextAlign.left,
         decoration: InputDecoration(
           labelText: 'Email',
-          hintText: 'e.g. test@test.com',
+          hintText: 'e.g. some@email.com',
           errorText: _nameErrorText,
         ),
       ),
@@ -64,7 +68,7 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
             await shareNutritionPlanToUser(widget.nutritionPlan, _emailController.text);
             if (!mounted) return;
             Navigator.of(context).pop();
-            PopupMessenger.info('Added ${_emailController.text} to the plan.');
+            PopupMessenger.info('Shared nutrition plan to ${_emailController.text}');
             _emailController.clear();
             setState(() => _nameErrorText = null);
           } catch (e) {
@@ -81,6 +85,36 @@ class _NutritionPlanUserManagementDialogState extends State<NutritionPlanUserMan
         children: [
           if (userEmails != null) ChipsList(userEmails: userEmails!, widget: widget),
           emailAddressInput,
+          Row(
+            children: [
+              FutureBuilder(
+                future: friendsList,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.data.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 0, top: 14, right: 6, bottom: 4),
+                        child: Text(
+                          'Friends:',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      ...snapshot.data.map((friend) => TextButton(
+                            child: Text(friend.email),
+                            onPressed: () async {
+                              _emailController.text = friend.email;
+                            },
+                          )),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
       actions: actionButtons,
@@ -121,7 +155,7 @@ class ChipsList extends StatelessWidget {
                 onDeleted: () {
                   deleteUserFromSharedPlan(widget.nutritionPlan, snapshot.data![index]);
                   Navigator.pop(context);
-                  PopupMessenger.info('Removed ${snapshot.data![index]} from the plan.');
+                  PopupMessenger.info('Stopped sharing with ${snapshot.data![index]}');
                 },
               );
             },

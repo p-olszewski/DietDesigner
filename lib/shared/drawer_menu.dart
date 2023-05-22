@@ -20,50 +20,84 @@ class _DrawerMenuState extends State<DrawerMenu> {
   @override
   Widget build(BuildContext context) {
     User user = context.read<UserDataProvider>().user;
+
     return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 70),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: MemoryImage(base64Decode(user.avatarBase64!)),
+            const SizedBox(height: 90),
+            Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: MemoryImage(base64Decode(user.avatarBase64!)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.firstname!,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      user.lastname!,
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 30),
-            TextButton(
+            const SizedBox(height: 50),
+            TextButton.icon(
+              icon: const Icon(Icons.account_circle_outlined),
               onPressed: () {
                 if (!mounted) return;
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/account_details");
               },
-              child: const Text("Account details"),
+              label: const Text("Account details"),
             ),
-            TextButton(
+            TextButton.icon(
+              icon: const Icon(Icons.share_outlined),
               onPressed: () {
-                if (!mounted) return;
-                Navigator.pop(context);
                 Navigator.pushNamed(context, "/shared_nutrition_plans");
               },
-              child: const Text("Shared nutrition plans"),
+              label: const Text("Shared nutrition plans"),
             ),
-            TextButton(
+            TextButton.icon(
+              icon: const Icon(Icons.group_outlined),
               onPressed: () {
-                if (!mounted) return;
-                Navigator.pop(context);
                 Navigator.pushNamed(context, "/friends");
               },
-              child: const Text("Friends"),
+              label: const Text("Friends"),
             ),
-            TextButton(
+            TextButton.icon(
+              icon: const Icon(Icons.contact_support_outlined),
               onPressed: () {
-                if (!mounted) return;
-                Navigator.pop(context);
                 Navigator.pushNamed(context, "/contact");
               },
-              child: const Text("Contact"),
+              label: const Text("Contact"),
             ),
-            const Spacer(),
-            ElevatedButton(
+            TextButton.icon(
+              icon: const Icon(Icons.logout_outlined),
               onPressed: () async {
                 bool shouldRedirect = await context.read<AuthProvider>().signOut();
                 if (shouldRedirect) {
@@ -72,8 +106,15 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   Navigator.pushNamed(context, "/login");
                 }
               },
-              child: const Text("Logout"),
+              label: const Text("Logout"),
             ),
+            const Spacer(),
+            const Logo(fontSize: 16),
+            const Text(
+              "© 2023 Przemysław Olszewski",
+              style: TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

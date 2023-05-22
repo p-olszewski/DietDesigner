@@ -18,89 +18,135 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailFieldController = TextEditingController();
-  final TextEditingController _passwordFieldController = TextEditingController();
-  final TextEditingController _repeatedPasswordFieldController = TextEditingController();
+  final TextEditingController _passwordFieldController =
+      TextEditingController();
+  final TextEditingController _repeatedPasswordFieldController =
+      TextEditingController();
   bool _isLoginPage = true;
   int _key = 1;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final widgetWidth = screenWidth / 1.3;
-    final backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+    final containerWidth = MediaQuery.of(context).size.width / 1.1;
+    final containerHeight = MediaQuery.of(context).size.height / 1.3;
+    final widgetWidth = containerWidth / 1.3;
+    final backgroundColor = Theme.of(context).colorScheme.primary;
+    final innerBackgroundColor = Theme.of(context).colorScheme.surface;
     final fontColor = Theme.of(context).colorScheme.onPrimaryContainer;
 
     return Scaffold(
-      body: Container(
-        width: screenWidth,
-        height: screenHeight,
-        color: backgroundColor,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) => FadeThroughTransition(
-            animation: animation,
-            secondaryAnimation: Tween<double>(begin: 0, end: 0).animate(animation),
-            child: child,
-          ),
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: Center(
           child: Container(
-            key: ValueKey<int>(_key),
-            width: screenWidth,
-            height: screenHeight,
-            color: backgroundColor,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _isLoginPage
-                    ? Column(
-                        children: [
-                          Text(
-                            "Sign in to",
-                            style: TextStyle(fontSize: 24, color: fontColor),
-                          ),
-                          const Logo(),
-                        ],
-                      )
-                    : Text(
-                        "Create Account",
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: fontColor),
-                      ),
-                SizedBox(height: screenHeight / 25),
-                LoginTextFormField(
-                    controller: _emailFieldController, labelText: "Email", hintText: "youremail@email.com", obscureText: false),
-                SizedBox(height: screenHeight / 100),
-                LoginTextFormField(controller: _passwordFieldController, labelText: "Password", hintText: "password", obscureText: true),
-                SizedBox(height: screenHeight / 100),
-                Visibility(
-                  visible: !_isLoginPage,
-                  child: LoginTextFormField(
-                      controller: _repeatedPasswordFieldController, labelText: "Repeat password", hintText: "password", obscureText: true),
-                ),
-                SizedBox(height: screenHeight / 15),
-                SizedBox(
-                  width: widgetWidth / 1.5,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: loginOrRegisterUser,
-                    child: Text(_isLoginPage ? "Login" : "Register and login"),
-                  ),
-                ),
-                SizedBox(height: screenHeight / 100),
-                TextButton(
-                  onPressed: () => setState(() {
-                    _isLoginPage = !_isLoginPage;
-                    _emailFieldController.clear();
-                    _passwordFieldController.clear();
-                    _repeatedPasswordFieldController.clear();
-                    FocusScope.of(context).unfocus();
-                    _key = _isLoginPage ? 1 : 2;
-                  }),
-                  child: Text(
-                    _isLoginPage ? "or go to registration page" : "or go back to the login page",
-                    style: TextStyle(color: fontColor, fontWeight: FontWeight.w400),
-                  ),
+            width: containerWidth,
+            height: containerHeight,
+            decoration: BoxDecoration(
+              color: innerBackgroundColor,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
                 ),
               ],
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) => FadeThroughTransition(
+                animation: animation,
+                secondaryAnimation:
+                    Tween<double>(begin: 0, end: 0).animate(animation),
+                child: child,
+              ),
+              child: Container(
+                key: ValueKey<int>(_key),
+                width: containerWidth - 20,
+                height: containerHeight - 120,
+                color: innerBackgroundColor,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 14),
+                      _isLoginPage
+                          ? Column(
+                              children: [
+                                Text(
+                                  "Sign in to",
+                                  style:
+                                      TextStyle(fontSize: 24, color: fontColor),
+                                ),
+                                const Logo(),
+                              ],
+                            )
+                          : Text(
+                              "Create Account",
+                              style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w600,
+                                  color: fontColor),
+                            ),
+                      SizedBox(height: containerHeight / 16),
+                      LoginTextFormField(
+                          controller: _emailFieldController,
+                          labelText: "Email",
+                          hintText: "youremail@email.com",
+                          obscureText: false),
+                      SizedBox(height: containerHeight / 100),
+                      LoginTextFormField(
+                          controller: _passwordFieldController,
+                          labelText: "Password",
+                          hintText: "password",
+                          obscureText: true),
+                      SizedBox(height: containerHeight / 100),
+                      Visibility(
+                        visible: !_isLoginPage,
+                        child: LoginTextFormField(
+                            controller: _repeatedPasswordFieldController,
+                            labelText: "Repeat password",
+                            hintText: "password",
+                            obscureText: true),
+                      ),
+                      SizedBox(height: containerHeight / 10),
+                      SizedBox(
+                        width: widgetWidth / 1.5,
+                        height: 40,
+                        child: FilledButton(
+                          onPressed: loginOrRegisterUser,
+                          child: Text(
+                              _isLoginPage ? "Login" : "Register and login"),
+                        ),
+                      ),
+                      SizedBox(height: containerHeight / 100),
+                      TextButton(
+                        onPressed: () => setState(() {
+                          _isLoginPage = !_isLoginPage;
+                          _emailFieldController.clear();
+                          _passwordFieldController.clear();
+                          _repeatedPasswordFieldController.clear();
+                          FocusScope.of(context).unfocus();
+                          _key = _isLoginPage ? 1 : 2;
+                        }),
+                        child: Text(
+                          _isLoginPage
+                              ? "or go to registration page"
+                              : "or go back to the login page",
+                          style: TextStyle(
+                              color: fontColor, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      SizedBox(height: containerHeight / 9),
+                      const Logo(fontSize: 16),
+                      const Text(
+                        "© 2023 Przemysław Olszewski",
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -121,12 +167,13 @@ class _LoginScreenState extends State<LoginScreen> {
             _repeatedPasswordFieldController.text,
           );
     if (shouldRedirect) {
-      bool hasCalculatedCalories = await checkUserHasCalculatedData(authProvider.uid!);
+      bool hasCalculatedCalories =
+          await checkUserHasCalculatedData(authProvider.uid!);
       await setProviders(authProvider.uid!);
       if (!mounted) return;
       if (!hasCalculatedCalories) {
-        Navigator.pushReplacementNamed(context, '/calculator');
-        PopupMessenger.error('You have no calculated data, go to calculator!');
+        Navigator.pushReplacementNamed(context, '/account_edit');
+        PopupMessenger.error('You have no calculated data, please fill it in');
       } else {
         Navigator.pushReplacementNamed(context, '/home');
       }

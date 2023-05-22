@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'DietDesigner',
       theme: appTheme,
-      initialRoute: firebaseUser == null ? '/login' : '/home', // temporary
+      initialRoute: firebaseUser == null ? '/login' : '/home',
       routes: appRoutes,
     );
   }

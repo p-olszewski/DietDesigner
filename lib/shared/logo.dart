@@ -2,18 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({super.key});
+  final double fontSize;
+
+  const Logo({Key? key, this.fontSize = 50}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "DietDesigner",
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        fontSize: 50,
-        fontWeight: FontWeight.w600,
-        fontFamily: GoogleFonts.indieFlower().fontFamily,
-      ),
+    var textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      fontFamily: GoogleFonts.balooPaaji2().fontFamily,
+    );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "DietDesigner",
+          style: textStyle,
+        ),
+        Text(
+          "®",
+          style: textStyle.copyWith(
+            fontSize: fontSize * 0.6,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
     );
   }
 }
