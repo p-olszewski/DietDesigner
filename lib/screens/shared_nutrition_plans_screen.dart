@@ -12,12 +12,10 @@ class SharedNutritionPlansScreen extends StatefulWidget {
   const SharedNutritionPlansScreen({super.key});
 
   @override
-  State<SharedNutritionPlansScreen> createState() =>
-      _SharedNutritionPlansScreenState();
+  State<SharedNutritionPlansScreen> createState() => _SharedNutritionPlansScreenState();
 }
 
-class _SharedNutritionPlansScreenState
-    extends State<SharedNutritionPlansScreen> {
+class _SharedNutritionPlansScreenState extends State<SharedNutritionPlansScreen> {
   final bool _isLoading = false;
   @override
   void initState() {
@@ -51,21 +49,14 @@ class _SharedNutritionPlansScreenState
                           children: [
                             Text(
                               "Nutrition plans",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Row(
                               children: [
-                                const Icon(Icons.touch_app,
-                                    color: Colors.grey, size: 12),
+                                const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                                 Text(
                                   "  Tap to unfold",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .copyWith(color: Colors.grey),
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -76,9 +67,7 @@ class _SharedNutritionPlansScreenState
                   ],
                 ),
               ),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _buildSharedPlansList(uid)
+              _isLoading ? const Center(child: CircularProgressIndicator()) : _buildSharedPlansList(uid)
             ],
           ),
         ),
@@ -117,8 +106,7 @@ class _SharedNutritionPlansScreenState
                 return FutureBuilder<String>(
                   future: getUserEmail(plan.uid),
                   builder: (context, emailSnapshot) {
-                    if (emailSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (emailSnapshot.connectionState == ConnectionState.waiting) {
                       return const SizedBox(
                         height: 50,
                         child: Center(child: CircularProgressIndicator()),
@@ -141,8 +129,7 @@ class _SharedNutritionPlansScreenState
                                     onTap: () async {
                                       await showDialog(
                                         context: context,
-                                        builder: (context) =>
-                                            NutritionPlanNameDialog(
+                                        builder: (context) => NutritionPlanNameDialog(
                                           nutritionPlan: snapshot.data![index],
                                           isShared: true,
                                         ),
@@ -162,15 +149,10 @@ class _SharedNutritionPlansScreenState
                           ],
                         ),
                         subtitle: uid == plan.uid
-                            ? Text(
-                                'You shared this plan with ${plan.sharedUsers.length} people.')
+                            ? Text('You shared this plan with ${plan.sharedUsers.length} people.')
                             : Text('Shared by $ownerEmail'),
-                        tilePadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 0),
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .secondaryContainer
-                            .withOpacity(0.5),
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -181,17 +163,14 @@ class _SharedNutritionPlansScreenState
                                 i,
                                 Column(
                                   children: [
-                                    if (meal == plan.meals.first)
-                                      const SizedBox(height: 5),
+                                    if (meal == plan.meals.first) const SizedBox(height: 5),
                                     ListTile(
                                       leading: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
+                                          borderRadius: BorderRadius.circular(50.0),
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.1),
+                                              color: Colors.black.withOpacity(0.1),
                                               spreadRadius: 1,
                                               blurRadius: 4,
                                               offset: const Offset(1, 1),
@@ -200,17 +179,14 @@ class _SharedNutritionPlansScreenState
                                         ),
                                         child: CircleAvatar(
                                           radius: 26.0,
-                                          backgroundImage:
-                                              NetworkImage(meal.imageSmall),
+                                          backgroundImage: NetworkImage(meal.imageSmall),
                                         ),
                                       ),
                                       title: Text(meal.title),
                                       subtitle: Text(
                                           '${meal.calories.round()} kcal, ${meal.proteins.round()}g protein, ${meal.fats.round()}g fat, ${meal.carbs.round()}g carbs'),
                                       onTap: () async {
-                                        await Navigator.pushNamed(
-                                            context, '/meal_details',
-                                            arguments: meal);
+                                        await Navigator.pushNamed(context, '/meal_details', arguments: meal);
                                         setState(() {});
                                       },
                                     ),
@@ -218,33 +194,30 @@ class _SharedNutritionPlansScreenState
                                         ? Column(
                                             children: [
                                               const SizedBox(height: 20),
-                                              ElevatedButton(
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  await Navigator.pushNamed(context, '/comments', arguments: plan);
+                                                  setState(() {});
+                                                },
+                                                icon: const Icon(Icons.chat),
+                                                label: const Text('Comments'),
+                                              ),
+                                              ElevatedButton.icon(
                                                 onPressed: () async {
                                                   if (uid == plan.uid) {
-                                                    await _showPlanSharingPopup(
-                                                        context, plan);
+                                                    await _showPlanSharingPopup(context, plan);
                                                   } else {
-                                                    final email = context
-                                                        .read<
-                                                            UserDataProvider>()
-                                                        .user
-                                                        .email;
-                                                    await deleteUserFromSharedPlan(
-                                                        plan, email!);
-                                                    PopupMessenger.info(
-                                                        'You left this shared plan.');
+                                                    final email = context.read<UserDataProvider>().user.email;
+                                                    await deleteUserFromSharedPlan(plan, email!);
+                                                    PopupMessenger.info('You left this shared plan.');
                                                   }
                                                   setState(() {});
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                                                 ),
-                                                child: Text(uid == plan.uid
-                                                    ? 'Manage users'
-                                                    : 'Leave plan'),
+                                                icon: Icon(uid == plan.uid ? Icons.manage_accounts : Icons.exit_to_app),
+                                                label: Text(uid == plan.uid ? 'Manage users' : 'Leave plan'),
                                               ),
                                               const SizedBox(height: 15),
                                             ],
@@ -279,8 +252,7 @@ class _SharedNutritionPlansScreenState
     );
   }
 
-  Future<void> _showPlanSharingPopup(
-      BuildContext context, NutritionPlan nutritionPlan) async {
+  Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
