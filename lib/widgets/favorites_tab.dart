@@ -63,14 +63,22 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 children: [
                   Text(
                     _selectedOption == 0 ? "Favorite plans" : "Favorite meals",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: [
                       const Icon(Icons.touch_app, color: Colors.grey, size: 12),
                       Text(
-                        _selectedOption == 0 ? "  Tap to unfold" : "  Tap for details",
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.grey),
+                        _selectedOption == 0
+                            ? "  Tap to unfold"
+                            : "  Tap for details",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
+                            .copyWith(color: Colors.grey),
                       ),
                     ],
                   ),
@@ -80,10 +88,19 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 width: 30,
                 height: 42,
                 borderRadius: 50,
-                marginSelected: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                selectedTextStyle: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
-                unSelectedTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w400),
-                unSelectedBackgroundColors: [Theme.of(context).colorScheme.secondaryContainer],
+                marginSelected:
+                    const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                selectedTextStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                unSelectedTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
+                unSelectedBackgroundColors: [
+                  Theme.of(context).colorScheme.secondaryContainer
+                ],
                 labels: const ['', ''],
                 icons: const [Icons.event_note, Icons.fastfood],
                 iconSize: 22,
@@ -126,15 +143,18 @@ class _FavoritesTabState extends State<FavoritesTab> {
                 return Stack(
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, '/meal_details', arguments: snapshot.data![index]),
-                      onLongPress: () => _buildBottomSheet(context, snapshot.data![index]),
+                      onTap: () => Navigator.pushNamed(context, '/meal_details',
+                          arguments: snapshot.data![index]),
+                      onLongPress: () =>
+                          _buildBottomSheet(context, snapshot.data![index]),
                       child: MealCard(meal: snapshot.data![index]),
                     ),
                     Positioned(
                       top: 15,
                       right: 5,
                       child: IconButton(
-                        onPressed: () => _buildBottomSheet(context, snapshot.data![index]),
+                        onPressed: () =>
+                            _buildBottomSheet(context, snapshot.data![index]),
                         icon: Icon(
                           Icons.more_vert,
                           size: 26,
@@ -147,7 +167,8 @@ class _FavoritesTabState extends State<FavoritesTab> {
                             ),
                           ],
                         ),
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                     ),
                   ],
@@ -194,18 +215,23 @@ class _FavoritesTabState extends State<FavoritesTab> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          showDialog(
+                        onPressed: () async {
+                          await showDialog(
                             context: context,
-                            builder: (context) => NutritionPlanNameDialog(nutritionPlan: snapshot.data![index]),
-                          );
+                            builder: (context) => NutritionPlanNameDialog(
+                                nutritionPlan: snapshot.data![index]),
+                          ).then((value) => setState(() {}));
                         },
                         icon: const Icon(Icons.edit, size: 18),
                       ),
                     ],
                   ),
-                  tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+                  tilePadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .secondaryContainer
+                      .withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
@@ -216,7 +242,8 @@ class _FavoritesTabState extends State<FavoritesTab> {
                           i,
                           Column(
                             children: [
-                              if (meal == snapshot.data![index].meals.first) const SizedBox(height: 5),
+                              if (meal == snapshot.data![index].meals.first)
+                                const SizedBox(height: 5),
                               ListTile(
                                 leading: Container(
                                   decoration: BoxDecoration(
@@ -232,14 +259,17 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                   ),
                                   child: CircleAvatar(
                                     radius: 26.0,
-                                    backgroundImage: NetworkImage(meal.imageSmall),
+                                    backgroundImage:
+                                        NetworkImage(meal.imageSmall),
                                   ),
                                 ),
                                 title: Text(meal.title),
                                 subtitle: Text(
                                     '${meal.calories.round()} kcal, ${meal.proteins.round()}g protein, ${meal.fats.round()}g fat, ${meal.carbs.round()}g carbs'),
                                 onTap: () async {
-                                  await Navigator.pushNamed(context, '/meal_details', arguments: meal);
+                                  await Navigator.pushNamed(
+                                      context, '/meal_details',
+                                      arguments: meal);
                                   setState(() {});
                                 },
                               ),
@@ -249,25 +279,37 @@ class _FavoritesTabState extends State<FavoritesTab> {
                                         const SizedBox(height: 20),
                                         ElevatedButton(
                                           onPressed: () async {
-                                            DateTime? newDate = await showDatePicker(
+                                            DateTime? newDate =
+                                                await showDatePicker(
                                               context: context,
                                               initialDate: DateTime.now(),
                                               firstDate: DateTime.now(),
                                               lastDate: DateTime(2100),
                                             );
                                             if (newDate == null) return;
-                                            final formattedDate = DateFormat('dd.MM.yyyy').format(newDate);
-                                            NutritionPlan nutritionPlan = snapshot.data![index];
+                                            final formattedDate =
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(newDate);
+                                            NutritionPlan nutritionPlan =
+                                                snapshot.data![index];
                                             nutritionPlan.date = formattedDate;
-                                            await saveNutritionPlan(nutritionPlan);
+                                            await saveNutritionPlan(
+                                                nutritionPlan);
                                             if (!mounted) return;
-                                            context.read<NavBarProvider>().setCurrentIndex(0);
-                                            context.read<DateProvider>().setDate(newDate);
-                                            Navigator.pushNamed(context, "/home");
-                                            PopupMessenger.info('Plan successfully added to your calendar.');
+                                            context
+                                                .read<NavBarProvider>()
+                                                .setCurrentIndex(0);
+                                            context
+                                                .read<DateProvider>()
+                                                .setDate(newDate);
+                                            Navigator.pushNamed(
+                                                context, "/home");
+                                            PopupMessenger.info(
+                                                'Plan successfully added to your calendar.');
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 0),
                                           ),
                                           child: const Text('Use plan'),
                                         ),
