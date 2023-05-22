@@ -32,7 +32,8 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
     _uid = context.read<AuthProvider>().uid!;
     _dateProvider = context.read<DateProvider>();
-    _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+    _nutritionPlan =
+        getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
     _checkIsPlanInFavorites();
   }
 
@@ -49,11 +50,13 @@ class _HomeTabState extends State<HomeTab> {
                     selectedDay: _dateProvider.date,
                     changeDay: (value) => setState(() {
                       context.read<DateProvider>().setDate(value);
-                      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                      _nutritionPlan = getNutritionPlan(
+                          _uid, _dateProvider.dateFormattedWithDots);
                       _checkIsPlanInFavorites();
                     }),
                     enableWeeknumberText: false,
-                    selectedBackgroundColor: Theme.of(context).colorScheme.primary,
+                    selectedBackgroundColor:
+                        Theme.of(context).colorScheme.primary,
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   ),
                 ),
@@ -62,19 +65,25 @@ class _HomeTabState extends State<HomeTab> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 22),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     _dateProvider.dateFormattedWithWords,
-                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium!
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
-                                    onPressed: () => _buildPlanBottomSheet(context),
+                                    onPressed: () =>
+                                        _buildPlanBottomSheet(context),
                                     icon: const Icon(Icons.more_vert),
                                   ),
                                 ],
@@ -88,22 +97,34 @@ class _HomeTabState extends State<HomeTab> {
                                     if (snapshot.data!.meals.isEmpty) {
                                       return SizedBox(
                                         width: double.infinity,
-                                        height: MediaQuery.of(context).size.height * 0.6,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
                                               const Text('No meals found.'),
                                               const SizedBox(height: 20),
                                               ElevatedButton(
-                                                onPressed: () => _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots),
-                                                child: const Text('Generate nutrition plan'),
+                                                onPressed: () =>
+                                                    _generateNutritionPlan(
+                                                        _uid,
+                                                        _dateProvider
+                                                            .dateFormattedWithDots),
+                                                child: const Text(
+                                                    'Generate nutrition plan'),
                                               ),
                                               TextButton(
-                                                onPressed: () => _showFavoritePlansPopup(context),
-                                                child: const Text('Choose from favorites'),
+                                                onPressed: () =>
+                                                    _showFavoritePlansPopup(
+                                                        context),
+                                                child: const Text(
+                                                    'Choose from favorites'),
                                               ),
                                             ],
                                           ),
@@ -111,7 +132,8 @@ class _HomeTabState extends State<HomeTab> {
                                       );
                                     } else {
                                       final nutritionPlan = snapshot.data!;
-                                      List<String> mealTypes = _getListOfMealTypes(nutritionPlan);
+                                      List<String> mealTypes =
+                                          _getListOfMealTypes(nutritionPlan);
                                       return ListView.builder(
                                         physics: const ScrollPhysics(),
                                         scrollDirection: Axis.vertical,
@@ -122,20 +144,36 @@ class _HomeTabState extends State<HomeTab> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () =>
-                                                    Navigator.pushNamed(context, '/meal_details', arguments: nutritionPlan.meals[index]),
-                                                onLongPress: () => _buildMealBottomSheet(context, nutritionPlan.meals[index]),
+                                                    Navigator.pushNamed(context,
+                                                        '/meal_details',
+                                                        arguments: nutritionPlan
+                                                            .meals[index]),
+                                                onLongPress: () =>
+                                                    _buildMealBottomSheet(
+                                                        context,
+                                                        nutritionPlan
+                                                            .meals[index]),
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     const SizedBox(height: 10),
                                                     Text(
-                                                      mealTypes[index].toUpperCase(),
+                                                      mealTypes[index]
+                                                          .toUpperCase(),
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .titleLarge!
-                                                          .copyWith(fontWeight: FontWeight.w100, color: Colors.grey.shade400),
+                                                          .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w100,
+                                                              color: Colors.grey
+                                                                  .shade400),
                                                     ),
-                                                    MealCard(meal: nutritionPlan.meals[index]),
+                                                    MealCard(
+                                                        meal: nutritionPlan
+                                                            .meals[index]),
                                                   ],
                                                 ),
                                               ),
@@ -143,20 +181,28 @@ class _HomeTabState extends State<HomeTab> {
                                                 top: 45,
                                                 right: 0,
                                                 child: IconButton(
-                                                  onPressed: () => _buildMealBottomSheet(context, nutritionPlan.meals[index]),
+                                                  onPressed: () =>
+                                                      _buildMealBottomSheet(
+                                                          context,
+                                                          nutritionPlan
+                                                              .meals[index]),
                                                   icon: Icon(
                                                     Icons.more_vert,
                                                     size: 26,
                                                     color: Colors.white,
                                                     shadows: [
                                                       Shadow(
-                                                        offset: const Offset(0.5, 0.5),
+                                                        offset: const Offset(
+                                                            0.5, 0.5),
                                                         blurRadius: 2.0,
-                                                        color: Colors.grey.shade600,
+                                                        color: Colors
+                                                            .grey.shade600,
                                                       ),
                                                     ],
                                                   ),
-                                                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSecondaryContainer,
                                                 ),
                                               ),
                                             ],
@@ -165,7 +211,8 @@ class _HomeTabState extends State<HomeTab> {
                                       );
                                     }
                                   } else {
-                                    return const Center(child: CircularProgressIndicator());
+                                    return const Center(
+                                        child: CircularProgressIndicator());
                                   }
                                 },
                               ),
@@ -177,7 +224,8 @@ class _HomeTabState extends State<HomeTab> {
                                   if (snapshot.hasData) {
                                     if (snapshot.data!.meals.isNotEmpty) {
                                       final nutritionPlan = snapshot.data!;
-                                      return NutritionPlanStatistics(nutritionPlan: nutritionPlan);
+                                      return NutritionPlanStatistics(
+                                          nutritionPlan: nutritionPlan);
                                     } else {
                                       return const SizedBox.shrink();
                                     }
@@ -259,7 +307,8 @@ class _HomeTabState extends State<HomeTab> {
     }
     setState(() {
       _isLoading = false;
-      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+      _nutritionPlan =
+          getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
     });
   }
 
@@ -273,13 +322,16 @@ class _HomeTabState extends State<HomeTab> {
     try {
       do {
         try {
-          newMeal = await APIService.instance.getSimilarMealFromAPI(meal, mealType: meal.id == 'meal_1' ? 'breakfast' : '');
+          newMeal = await APIService.instance.getSimilarMealFromAPI(meal,
+              mealType: meal.id == 'meal_1' ? 'breakfast' : '');
         } catch (e) {
           debugPrint('Error fetching similar meal from API: $e');
         }
         retryCount++;
         await Future.delayed(const Duration(seconds: 1));
-      } while ((newMeal == null || newMeal.spoonacularId == meal.spoonacularId) && retryCount < maxRetries);
+      } while (
+          (newMeal == null || newMeal.spoonacularId == meal.spoonacularId) &&
+              retryCount < maxRetries);
 
       if (newMeal == null) {
         PopupMessenger.error("Please try again later.");
@@ -296,7 +348,8 @@ class _HomeTabState extends State<HomeTab> {
     }
     setState(() {
       _isLoading = false;
-      _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+      _nutritionPlan =
+          getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
     });
   }
 
@@ -313,8 +366,10 @@ class _HomeTabState extends State<HomeTab> {
             MaterialButton(
               onPressed: () async {
                 Navigator.pop(context);
-                _generateNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
-                await removeNutritionPlanFromFavorites(await _nutritionPlan, _uid);
+                _generateNutritionPlan(
+                    _uid, _dateProvider.dateFormattedWithDots);
+                await removeNutritionPlanFromFavorites(
+                    await _nutritionPlan, _uid);
                 setState(() => _isFavorite = !_isFavorite);
               },
               child: Row(
@@ -339,7 +394,8 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () async => _showPlanSharingPopup(context, await _nutritionPlan),
+              onPressed: () async =>
+                  _showPlanSharingPopup(context, await _nutritionPlan),
               child: Row(
                 children: const [
                   Icon(Icons.share_outlined),
@@ -349,7 +405,9 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             MaterialButton(
-              onPressed: () async => await PDFService.generatePDFForNutritionPlan(await _nutritionPlan),
+              onPressed: () async =>
+                  await PDFService.generatePDFForNutritionPlan(
+                      await _nutritionPlan),
               child: Row(
                 children: const [
                   Icon(Icons.download_outlined),
@@ -397,11 +455,13 @@ class _HomeTabState extends State<HomeTab> {
             meal.isFavorite
                 ? MaterialButton(
                     onPressed: () async {
-                      await removeMealFromFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
+                      await removeMealFromFavorites(
+                          meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
                       setState(() {
-                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                        _nutritionPlan = getNutritionPlan(
+                            _uid, _dateProvider.dateFormattedWithDots);
                       });
                       PopupMessenger.info('Removed from favorites');
                     },
@@ -415,11 +475,13 @@ class _HomeTabState extends State<HomeTab> {
                   )
                 : MaterialButton(
                     onPressed: () async {
-                      await addMealToFavorites(meal, _uid, _dateProvider.dateFormattedWithDots);
+                      await addMealToFavorites(
+                          meal, _uid, _dateProvider.dateFormattedWithDots);
                       if (!mounted) return;
                       Navigator.pop(context);
                       setState(() {
-                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                        _nutritionPlan = getNutritionPlan(
+                            _uid, _dateProvider.dateFormattedWithDots);
                       });
                       PopupMessenger.info('Added to favorites');
                     },
@@ -437,7 +499,8 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Future<void> _showFavoriteMealsPopup(BuildContext context, Meal oldMeal) async {
+  Future<void> _showFavoriteMealsPopup(
+      BuildContext context, Meal oldMeal) async {
     Navigator.pop(context);
     final meals = await getFavoriteMeals(_uid);
     if (meals.isEmpty) {
@@ -447,7 +510,9 @@ class _HomeTabState extends State<HomeTab> {
     if (!mounted) return;
     final maxHeight = MediaQuery.of(context).size.height * 0.5;
     const elementHeight = 80.0;
-    var height = meals.length * elementHeight > maxHeight ? maxHeight : meals.length * elementHeight;
+    var height = meals.length * elementHeight > maxHeight
+        ? maxHeight
+        : meals.length * elementHeight;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -461,27 +526,34 @@ class _HomeTabState extends State<HomeTab> {
               itemCount: meals.length,
               itemBuilder: (context, index) {
                 final meal = meals[index];
-                final kcalDiff = '${meal.calories - oldMeal.calories >= 0 ? '↑' : '↓'}${(meal.calories - oldMeal.calories).abs().round()}';
+                final kcalDiff =
+                    '${meal.calories - oldMeal.calories >= 0 ? '↑' : '↓'}${(meal.calories - oldMeal.calories).abs().round()}';
                 final proteinsDiff =
                     '${meal.proteins - oldMeal.proteins >= 0 ? '↑' : '↓'}${(meal.proteins - oldMeal.proteins).abs().round()}';
-                final fatsDiff = '${meal.fats - oldMeal.fats >= 0 ? '↑' : '↓'}${(meal.fats - oldMeal.fats).abs().round()}';
-                final carbsDiff = '${meal.carbs - oldMeal.carbs >= 0 ? '↑' : '↓'}${(meal.carbs - oldMeal.carbs).abs().round()}';
+                final fatsDiff =
+                    '${meal.fats - oldMeal.fats >= 0 ? '↑' : '↓'}${(meal.fats - oldMeal.fats).abs().round()}';
+                final carbsDiff =
+                    '${meal.carbs - oldMeal.carbs >= 0 ? '↑' : '↓'}${(meal.carbs - oldMeal.carbs).abs().round()}';
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 0.0),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundImage: NetworkImage(meal.imageSmall),
                     ),
                     title: Text(meal.title),
-                    subtitle: Text('${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
+                    subtitle: Text(
+                        '${kcalDiff}kcal, ${proteinsDiff}p, ${fatsDiff}f, ${carbsDiff}c'),
                     onTap: () async {
                       meal.id = oldMeal.id;
-                      await replaceMeal(meal, _dateProvider.dateFormattedWithDots, _uid);
+                      await replaceMeal(
+                          meal, _dateProvider.dateFormattedWithDots, _uid);
                       if (!mounted) return;
                       Navigator.pop(context);
                       setState(() {
                         _isLoading = false;
-                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
+                        _nutritionPlan = getNutritionPlan(
+                            _uid, _dateProvider.dateFormattedWithDots);
                       });
                       PopupMessenger.info('Meal replaced');
                     },
@@ -510,7 +582,9 @@ class _HomeTabState extends State<HomeTab> {
     if (!mounted) return;
     final maxHeight = MediaQuery.of(context).size.height * 0.5;
     const elementHeight = 70.0;
-    var height = nutritionPlans.length * elementHeight > maxHeight ? maxHeight : nutritionPlans.length * elementHeight;
+    var height = nutritionPlans.length * elementHeight > maxHeight
+        ? maxHeight
+        : nutritionPlans.length * elementHeight;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -524,21 +598,19 @@ class _HomeTabState extends State<HomeTab> {
               itemCount: nutritionPlans.length,
               itemBuilder: (context, index) {
                 final plan = nutritionPlans[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
-                  child: ListTile(
-                    title: Text(plan.date),
-                    onTap: () async {
-                      NutritionPlan nutritionPlan = plan;
-                      nutritionPlan.date = _dateProvider.dateFormattedWithDots;
-                      await saveNutritionPlan(nutritionPlan);
-                      if (!mounted) return;
-                      Navigator.pop(context);
-                      setState(() {
-                        _nutritionPlan = getNutritionPlan(_uid, _dateProvider.dateFormattedWithDots);
-                      });
-                    },
-                  ),
+                return ListTile(
+                  title: Text(plan.name),
+                  onTap: () async {
+                    NutritionPlan nutritionPlan = plan;
+                    nutritionPlan.date = _dateProvider.dateFormattedWithDots;
+                    await saveNutritionPlan(nutritionPlan);
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    setState(() {
+                      _nutritionPlan = getNutritionPlan(
+                          _uid, _dateProvider.dateFormattedWithDots);
+                    });
+                  },
                 );
               },
             ),
@@ -554,7 +626,8 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Future<void> _showPlanSharingPopup(BuildContext context, NutritionPlan nutritionPlan) async {
+  Future<void> _showPlanSharingPopup(
+      BuildContext context, NutritionPlan nutritionPlan) async {
     Navigator.pop(context);
     if (!mounted) return;
     await showDialog(
@@ -578,10 +651,24 @@ class _HomeTabState extends State<HomeTab> {
         mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Supper'];
         break;
       case 6:
-        mealTypes = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Afternoon meal', 'Supper'];
+        mealTypes = [
+          'Breakfast',
+          'Brunch',
+          'Lunch',
+          'Dinner',
+          'Afternoon meal',
+          'Supper'
+        ];
         break;
       default:
-        mealTypes = ['Meal 1', 'Meal 2', 'Meal 3', 'Meal 4', 'Meal 5', 'Meal 6'];
+        mealTypes = [
+          'Meal 1',
+          'Meal 2',
+          'Meal 3',
+          'Meal 4',
+          'Meal 5',
+          'Meal 6'
+        ];
         break;
     }
     return mealTypes;
